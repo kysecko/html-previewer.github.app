@@ -1,0 +1,21 @@
+{
+  "name": "html-previewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.87.1",
+    "aos": "^2.3.4",
+    "appwrite": "^21.5.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "lucide": "^0.555.0"
+  }
+}

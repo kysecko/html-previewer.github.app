@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Editor Dashboard</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="../../css/home.css" />
+
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container" style="margin-bottom: 20px;
+      margin-left: 20px;
+  display: flex;
+  align-items: center; align-self: center;">
+        <img src="images/logoo.png" alt="logo" style="  width: 60px;
+  height: 50px;">
+        <h3>Code<span style="color: #FFAC1C;">Previewer</span></h3>
+      </div>
+      <!-- <h3>Projects</h3> -->
+      <button id="newBtn" style="margin-top: 30px;"><i data-lucide="plus" class="icon"></i> New Project</button>
+    </div>
+    <div id="projectList">
+      <div class="project-list-header">Recent Projects</div>
+      <div id="projectItems">
+        <div class="loading">
+          <i data-lucide="loader" class="icon"></i> Loading projects...
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button onclick="openModal()">Logout</button>
+      <span id="projectCount">0 projects</span>
+    </div>
+  </div>
+
+  <!-- Main Area -->
+  <div id="mainArea">
+    <div id="topBar">
+      <div class="h2" style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="folder-open" style="color: #FFAC1C;"></i>
+        <div id="currentTitle">Untitled Project</div>
+      </div>
+      <div>
+        <button id="uploadBtn" class="topbar-btn">
+          <i data-lucide="upload" class="icon"></i> Upload File
+        </button>
+        <button id="saveBtn" class="topbar-btn">
+          <i data-lucide="save" class="icon"></i> Save
+        </button>
+        <button id="clearBtn" class="topbar-btn">
+          <i data-lucide="eraser" class="icon"></i> Clear Editor
+        </button>
+      </div>
+    </div>
+    <!-- Hidden file input -->
+    <input type="file" id="fileInput" accept=".html,.htm,.js,.css,.txt" style="display: none;">
+
+
+    <div id="editorArea">
+      <div id="editorPanel">
+        <div class="panel-header">
+          <i data-lucide="code" class="icon"></i> Editor
+        </div>
+        <div class="editor-container">
+          <div id="lineNumbers" class="line-numbers"></div>
+          <textarea id="codeEditor" placeholder="Start typing your HTML here..."></textarea>
+        </div>
+      </div>
+
+      <div id="divider"></div>
+
+      <div id="previewPanel">
+        <div class="panel-header">
+          <i data-lucide="eye" class="icon"></i> Previewer
+        </div>
+        <button id="maximizeBtn" class="maximize-btn">
+          <i data-lucide="maximize" class="icon"></i>
+        </button>
+
+        <iframe id="previewFrame"></iframe>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div id="status" class="status">Saved!</div>
+
+  <!-- Logout Modal -->
+  <div id="myModal" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 2000;
+    place-items: center;
+  ">
+    <div style="
+      background: #1a1a1a;
+      color: #eee;
+      padding: 28px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    ">
+      <h2 style="margin-bottom: 20px;">Confirm Logout</h2>
+      <p style="color: #aaa; margin-bottom: 28px;">Are you sure you want to log out?</p>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button onclick="cancel()" style="
+          padding: 10px 24px;
+          background: #333;
+          color: #ccc;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-family: Montserrat;
+        ">Cancel</button>
+        <button onclick="logout()" style="
+          padding: 10px 24px;
+          background: #e53e3e;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-family: Montserrat;
+        ">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/home.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Previewer</title>
+
+  <script src="/libs/lucide.js"></script>
+  <link rel="stylesheet" href="/css/guestCompiler.css" />
+</head>
+
+<body>
+  <div id="editor-wrapper" class="panel-wrapper">
+    <div class="panel-header">
+      <div class="panel-title">
+        <i data-lucide="file-code"></i>HTML Editor
+      </div>
+      <div class="panel-controls">
+        <button class="header-toggle-btn" onclick="toggleTheme()">
+          <i id="theme-icon" data-lucide="sun"></i>
+          <span id="theme-text">Light</span>
+        </button>
+      </div>
+    </div>
+    <div class="panel-content">
+      <div id="editor">
+        <div class="editor-container">
+          <div class="editor-wrapper">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <textarea id="sourceCode" spellcheck="false"
+              placeholder="Start by typing or pasting your HTML, CSS code here..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="resizer" id="resizer"></div>
+
+  <div id="preview-wrapper" class="panel-wrapper">
+    <div class="panel-header">
+      <div class="panel-title"><i data-lucide="eye"></i>Live Preview</div>
+      <div class="panel-controls">
+        <button class="panel-btn" title="Toggle layout" onclick="toggleLayout()">
+          <i data-lucide="columns"></i>
+        </button>
+      </div>
+    </div>
+    <div class="panel-content">
+      <div id="preview-container">
+        <div class="preview-wrapper">
+          <div class="chrome-bar">
+            <div class="tab-shape" id="tabTitle">
+              <i data-lucide="file-text"></i>
+              <span>Untitled</span>
+            </div>
+          </div>
+          <iframe id="preview"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/guestCompiler.js"></script>
+</body>
+
+</html>

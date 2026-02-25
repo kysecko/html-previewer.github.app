@@ -1,0 +1,335 @@
+@import url('./shared.css');
+
+body {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.light-mode {
+  background: #f5f5f5;
+  color: #2a2a2a;
+}
+
+body.wrapped {
+  flex-direction: column;
+}
+
+.panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+#editor-wrapper {
+  width: 40%;
+  min-width: 300px;
+  max-width: calc(100% - 300px);
+}
+#preview-wrapper {
+  width: 60%;
+  min-width: 300px;
+  max-width: calc(100% - 300px);
+}
+body.wrapped #editor-wrapper,
+body.wrapped #preview-wrapper {
+  width: 100%;
+  max-width: 100%;
+  height: 50%;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+  user-select: none;
+  color: #00a8ff;
+  font-weight: 600;
+}
+.light-mode .panel-header {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  color: #007ab4;
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.panel-btn {
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+.light-mode .panel-btn {
+  color: #2a2a2a;
+}
+.panel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+.light-mode .panel-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+#editor {
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.editor-container {
+  flex: 1;
+  border: 1px solid #333;
+  background: #1c1c1c;
+  overflow: hidden;
+  display: flex;
+  border-radius: 8px;
+}
+.light-mode .editor-container {
+  border: 1px solid #ddd;
+  background: #fff;
+}
+.line-numbers {
+  background: #252525;
+  color: #666;
+  padding: 10px 8px;
+  text-align: right;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  user-select: none;
+  width: 45px;
+  min-width: 45px;
+  border-right: 1px solid #333;
+  overflow: hidden;
+  white-space: pre;
+}
+.light-mode .line-numbers {
+  background: #f0f0f0;
+  color: #999;
+  border-right: 1px solid #ddd;
+}
+.editor-wrapper {
+  display: flex;
+  flex: 1;
+  overflow: auto;
+}
+#sourceCode {
+  flex: 1;
+  padding: 10px;
+  background: #1c1c1c;
+  color: #e0e0e0;
+  border: none;
+  outline: none;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  transition: background 0.3s, color 0.3s;
+}
+.light-mode #sourceCode {
+  background: #fff;
+  color: #2a2a2a;
+}
+#sourceCode::-webkit-scrollbar,
+.editor-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+#sourceCode::-webkit-scrollbar-track,
+.editor-wrapper::-webkit-scrollbar-track {
+  background: #1c1c1c;
+}
+.light-mode #sourceCode::-webkit-scrollbar-track,
+.light-mode .editor-wrapper::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+#sourceCode::-webkit-scrollbar-thumb,
+.editor-wrapper::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 5px;
+}
+.light-mode #sourceCode::-webkit-scrollbar-thumb,
+.light-mode .editor-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+#preview-container {
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+}
+.light-mode #preview-container {
+  background: #f0f0f0;
+}
+.preview-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.light-mode .preview-wrapper {
+  border: 1px solid #ddd;
+  background: #fff;
+}
+.chrome-bar {
+  display: flex;
+  align-items: flex-end;
+  height: 38px;
+  border-bottom: 1px solid #444;
+  background: #2a2a2a;
+  flex-shrink: 0;
+  padding: 0 10px;
+}
+.light-mode .chrome-bar {
+  border-bottom: 1px solid #ddd;
+  background: #f5f5f5;
+}
+.tab-shape {
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #eee;
+  background: linear-gradient(#3a3a3a, #2a2a2a);
+  border: 1px solid #555;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  white-space: nowrap;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.light-mode .tab-shape {
+  color: #333;
+  background: linear-gradient(#e0e0e0, #f5f5f5);
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+#preview {
+  flex: 1;
+  border: none;
+  display: block;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+}
+.resizer {
+  width: 10px;
+  background: #333;
+  cursor: col-resize;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.light-mode .resizer {
+  background: #ddd;
+}
+.resizer:hover {
+  background: #007ab4;
+}
+.resizer::before {
+  content: "";
+  width: 4px;
+  height: 40px;
+  background: #666;
+  border-radius: 2px;
+}
+.light-mode .resizer::before {
+  background: #999;
+}
+body.wrapped .resizer {
+  width: 100%;
+  height: 10px;
+  cursor: row-resize;
+}
+body.wrapped .resizer::before {
+  width: 40px;
+  height: 4px;
+}
+.header-toggle-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: 16px;
+  background: #007ab4;
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.2s;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.header-toggle-btn:hover {
+  background: #005b86;
+}
+.panel-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 768px) {
+  body:not(.wrapped) {
+    flex-direction: column;
+  }
+  body:not(.wrapped) #editor-wrapper,
+  body:not(.wrapped) #preview-wrapper {
+    width: 100%;
+    max-width: 100%;
+    height: 50%;
+  }
+  body:not(.wrapped) .resizer {
+    width: 100%;
+    height: 10px;
+    cursor: row-resize;
+  }
+  body:not(.wrapped) .resizer::before {
+    width: 40px;
+    height: 4px;
+  }
+}

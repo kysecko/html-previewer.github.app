@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/login.css" />
+    <link rel="stylesheet" href="css/loader.css">
+    <!-- Icons -->
+    <script src="/libs/lucide.js"></script>
+    <!-- JS -->
+    <script src="/js/login.js" defer></script>
+
+    <title>Log In to your account</title>
+</head>
+
+<body>
+    <!-- Redirect Spinner -->
+    <div id="redirectSpinner" class="spinner-overlay" style="display:none;">
+        <div class="spinner-bg"></div>
+        <div class="banter-loader">
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+            <div class="banter-loader__box"></div>
+        </div>
+    </div>
+
+
+
+    <div class="page">
+        <div class="card">
+            <div class="image-wrapper">
+                <img src="/images/login-img.jpg" alt="Login illustration" />
+            </div>
+
+            <div class="login-wrapper">
+                <div class="logo-container">
+                    <img src="images/logoo.png" alt="logo" class="logo-image">
+                    <h4>Code<span style="color: #FFAC1C;">Previewer</span></h4>
+                </div>
+
+                <h2 class="title-header">Welcome Back!</h2>
+                <p class="subtitle">Ready to create something amazing? Sign in.</p>
+
+                <form id="loginForm" novalidate>
+                    <label for="email">Email Address</label>
+                    <div class="input-container">
+                        <i data-lucide="at-sign"></i>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+                    </div>
+                    <div id="emailMessage" style="margin-bottom: 12px; font-size: 12px;"></div>
+
+                    <label for="password" class="password-label">Password</label>
+                    <div class="input-container">
+                        <i data-lucide="lock-keyhole"></i>
+                        <input type="password" id="password" name="password" placeholder="Enter your password"
+                            required />
+                    </div>
+                    <div id="passwordMessage" style="margin-bottom: 12px; font-size: 12px;"></div>
+
+                    <button type="submit" class="login-btn">Login</button>
+
+                    <p class="paragraph">
+                        Don't have an account?
+                        <a href="register.html" class="secondary-link">Create One</a>
+                    </p>
+                    <p class="paragraph">
+                        <a href="/pages/compiler.html" class="secondary-link">Continue as Guest</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

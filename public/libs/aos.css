@@ -1,0 +1,42 @@
+/* Base hidden state */
+[data-aos] {
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  transition-property: opacity, transform;
+  transition-timing-function: ease;
+}
+
+/* When visible */
+[data-aos].aos-animate {
+  opacity: 1;
+  transform: none;
+}
+
+/* Animations */
+[data-aos="fade"] {
+  opacity: 0;
+}
+
+[data-aos="fade-up"] {
+  transform: translateY(40px);
+}
+
+[data-aos="fade-down"] {
+  transform: translateY(-40px);
+}
+
+[data-aos="fade-left"] {
+  transform: translateX(40px);
+}
+
+[data-aos="fade-right"] {
+  transform: translateX(-40px);
+}
+
+[data-aos="zoom-in"] {
+  transform: scale(0.9);
+}
+
+[data-aos="zoom-out"] {
+  transform: scale(1.1);
+}

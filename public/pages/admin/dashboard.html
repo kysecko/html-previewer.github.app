@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | CodePreviewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admindashboard.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <img src="/images/logoo.png" alt="logo" class="logo-image">
+          </div>
+          <div class="logo-text">
+            <h3>Code<span class="highlight">Previewer</span></h3>
+            <p class="tagline">Admin Control</p>
+          </div>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <i data-lucide="panel-left-close"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="/admin/dashboard.html" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="/admin/users.html" data-page="users">
+          <i data-lucide="users"></i>
+          <span>Users</span>
+          <span class="badge" id="user-count">0</span>
+        </a>
+        <a class="nav-link" href="/admin/settings.html" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i data-lucide="user"></i>
+          </div>
+          <div class="user-details">
+            <p class="user-name" id="sidebar-email">admin@example.com</p>
+            <p class="user-role" id="sidebar-role">Administrator</p>
+          </div>
+        </div>
+        <button id="logout" class="logout-btn">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="page-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p class="header-subtitle">Welcome back, manage your platform</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search anything..." id="search-input" aria-label="Search">
+          </div>
+          <div class="header-meta">
+            <div class="date-display" id="current-date"></div>
+            <button class="notification-btn" aria-label="Notifications">
+              <i data-lucide="bell"></i>
+              <span class="notification-badge">3</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Stats -->
+      <section class="stats-section" id="dashboard-stats">
+        <div class="stats-grid">
+          <div class="stat-card" data-stat="users">
+            <div class="stat-header">
+              <div class="stat-icon user-stat">
+                <i data-lucide="users"></i>
+              </div>
+              <div class="stat-trend positive">
+                <i data-lucide="trending-up"></i>
+                <span>12%</span>
+              </div>
+            </div>
+            <div class="stat-info">
+              <h3 id="total-users">0</h3>
+              <p>Total Users</p>
+              <div class="stat-mini-chart">
+                <div class="mini-bar" style="height: 40%"></div>
+                <div class="mini-bar" style="height: 65%"></div>
+                <div class="mini-bar" style="height: 45%"></div>
+                <div class="mini-bar" style="height: 80%"></div>
+                <div class="mini-bar" style="height: 60%"></div>
+                <div class="mini-bar" style="height: 95%"></div>
+                <div class="mini-bar" style="height: 75%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card" data-stat="admins">
+            <div class="stat-header">
+              <div class="stat-icon admin-stat">
+                <i data-lucide="shield-check"></i>
+              </div>
+              <div class="stat-trend neutral">
+                <i data-lucide="minus"></i>
+                <span>0%</span>
+              </div>
+            </div>
+            <div class="stat-info">
+              <h3 id="admin-count">0</h3>
+              <p>Admin Accounts</p>
+              <div class="stat-mini-chart">
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+                <div class="mini-bar" style="height: 50%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card" data-stat="today">
+            <div class="stat-header">
+              <div class="stat-icon date-stat">
+                <i data-lucide="user-plus"></i>
+              </div>
+              <div class="stat-trend positive">
+                <i data-lucide="trending-up"></i>
+                <span>8%</span>
+              </div>
+            </div>
+            <div class="stat-info">
+              <h3 id="today-count">0</h3>
+              <p>Today's Signups</p>
+              <div class="stat-mini-chart">
+                <div class="mini-bar" style="height: 30%"></div>
+                <div class="mini-bar" style="height: 55%"></div>
+                <div class="mini-bar" style="height: 40%"></div>
+                <div class="mini-bar" style="height: 70%"></div>
+                <div class="mini-bar" style="height: 85%"></div>
+                <div class="mini-bar" style="height: 60%"></div>
+                <div class="mini-bar" style="height: 90%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stat-card" data-stat="active">
+            <div class="stat-header">
+              <div class="stat-icon activity-stat">
+                <i data-lucide="activity"></i>
+              </div>
+              <div class="stat-trend positive">
+                <i data-lucide="trending-up"></i>
+                <span>5%</span>
+              </div>
+            </div>
+            <div class="stat-info">
+              <h3 id="active-count">0</h3>
+              <p>Active Sessions</p>
+              <div class="stat-mini-chart">
+                <div class="mini-bar" style="height: 60%"></div>
+                <div class="mini-bar" style="height: 45%"></div>
+                <div class="mini-bar" style="height: 70%"></div>
+                <div class="mini-bar" style="height: 55%"></div>
+                <div class="mini-bar" style="height: 80%"></div>
+                <div class="mini-bar" style="height: 65%"></div>
+                <div class="mini-bar" style="height: 75%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Grid -->
+      <div class="content-grid">
+        <!-- Dashboard Info Card -->
+        <section class="content-section info-section" id="dashboard-info">
+          <div class="section-header">
+            <h2>
+              <i data-lucide="user-circle"></i>
+              Account Information
+            </h2>
+            <button class="icon-btn" aria-label="Edit account">
+              <i data-lucide="pencil"></i>
+            </button>
+          </div>
+          <div class="info-card">
+            <div class="info-row">
+              <div class="info-label">
+                <i data-lucide="mail"></i>
+                <strong>Email Address</strong>
+              </div>
+              <span class="info-value" id="email">Loading...</span>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i data-lucide="shield"></i>
+                <strong>Role</strong>
+              </div>
+              <span class="info-value">
+                <span class="role-badge" id="role">Loading...</span>
+              </span>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i data-lucide="hash"></i>
+                <strong>User ID</strong>
+              </div>
+              <span class="info-value code" id="userId">Loading...</span>
+            </div>
+            <div class="info-row">
+              <div class="info-label">
+                <i data-lucide="clock"></i>
+                <strong>Last Login</strong>
+              </div>
+              <span class="info-value" id="last-login">Just now</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="content-section quick-actions">
+          <div class="section-header">
+            <h2>
+              <i data-lucide="zap"></i>
+              Quick Actions
+            </h2>
+          </div>
+          <div class="actions-grid">
+            <button class="action-card">
+              <div class="action-icon">
+                <i data-lucide="user-plus"></i>
+              </div>
+              <div class="action-info">
+                <h4>Add User</h4>
+                <p>Create new account</p>
+              </div>
+            </button>
+            <button class="action-card">
+              <div class="action-icon">
+                <i data-lucide="download"></i>
+              </div>
+              <div class="action-info">
+                <h4>Export Data</h4>
+                <p>Download reports</p>
+              </div>
+            </button>
+            <button class="action-card">
+              <div class="action-icon">
+                <i data-lucide="mail"></i>
+              </div>
+              <div class="action-info">
+                <h4>Send Notice</h4>
+                <p>Email all users</p>
+              </div>
+            </button>
+            <button class="action-card">
+              <div class="action-icon">
+                <i data-lucide="database"></i>
+              </div>
+              <div class="action-info">
+                <h4>Backup</h4>
+                <p>System backup</p>
+              </div>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Users Table -->
+      <section class="content-section table-section" id="users-section">
+        <div class="section-header">
+          <h2>
+            <i data-lucide="users"></i>
+            User Management
+          </h2>
+          <div class="table-controls">
+            <button class="btn btn-secondary">
+              <i data-lucide="filter"></i>
+              <span>Filter</span>
+            </button>
+            <button class="btn btn-primary">
+              <i data-lucide="download"></i>
+              <span>Export</span>
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table id="users-table">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" aria-label="Select all users">
+                </th>
+                <th>User ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be populated by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footer">
+          <div class="table-info">
+            <span class="page-info">Showing <strong>1-10</strong> of <strong>0</strong> users</span>
+          </div>
+          <div class="pagination">
+            <button class="pagination-btn" disabled>
+              <i data-lucide="chevron-left"></i>
+              <span>Previous</span>
+            </button>
+            <button class="pagination-btn" disabled>
+              <span>Next</span>
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loading State -->
+      <div id="loading" class="loading-container">
+        <div class="loader">
+          <div class="loader-ring"></div>
+          <div class="loader-ring"></div>
+          <div class="loader-ring"></div>
+        </div>
+        <p>Loading dashboard data...</p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Sidebar toggle functionality
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+
+    sidebarToggle?.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const icon = sidebarToggle.querySelector('i');
+      icon.setAttribute('data-lucide', sidebar.classList.contains('collapsed') ? 'panel-left-open' : 'panel-left-close');
+      lucide.createIcons();
+    });
+
+    mobileMenuBtn?.addEventListener('click', () => {
+      sidebar.classList.toggle('mobile-open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+          sidebar.classList.remove('mobile-open');
+        }
+      }
+    });
+
+    // Date display
+    const dateDisplay = document.getElementById('current-date');
+    if (dateDisplay) {
+      const now = new Date();
+      dateDisplay.textContent = now.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+
+    // Simulate loading
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      const statsSection = document.getElementById('dashboard-stats');
+      const infoSection = document.getElementById('dashboard-info');
+      const usersSection = document.getElementById('users-section');
+      
+      if (loading) loading.style.display = 'none';
+      if (statsSection) statsSection.style.display = 'block';
+      if (infoSection) infoSection.style.display = 'block';
+      if (usersSection) usersSection.style.display = 'block';
+      
+      // Animate stat cards
+      document.querySelectorAll('.stat-card').forEach((card, index) => {
+        setTimeout(() => {
+          card.style.animation = 'slideInUp 0.5s ease forwards';
+        }, index * 100);
+      });
+    }, 1000);
+  </script>
+  <script src="/js/adminDashboard.js"></script>
+</body>
+</html>
