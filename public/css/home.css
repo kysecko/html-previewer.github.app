@@ -351,9 +351,9 @@ body {
 
 .maximize-btn {
   position: absolute;
-  top: 10px;
+  top: 5px;
   right: 12px;
-  background: rgba(0, 0, 0, 0.5);
+  background: none;
   border: none;
   color: #FFAC1C;
   cursor: pointer;

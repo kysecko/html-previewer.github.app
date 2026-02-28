@@ -156,12 +156,35 @@ async function createProject(title) {
     }
 }
 
+//  PROJECT OPERATIONS (LOAD, SAVE, DELETE)
+function openCreateModal() {
+    const modal = document.getElementById('createProjectModal');
+    const input = document.getElementById('newProjectTitleInput');
+    input.value = '';
+    modal.style.display = 'grid';
+    setTimeout(() => input.focus(), 50);
+}
+
+function closeCreateModal() {
+    document.getElementById('createProjectModal').style.display = 'none';
+}
+
+async function confirmCreateProject() {
+    const input = document.getElementById('newProjectTitleInput');
+    const title = input.value.trim();
+    if (!title) {
+        input.style.border = '1px solid #e53e3e';
+        setTimeout(() => input.style.border = '1px solid #444', 1500);
+        return;
+    }
+    closeCreateModal();
+    await createProject(title);
+}
+
+// Updated saveProject 
 async function saveProject() {
     if (!currentId) {
-        const title = prompt('Save as new project. Enter project name:');
-        if (title) {
-            await createProject(title);
-        }
+        openCreateModal();
         return;
     }
 
@@ -170,9 +193,7 @@ async function saveProject() {
 
         const res = await fetch('/api/projects/' + currentId, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
                 title: currentTitle.textContent,
@@ -188,11 +209,8 @@ async function saveProject() {
         const updated = await res.json();
         console.log('Project updated successfully:', updated);
 
-        // Update local projects array
         const index = projects.findIndex(p => p.id === currentId);
-        if (index !== -1) {
-            projects[index] = updated;
-        }
+        if (index !== -1) projects[index] = updated;
 
         renderList();
         showStatus('Project saved successfully!');
@@ -204,6 +222,76 @@ async function saveProject() {
     }
 }
 
+// Rename project title on click
+// ── Inline title editing ──────────────────────────────────────────────────────
+function makeCurrentTitleEditable() {
+    const titleEl = document.getElementById('currentTitle');
+
+    // Avoid double-binding
+    if (titleEl.dataset.editable) return;
+    titleEl.dataset.editable = 'true';
+
+    // Style as editable
+    titleEl.style.cursor = 'text';
+    titleEl.title = 'Click to rename';
+
+    titleEl.addEventListener('click', () => {
+        if (!currentId) return; // no project loaded yet
+
+        const original = titleEl.textContent;
+        titleEl.contentEditable = 'true';
+        titleEl.style.outline = '1px solid #FFAC1C';
+        titleEl.style.borderRadius = '4px';
+        titleEl.style.padding = '2px 6px';
+        titleEl.focus();
+
+        // Select all text
+        const range = document.createRange();
+        range.selectNodeContents(titleEl);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+
+        const finish = async (save) => {
+            titleEl.contentEditable = 'false';
+            titleEl.style.outline = '';
+            titleEl.style.padding = '';
+
+            const newTitle = titleEl.textContent.trim();
+            if (!save || !newTitle || newTitle === original) {
+                titleEl.textContent = original; // revert if empty or unchanged
+                return;
+            }
+
+            // Persist immediately
+            try {
+                const res = await fetch('/api/projects/' + currentId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ title: newTitle, code: editor.value })
+                });
+                if (!res.ok) throw new Error('Failed to rename');
+                const updated = await res.json();
+                const index = projects.findIndex(p => p.id === currentId);
+                if (index !== -1) projects[index] = updated;
+                renderList();
+                showStatus('Project renamed!');
+            } catch (err) {
+                titleEl.textContent = original;
+                showStatus('Failed to rename: ' + err.message, true);
+            }
+        };
+
+        titleEl.addEventListener('blur', () => finish(true), { once: true });
+        titleEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+            if (e.key === 'Escape') { titleEl.textContent = original; finish(false); }
+        }, { once: true });
+    });
+}
+
+// Call this once after the DOM is ready (e.g. at the bottom of your init code):
+// makeCurrentTitleEditable();
 async function deleteProjectFromDB(id) {
     try {
         console.log('Deleting project: ' + id);
@@ -437,18 +525,18 @@ fileInput.addEventListener('change', async function (e) {
             // Load the file content into the editor
             const fileContent = event.target.result;
             editor.value = fileContent;
-            
+
             // Update title with filename (without extension)
             const filename = file.name.replace(/\.[^/.]+$/, '');
             const projectTitle = filename || 'Untitled Project';
             currentTitle.textContent = projectTitle;
-            
+
             // Update preview immediately
             updatePreview();
-            
+
             // Automatically save to database
             console.log('Auto-saving uploaded file to database...');
-            
+
             const res = await fetch('/api/projects', {
                 method: 'POST',
                 headers: {
@@ -474,10 +562,10 @@ fileInput.addEventListener('change', async function (e) {
 
             // Reload projects list to show the new upload
             await loadProjects();
-            
+
             // Show success message
             showStatus('File uploaded and saved: ' + file.name);
-            
+
         } catch (error) {
             console.error('Upload and save error:', error);
             showStatus('File loaded but failed to save: ' + error.message, true);
