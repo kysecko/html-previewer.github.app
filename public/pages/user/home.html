@@ -8,22 +8,16 @@
   <title>Code Editor Dashboard</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="../../css/home.css" />
-
 </head>
 
 <body>
   <!-- Sidebar -->
   <div id="sidebar">
     <div class="sidebar-header">
-      <div class="logo-container" style="margin-bottom: 20px;
-      margin-left: 20px;
-  display: flex;
-  align-items: center; align-self: center;">
-        <img src="images/logoo.png" alt="logo" style="  width: 60px;
-  height: 50px;">
+      <div onC class="logo-container" style="margin-bottom: 20px; margin-left: 20px; display: flex; align-items: center; align-self: center;">
+        <img src="images/logoo.png" alt="logo" style="width: 60px; height: 50px;">
         <h3>Code<span style="color: #FFAC1C;">Previewer</span></h3>
       </div>
-      <!-- <h3>Projects</h3> -->
       <button id="newBtn" style="margin-top: 30px;"><i data-lucide="plus" class="icon"></i> New Project</button>
     </div>
     <div id="projectList">
@@ -45,7 +39,7 @@
     <div id="topBar">
       <div class="h2" style="display: flex; align-items: center; gap: 10px;">
         <i data-lucide="folder-open" style="color: #FFAC1C;"></i>
-        <div id="currentTitle">Untitled Project</div>
+        <div id="currentTitle" title="Click to rename">Untitled Project</div>
       </div>
       <div>
         <button id="uploadBtn" class="topbar-btn">
@@ -59,9 +53,9 @@
         </button>
       </div>
     </div>
+
     <!-- Hidden file input -->
     <input type="file" id="fileInput" accept=".html,.htm,.js,.css,.txt" style="display: none;">
-
 
     <div id="editorArea">
       <div id="editorPanel">
@@ -83,74 +77,77 @@
         <button id="maximizeBtn" class="maximize-btn">
           <i data-lucide="maximize" class="icon"></i>
         </button>
-
         <iframe id="previewFrame"></iframe>
       </div>
     </div>
   </div>
-  </div>
+
   <div id="status" class="status">Saved!</div>
 
-  <!-- Add New Project Modal -->
-  <!-- Create Project Modal -->
+  <!-- Create / Rename Project Modal -->
   <div id="createProjectModal" style="
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  z-index: 2000;
-  place-items: center;
-">
-    <div style="
-    background: #1a1a1a;
-    color: #eee;
-    padding: 28px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 420px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 2000;
+    place-items: center;
   ">
-      <h2 style="margin-bottom: 8px;">New Project</h2>
-      <p style="color: #aaa; margin-bottom: 20px;">Enter a name for your project</p>
+    <div style="
+      background: #1a1a1a;
+      color: #eee;
+      padding: 28px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    ">
+      <h2 id="createModalHeading" style="margin-bottom: 8px;">New Project</h2>
+      <p id="createModalSubtext" style="color: #aaa; margin-bottom: 20px;">Enter a name for your project</p>
 
-      <input id="newProjectTitleInput" type="text" placeholder="Project name..." style="
-        width: 100%;
-        padding: 10px 14px;
-        background: #2a2a2a;
-        border: 1px solid #444;
-        border-radius: 6px;
-        color: #eee;
-        font-family: Montserrat;
-        font-size: 14px;
-        box-sizing: border-box;
-        outline: none;
-        margin-bottom: 24px;
-      " onkeydown="if(event.key==='Enter') confirmCreateProject()" />
+      <input
+        id="newProjectTitleInput"
+        type="text"
+        placeholder="Type project name..."
+        style="
+          width: 100%;
+          padding: 10px 14px;
+          background: #2a2a2a;
+          border: 1px solid #444;
+          border-radius: 6px;
+          color: #eee;
+          font-family: Montserrat;
+          font-size: 14px;
+          box-sizing: border-box;
+          outline: none;
+          margin-bottom: 24px;
+        "
+      />
 
       <div style="display: flex; gap: 12px; justify-content: flex-end;">
         <button onclick="closeCreateModal()" style="
-        padding: 10px 24px;
-        background: #333;
-        color: #ccc;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: Montserrat;
-      ">Cancel</button>
-        <button onclick="confirmCreateProject()" style="
-        padding: 10px 24px;
-        background: #FFAC1C;
-        color: #111;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: Montserrat;
-        font-weight: 600;
-      ">Create</button>
+          padding: 10px 24px;
+          background: #333;
+          color: #ccc;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-family: Montserrat;
+        ">Cancel</button>
+        <button id="createModalConfirmBtn" onclick="confirmCreateModal()" style="
+          padding: 10px 24px;
+          background: #FFAC1C;
+          color: #111;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-family: Montserrat;
+          font-weight: 600;
+        ">Create</button>
       </div>
     </div>
   </div>
-  
+
   <!-- Logout Modal -->
   <div id="myModal" style="
     display: none;

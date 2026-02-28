@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
+
+  <!-- google fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/css/landingpage.css" />
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -32,42 +38,28 @@
   <section class="hero">
     <div class="hero-content">
       <h1 data-aos="fade-right" data-aos-duration="1000">
-        Code Without Distractions
-        <span class="accent">Pure Black & White.</span>
+        your <span style="color: #FFAC1C; font-family: 'Bungee';">ide</span> wherever you <span
+          style="color: #FFAC1C; font-family: 'Bungee';">go</span>
       </h1>
-      <p class="hero-description" data-aos="fade-right" data-aos-duration="3000">
-        A clean, powerful code editor for learners and pros alike. Code, see live previews, and keep your workflow
-        smooth.</p>
+      <p class="hero-description" data-aos="fade-right" data-aos-duration="2000"
+        style="font-size: 1.25rem; color: #ffffffcc; line-height: 1.6;">
+        Unlock your coding potential with a clean, fast, and intuitive editor. Write, test, and preview your projects
+        live — all in your browser.
+        Collaborate, experiment, and build without limits, whether you’re learning or creating your next big app.
+      </p>
       <div class="hero-actions">
         <a href="/pages/user/compiler.html" class="btn btn-primary" data-aos="zoom-in" data-aos-delay="200"
           data-aos-duration="700" data-aos-easing="ease-out-back">
-          <i class="fas fa-bolt"></i>
-          Try it Now
-          <span class="btn-subtext">No sign up required</span>
+          <i class="fas fa-user-plus"></i>
+          Continue as Guest
         </a>
 
-        <a href="/login.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700"
+        <a href="/register.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700"
           data-aos-easing="ease-out-cubic">
-          <i class="fas fa-save"></i>
-          Save & Organize Projects
+          <i class="fas fa-user"></i>
+          Join Now
           <span class="btn-subtext">Free account</span>
         </a>
-      </div>
-
-      <!-- Trust Indicators -->
-      <div class="trust-indicators">
-        <div class="trust-item" data-aos="fade-up" data-aos-delay="100">
-          <i class="fas fa-shield-alt"></i>
-          <span>No credit card needed</span>
-        </div>
-        <div class="trust-item" data-aos="fade-up" data-aos-delay="200">
-          <i class="fas fa-clock"></i>
-          <span>Get started in 10 seconds</span>
-        </div>
-        <div class="trust-item" data-aos="fade-up" data-aos-delay="300">
-          <i class="fas fa-infinity"></i>
-          <span>Unlimited guest sessions</span>
-        </div>
       </div>
     </div>
 
@@ -148,7 +140,7 @@
   <section class="section" id="features">
     <div class="section-header" data-aos="fade-up" data-aos-duration="1000">
       <h2 class="section-title">Simple, Clear, and Easy to Use</h2>
-      <p class="section-subtitle">
+      <p class="section-subtitle" data-aos-duration="2000">
         Everything is arranged to help users understand and use the system with minimal effort.
       </p>
     </div>
@@ -166,23 +158,14 @@
       <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
         <div class="feature-icon"><i class="fas fa-save"></i></div>
         <h3>Auto-Save & Export</h3>
-        <p>Your work is saved automatically. Export as clean HTML/CSS files or continue later.</p>
+        <p>Your work is saved automatically after 2 seconds. Export as clean HTML/CSS files or continue later.</p>
       </div>
-      <!-- <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-        <div class="feature-icon"><i class="fas fa-expand-alt"></i></div>
-        <h3>Zen Mode</h3>
-        <p>Fullscreen focus mode that hides all UI elements. Just you and your code.</p>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="feature-icon"><i class="fas fa-upload"></i></div>
+        <h3>Upload & Download</h3>
+        <p>Upload and download your projects with ease. Keep your work safe and portable across devices.</p>
       </div>
-      <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
-        <div class="feature-icon"><i class="fas fa-share-alt"></i></div>
-        <h3>One-Click Share</h3>
-        <p>Generate shareable links to your code. Perfect for collaboration or code reviews.</p>
-      </div>
-      <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
-        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
-        <h3>Mobile Responsive</h3>
-        <p>Preview how your code looks on different screen sizes with our device simulator.</p>
-      </div> -->
+
     </div>
   </section>
 
@@ -218,9 +201,7 @@
   <!-- Testimonials Section -->
   <section class="section" id="testimonials">
     <div class="section-header" data-aos="fade-up" data-aos-duration="1000">
-      <h2 class="section-title">What People's Say</h2>
-      <p class="section-subtitle">A clean, powerful code editor for learners and pros alike. Code, see live previews,
-        and keep your workflow smooth.</p>
+      <h2 class="section-title">What Our Users Say</h2>
     </div>
     <div class="testimonials">
       <div class="testimonial-card" data-aos="zoom-in" data-aos-delay="100" data-aos-anchor-placement="top-bottom">
@@ -279,7 +260,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 CodePreview. All rights reserved.</p>
+      <p>&copy; 2026 CodePreviewer. All rights reserved.</p>
     </div>
   </footer>
 
