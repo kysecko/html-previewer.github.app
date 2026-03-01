@@ -77,7 +77,20 @@ app.use('/api/projects', projectsRouter);
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
 });
+app.get('/debug-env', (req, res) => {
+  res.json({
+    hasSupabaseUrl: !!process.env.SUPABASE_URL,
+    hasSupabaseAnon: !!process.env.SUPABASE_ANON_KEY,
+    hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    hasRedisUrl: !!process.env.REDIS_URL,
+    hasSessionSecret: !!process.env.SESSION_SECRET
+  });
+});
+```
 
+Push it, then visit:
+```
+https://html-previewer-github.vercel.app/debug-env
 app.get('/api/projects/debug', (req, res) => {
   res.json({
     message: 'Projects route is accessible',
