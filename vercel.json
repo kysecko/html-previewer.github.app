@@ -5,9 +5,9 @@
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/auth/(.*)", "dest": "/backend/api/auth.js" },  
-    { "src": "/login", "dest": "/user/login.html" },
-    { "src": "/register", "dest": "/user/register.html" },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "^/$", "dest": "/index.html" },
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/register", "dest": "/register.html" },
+    { "src": "/api/auth/(.*)", "dest": "/backend/api/auth.js" }
   ]
 }
