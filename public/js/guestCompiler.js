@@ -14,6 +14,10 @@ const codeArea = document.getElementById("sourceCode"),
     let isResizing = false,
     isWrapped = false;
 
+    showLandingPage = () => {
+        window.location.href = '/';
+    };
+
 // Theme toggling functions
 function toggleTheme() {
     document.body.classList.toggle("light-mode");
