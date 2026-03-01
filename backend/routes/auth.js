@@ -57,56 +57,56 @@ router.post('/register', async (req, res) => {
 });
 
 /* ================= LOGIN ================= */
-router.post('/login', async (req, res) => {
-  console.log('Login attempt:', req.body.email);
+  router.post('/login', async (req, res) => {
+    console.log('Login attempt:', req.body.email);
 
-  try {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, error: 'Email and password required' });
-    }
-
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('id, username, email, password, role')
-      .eq('email', email)
-      .single();
-
-    if (error || !user) {
-      return res.status(401).json({ success: false, error: 'Invalid email or password' });
-    }
-
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
-      return res.status(401).json({ success: false, error: 'Invalid email or password' });
-    }
-
-    // Save session
-    req.session.isLoggedIn = true;
-    req.session.userId = user.id;
-    req.session.username = user.username;
-    req.session.email = user.email;
-    req.session.role = user.role;
-
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-        return res.status(500).json({ success: false, error: 'Session error' });
+      if (!email || !password) {
+        return res.status(400).json({ success: false, error: 'Email and password required' });
       }
 
-      console.log('Login successful for:', email, '| Role:', user.role);
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('id, username, email, password, role')
+        .eq('email', email)
+        .single();
 
-      // Redirect based on role
-      const redirect = user.role === 'admin' ? '/admin' : '/user';
-      res.json({ success: true, redirect });
-    });
+      if (error || !user) {
+        return res.status(401).json({ success: false, error: 'Invalid email or password' });
+      }
 
-  } catch (err) {
-    console.error('LOGIN ERROR:', err);
-    res.status(500).json({ success: false, error: 'Server error' });
-  }
-});
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ success: false, error: 'Invalid email or password' });
+      }
+
+      // Save session
+      req.session.isLoggedIn = true;
+      req.session.userId = user.id;
+      req.session.username = user.username;
+      req.session.email = user.email;
+      req.session.role = user.role;
+
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ success: false, error: 'Session error' });
+        }
+
+        console.log('Login successful for:', email, '| Role:', user.role);
+
+        // Redirect based on role
+        const redirect = user.role === 'admin' ? '/admin' : '/user';
+        res.json({ success: true, redirect });
+      });
+
+    } catch (err) {
+      console.error('LOGIN ERROR:', err);
+      res.status(500).json({ success: false, error: 'Server error' });
+    }
+  });
 
 /* ================= VERIFY ================= */
 router.get('/verify', (req, res) => {
