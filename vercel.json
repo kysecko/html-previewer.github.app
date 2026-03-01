@@ -1,13 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "backend/api/**/*.js", "use": "@vercel/node" },
-    { "src": "public/**/*", "use": "@vercel/static" }
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "^/$", "dest": "/index.html" },
-    { "src": "/login", "dest": "/login.html" },
-    { "src": "/register", "dest": "/register.html" },
-    { "src": "/api/auth/(.*)", "dest": "/backend/api/auth.js" }
+    {
+      "src": "/(.*)",
+      "dest": "backend/server.js"
+    }
   ]
 }
