@@ -21,11 +21,12 @@ const supabase = createSupabaseClient(
 );
 
 /* ================= REDIS SESSION STORE ================= */
-const { createClient: createRedisClient } = require('@upstash/redis'); // ✅ renamed
+const Redis = require('ioredis');
 const RedisStore = require('connect-redis').default;
+const redisClient = new Redis(process.env.REDIS_URL);
 
-const redisClient = createRedisClient({
-  url: process.env.REDIS_URL
+redisClient.on('error', (err) => {
+  console.error('Redis connection error:', err);
 });
 
 /* ================= CORS ================= */
