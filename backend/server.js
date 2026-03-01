@@ -21,33 +21,21 @@ const supabase = createSupabaseClient(
 );
 
 /* ================= REDIS SESSION STORE ================= */
-/* ================= REDIS SESSION STORE ================= */
 const { createClient } = require('redis');
 const RedisStore = require('connect-redis').default;
 
-let sessionStore;
-
 const redisClient = createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
+  socket: {
+    tls: true,
+    rejectUnauthorized: false
+  }
 });
 
-redisClient.connect()
-  .then(() => console.log('Redis connected'))
-  .catch(err => console.error('Redis connection failed:', err));
-
+redisClient.connect().catch(err => console.error('Redis connect error:', err));
 redisClient.on('error', (err) => console.error('Redis error:', err));
 
-sessionStore = new RedisStore({ client: redisClient });
-
-app.post('/api/test-session', (req, res) => {
-  req.session.testValue = 'hello';
-  req.session.save((err) => {
-    if (err) {
-      return res.json({ success: false, error: err.message });
-    }
-    res.json({ success: true, sessionID: req.sessionID, testValue: req.session.testValue });
-  });
-});
+const sessionStore = new RedisStore({ client: redisClient });
 /* ================= CORS ================= */
 app.use((req, res, next) => {
   const origin = req.headers.origin;
