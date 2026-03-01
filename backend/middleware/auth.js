@@ -1,4 +1,3 @@
-// middleware/auth.js
 function requireAuth(req, res, next) {
   console.log('Auth check:', {
     path: req.path,
