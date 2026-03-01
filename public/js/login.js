@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
         window.location.href = data.redirect || "/user";
-      }, 3000);
+      }, 500);
     } catch (err) {
       showAlert("Invalid email or password");
 
