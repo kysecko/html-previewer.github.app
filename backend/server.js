@@ -12,7 +12,7 @@ const app = express();
 const { createClient } = require('@supabase/supabase-js');
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-  throw new Error('Missing Supabase environment variables. Add them in the Vercel dashboard under Settings → Environment Variables.');
+  throw new Error('Missing Supabase environment variables. Add them in Vercel Dashboard → Settings → Environment Variables.');
 }
 
 const supabase = createClient(
@@ -38,22 +38,22 @@ app.use((req, res, next) => {
 });
 
 /* ================= SESSION ================= */
-// NOTE: In-memory sessions do NOT persist between Vercel serverless invocations.
-// For production, replace this with a persistent store.
+// ⚠️  WARNING: In-memory sessions are lost between Vercel serverless invocations.
+// This means users will be logged out on every cold start.
 //
-// Option A — Supabase-backed sessions via connect-pg-simple:
-//   npm install connect-pg-simple
-//   const pgSession = require('connect-pg-simple')(session);
-//   store: new pgSession({ conString: process.env.DATABASE_URL })
+// To fix this for production, use a persistent session store:
 //
-// Option B — Redis via @upstash/redis + connect-redis:
+// Option A — Redis (Upstash is free & works great with Vercel):
 //   npm install connect-redis @upstash/redis
-//   const { createClient } = require('@upstash/redis');
-//   const RedisStore = require('connect-redis').default;
-//   const redisClient = createClient({ url: process.env.REDIS_URL });
+//   const { createClient } = require('@upstash/redis')
+//   const RedisStore = require('connect-redis').default
+//   const redisClient = createClient({ url: process.env.REDIS_URL })
 //   store: new RedisStore({ client: redisClient })
 //
-// Option C — Switch to stateless JWT auth (recommended for serverless).
+// Option B — Supabase Postgres:
+//   npm install connect-pg-simple
+//   const pgSession = require('connect-pg-simple')(session)
+//   store: new pgSession({ conString: process.env.DATABASE_URL })
 app.use(
   session({
     name: 'code-editor-session',
@@ -61,7 +61,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // true on Vercel (HTTPS)
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000
@@ -82,17 +82,13 @@ app.use((req, res, next) => {
 /* ================= MIDDLEWARE ================= */
 const { requireAuth } = require('./middleware/auth');
 
-/* ================= STATIC FILES ================= */
-// Serve static assets (CSS, JS, images) BEFORE page routes but AFTER API routes.
-// Vercel will also serve these from its CDN if you configure vercel.json correctly.
-app.use(express.static(path.join(__dirname, '../public')));
-
 /* ================= API ROUTES ================= */
+// Mount these BEFORE static files so /api/* is never intercepted by static middleware
 const authRouter = require('./routes/auth');
 const projectsRouter = require('./routes/projects');
 
-app.use('/auth', authRouter);
-app.use('/api/projects', projectsRouter);
+app.use('/api/auth', authRouter);         // ✅ /api/auth/login, /api/auth/register, /api/auth/logout
+app.use('/api/projects', projectsRouter); // ✅ /api/projects/...
 
 /* ================= TEST / DEBUG ENDPOINTS ================= */
 app.get('/api/test', (req, res) => {
@@ -113,31 +109,26 @@ app.get('/debug-session', (req, res) => {
   res.json({ session: req.session, sessionID: req.sessionID });
 });
 
+/* ================= STATIC FILES ================= */
+// Serve CSS, JS, images etc. — after API routes so /api/* is never caught here
+app.use(express.static(path.join(__dirname, '../public')));
+
 /* ================= PAGE ROUTES ================= */
 
 // Root — redirect logged-in users, otherwise serve index
 app.get('/', (req, res) => {
   if (req.session?.isLoggedIn) {
-    return res.redirect('/pages/user/home.html');
+    return res.redirect('/user');
   }
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Protected pages
-app.get('/admin', requireAuth, (req, res) => {
-  if (req.session.role !== 'admin') {
-    return res.redirect('/pages/user/home.html');
-  }
-  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
+// Guest compiler — no auth required
+app.get('/guest/compiler', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
 });
 
-app.get('/admin/dashboard.html', requireAuth, (req, res) => {
-  if (req.session.role !== 'admin') {
-    return res.redirect('/pages/user/home.html');
-  }
-  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
-});
-
+// Protected user pages
 app.get('/user', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/user/home.html'));
 });
@@ -148,6 +139,21 @@ app.get('/pages/user/home.html', requireAuth, (req, res) => {
 
 app.get('/pages/user/compiler.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
+});
+
+// Protected admin pages
+app.get('/admin', requireAuth, (req, res) => {
+  if (req.session.role !== 'admin') {
+    return res.redirect('/user');
+  }
+  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
+});
+
+app.get('/admin/dashboard.html', requireAuth, (req, res) => {
+  if (req.session.role !== 'admin') {
+    return res.redirect('/user');
+  }
+  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
 });
 
 /* ================= 404 HANDLER ================= */
@@ -170,14 +176,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-/* ================= EXPORT FOR VERCEL ================= */
-// Vercel does NOT use app.listen() — it calls your exported app directly.
-// Keep the listen block for local development only.
+/* ================= START ================= */
+// Vercel uses module.exports — app.listen() is for local dev only
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Static files served from: ${path.join(__dirname, '../public')}`);
+    console.log(`Static files: ${path.join(__dirname, '../public')}`);
   });
 }
 
