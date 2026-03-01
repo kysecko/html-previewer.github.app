@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 
-// ✅ CRITICAL: Required for Vercel/proxied environments so secure cookies work
+// ✅ CRITICAL: Tells Express to trust Vercel's proxy for secure cookies
 app.set('trust proxy', 1);
 
 /* ================= DEBUG ENV ================= */
@@ -25,50 +25,33 @@ app.get('/debug-env', (req, res) => {
 
 /* ================= SUPABASE ================= */
 const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-
 const supabase = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY
   ? createSupabaseClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
   : null;
-
-if (!supabase) {
-  console.error('WARNING: Supabase client not initialized - missing env vars');
-}
+if (!supabase) console.error('WARNING: Supabase client not initialized');
 
 /* ================= REDIS SESSION STORE ================= */
-let sessionStore = undefined;
+const { createClient } = require('redis');
+const RedisStore = require('connect-redis').default;
 
-try {
-  const { createClient } = require('redis');
-  const RedisStore = require('connect-redis').default;
-
-  if (process.env.REDIS_URL) {
-    const redisClient = createClient({
-      url: process.env.REDIS_URL,
-      socket: {
-        tls: true,
-        rejectUnauthorized: false,
-        reconnectStrategy: (retries) => {
-          if (retries > 3) return new Error('Redis max retries reached');
-          return retries * 500;
-        }
-      }
-    });
-
-    redisClient.on('error', (err) => console.error('Redis error:', err.message));
-    redisClient.on('connect', () => console.log('Redis connected'));
-
-    redisClient.connect().catch(err => {
-      console.error('Redis connect failed:', err.message);
-    });
-
-    sessionStore = new RedisStore({ client: redisClient });
-    console.log('Redis store initialized');
-  } else {
-    console.warn('REDIS_URL not set - using memory store');
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+  socket: {
+    tls: process.env.REDIS_URL?.startsWith('rediss://'),
+    rejectUnauthorized: false,
+    connectTimeout: 10000,
+    reconnectStrategy: (retries) => {
+      if (retries > 5) return new Error('Redis max retries reached');
+      return Math.min(retries * 200, 2000);
+    }
   }
-} catch (err) {
-  console.error('Redis setup error:', err.message);
-}
+});
+
+redisClient.on('error', (err) => console.error('❌ Redis error:', err.message));
+redisClient.on('connect', () => console.log('✅ Redis connected'));
+redisClient.connect().catch(err => console.error('Redis connect error:', err.message));
+
+const sessionStore = new RedisStore({ client: redisClient, prefix: 'sess:' });
 
 /* ================= CORS ================= */
 app.use((req, res, next) => {
@@ -84,18 +67,16 @@ app.use((req, res, next) => {
 });
 
 /* ================= SESSION ================= */
-const isProduction = process.env.NODE_ENV === 'production';
-
 app.use(session({
   name: 'code-editor-session',
-  secret: process.env.SESSION_SECRET || 'fallback-secret-change-me',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
-    secure: isProduction,                    // true on Vercel HTTPS, false locally
+    secure: true,
     httpOnly: true,
-    sameSite: isProduction ? 'none' : 'lax', // 'none' only valid when secure:true
+    sameSite: 'lax',  // ✅ FIXED: same-domain on Vercel needs 'lax' not 'none'
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
@@ -106,7 +87,8 @@ app.use(express.urlencoded({ extended: true }));
 
 /* ================= REQUEST LOGGING ================= */
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} | session: ${req.session?.isLoggedIn ? '✅ ' + req.session.email : '❌ not logged in'}`);
+  const status = req.session?.isLoggedIn ? `✅ ${req.session.email}` : '❌ not logged in';
+  console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
   next();
 });
 
@@ -120,13 +102,18 @@ const projectsRouter = require('./routes/projects');
 app.use('/api/auth', authRouter);
 app.use('/api/projects', projectsRouter);
 
-/* ================= TEST / DEBUG ENDPOINTS ================= */
+/* ================= DEBUG ENDPOINTS ================= */
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
 });
 
 app.get('/debug-session', (req, res) => {
-  res.json({ session: req.session, sessionID: req.sessionID });
+  res.json({
+    session: req.session,
+    sessionID: req.sessionID,
+    storeType: sessionStore?.constructor?.name || 'unknown',
+    redisReady: redisClient.isReady
+  });
 });
 
 /* ================= STATIC FILES ================= */
@@ -166,12 +153,7 @@ app.get('/admin/dashboard.html', requireAuth, (req, res) => {
 
 /* ================= 404 HANDLER ================= */
 app.use((req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    path: req.path,
-    method: req.method,
-    timestamp: new Date().toISOString()
-  });
+  res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
 });
 
 /* ================= ERROR HANDLER ================= */
@@ -186,9 +168,7 @@ app.use((err, req, res, next) => {
 /* ================= START ================= */
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 }
 
 module.exports = app;
