@@ -23,11 +23,35 @@ const supabase = createSupabaseClient(
 /* ================= REDIS SESSION STORE ================= */
 const Redis = require('ioredis');
 const RedisStore = require('connect-redis').default;
-const redisClient = new Redis(process.env.REDIS_URL);
 
-redisClient.on('error', (err) => {
-  console.error('Redis connection error:', err);
-});
+let redisClient;
+let sessionStore;
+
+try {
+  redisClient = new Redis(process.env.REDIS_URL);
+  redisClient.on('error', (err) => console.error('Redis error:', err));
+  sessionStore = new RedisStore({ client: redisClient });
+  console.log('Redis connected successfully');
+} catch (err) {
+  console.error('Redis setup failed:', err.message);
+  sessionStore = null; // fall back to memory store
+}
+
+app.use(
+  session({
+    name: 'code-editor-session',
+    secret: process.env.SESSION_SECRET || 'fallback-secret',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore || undefined, // undefined = memory store fallback
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000
+    }
+  })
+);
 
 /* ================= CORS ================= */
 app.use((req, res, next) => {
@@ -45,24 +69,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-/* ================= SESSION ================= */
-// Radis store configuration with secure cookie settings
-app.use(
-  session({
-    name: 'code-editor-session',
-    secret: process.env.SESSION_SECRET || 'fallback-secret',
-    resave: false,
-    saveUninitialized: false,
-    store: new RedisStore({ client: redisClient }),
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  })
-);
 
 /* ================= BODY PARSING ================= */
 app.use(express.json());
