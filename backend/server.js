@@ -21,38 +21,33 @@ const supabase = createSupabaseClient(
 );
 
 /* ================= REDIS SESSION STORE ================= */
-const Redis = require('ioredis');
+/* ================= REDIS SESSION STORE ================= */
+const { createClient } = require('redis');
 const RedisStore = require('connect-redis').default;
 
-let redisClient;
 let sessionStore;
 
-try {
-  redisClient = new Redis(process.env.REDIS_URL);
-  redisClient.on('error', (err) => console.error('Redis error:', err));
-  sessionStore = new RedisStore({ client: redisClient });
-  console.log('Redis connected successfully');
-} catch (err) {
-  console.error('Redis setup failed:', err.message);
-  sessionStore = null; // fall back to memory store
-}
+const redisClient = createClient({
+  url: process.env.REDIS_URL
+});
 
-app.use(
-  session({
-    name: 'code-editor-session',
-    secret: process.env.SESSION_SECRET || 'fallback-secret',
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore || undefined, // undefined = memory store fallback
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000
+redisClient.connect()
+  .then(() => console.log('Redis connected'))
+  .catch(err => console.error('Redis connection failed:', err));
+
+redisClient.on('error', (err) => console.error('Redis error:', err));
+
+sessionStore = new RedisStore({ client: redisClient });
+
+app.post('/api/test-session', (req, res) => {
+  req.session.testValue = 'hello';
+  req.session.save((err) => {
+    if (err) {
+      return res.json({ success: false, error: err.message });
     }
-  })
-);
-
+    res.json({ success: true, sessionID: req.sessionID, testValue: req.session.testValue });
+  });
+});
 /* ================= CORS ================= */
 app.use((req, res, next) => {
   const origin = req.headers.origin;
