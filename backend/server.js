@@ -38,28 +38,20 @@ app.use((req, res, next) => {
 });
 
 /* ================= SESSION ================= */
-// ⚠️  WARNING: In-memory sessions are lost between Vercel serverless invocations.
-// This means users will be logged out on every cold start.
-//
-// To fix this for production, use a persistent session store:
-//
-// Option A — Redis (Upstash is free & works great with Vercel):
-//   npm install connect-redis @upstash/redis
-//   const { createClient } = require('@upstash/redis')
-//   const RedisStore = require('connect-redis').default
-//   const redisClient = createClient({ url: process.env.REDIS_URL })
-//   store: new RedisStore({ client: redisClient })
-//
-// Option B — Supabase Postgres:
-//   npm install connect-pg-simple
-//   const pgSession = require('connect-pg-simple')(session)
-//   store: new pgSession({ conString: process.env.DATABASE_URL })
+// For development/demo purposes, we'll use in-memory sessions here
+const { createClient } = require('@upstash/redis');
+const RedisStore = require('connect-redis').default;
+
+const redisClient = createClient({
+  url: process.env.REDIS_URL
+});
 app.use(
   session({
     name: 'code-editor-session',
-    secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
+    secret: process.env.SESSION_SECRET || 'fallback-secret',
     resave: false,
     saveUninitialized: false,
+    store: new RedisStore({ client: redisClient }), // ← sessions now persist
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
