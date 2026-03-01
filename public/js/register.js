@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (!/(?=.*\d)/.test(value)) {
       showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
     } else {
-      showFieldSuccess(passwordInput, passwordMessage, '✓ Strong password');
+      showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
     }
 
     // Also check confirm password if it has a value
