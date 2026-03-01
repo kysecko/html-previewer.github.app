@@ -11,7 +11,6 @@ const icons = {
   "check-check": `<svg ...>...</svg>`
 };
 
-// Helper
 function createElement(svgString){
   const template = document.createElement('template');
   template.innerHTML = svgString.trim();
@@ -20,9 +19,7 @@ function createElement(svgString){
 function replaceLucideIcons(){
   document.querySelectorAll('i[data-lucide]').forEach(el => {
     const name = el.getAttribute('data-lucide');
-    if(icons[name]){
-      el.replaceWith(createElement(icons[name]));
-    }
+    if(icons[name]) el.replaceWith(createElement(icons[name]));
   });
 }
 document.addEventListener('DOMContentLoaded', replaceLucideIcons);
@@ -30,7 +27,7 @@ document.addEventListener('DOMContentLoaded', replaceLucideIcons);
 // ==== DASHBOARD LOGIC ====
 async function loadDashboard() {
   try {
-    const res = await fetch('/auth/verify', { credentials: 'include' });
+    const res = await fetch('/api/auth/verify', { credentials: 'include' }); // ✅ FIXED
     const data = await res.json();
 
     if(!data.success || data.role !== 'admin'){
@@ -83,7 +80,7 @@ async function loadUsersList(){
 // Logout
 document.getElementById('logout').addEventListener('click', async ()=>{
   try{
-    await fetch('/logout',{method:'POST',credentials:'include'});
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }); // ✅ FIXED
   }catch(err){ console.error(err); }
   window.location.href = '/login.html';
 });
