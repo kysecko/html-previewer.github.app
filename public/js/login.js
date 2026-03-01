@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       spinner.style.display = "flex";
 
       setTimeout(() => {
-        window.location.href = data.redirect || "/dashboard";
+        window.location.href = data.redirect || "/user";
       }, 3000);
     } catch (err) {
       showAlert("Invalid email or password");
