@@ -7,7 +7,6 @@ const session = require('express-session');
 const path = require('path');
 
 const app = express();
-
 app.set('trust proxy', 1);
 
 /* ================= DEBUG ENV ================= */
@@ -39,7 +38,6 @@ const redisClient = createClient({
     tls: process.env.REDIS_URL?.startsWith('rediss://'),
     rejectUnauthorized: false,
     connectTimeout: 10000,
-    // ✅ Keep connection alive — prevents Vercel from closing Redis mid-request
     keepAlive: 5000,
     reconnectStrategy: (retries) => {
       if (retries > 10) return new Error('Redis max retries reached');
@@ -57,9 +55,8 @@ redisClient.connect().catch(err => console.error('Redis connect error:', err.mes
 const sessionStore = new RedisStore({
   client: redisClient,
   prefix: 'sess:',
-  // ✅ Disable touch to prevent TTL refresh issues on Vercel
   disableTouch: false,
-  ttl: 86400 // 24 hours in seconds
+  ttl: 86400
 });
 
 /* ================= CORS ================= */
@@ -79,15 +76,15 @@ app.use((req, res, next) => {
 app.use(session({
   name: 'code-editor-session',
   secret: process.env.SESSION_SECRET,
-  resave: true,          // ✅ CHANGED: force resave on every request to keep session alive
+  resave: true,
   saveUninitialized: false,
-  rolling: true,         // ✅ NEW: resets maxAge on every request so session stays fresh
+  rolling: true,
   store: sessionStore,
   cookie: {
     secure: true,
     httpOnly: true,
     sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
@@ -103,11 +100,11 @@ app.use((req, res, next) => {
 });
 
 /* ================= MIDDLEWARE ================= */
-const { requireAuth } = require('./middleware/auth');
+const { requireAuth } = require('./middleware/auth');  // ✅ backend/middleware/auth
 
 /* ================= API ROUTES ================= */
-const authRouter = require('./routes/auth');
-const projectsRouter = require('./routes/projects');
+const authRouter = require('./routes/auth');           // ✅ backend/routes/auth
+const projectsRouter = require('./routes/projects');   // ✅ backend/routes/projects
 
 app.use('/api/auth', authRouter);
 app.use('/api/projects', projectsRouter);
