@@ -17,7 +17,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
-    "ioredis": "^5.10.0",
-    "lucide": "^0.555.0"
+    "lucide": "^0.555.0",
+    "redis": "^5.11.0"
   }
 }
