@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 
-// ✅ CRITICAL: Tells Express to trust Vercel's proxy for secure cookies
+// CRITICAL: Tells Express to trust Vercel's proxy for secure cookies
 app.set('trust proxy', 1);
 
 /* ================= DEBUG ENV ================= */
@@ -34,24 +34,94 @@ if (!supabase) console.error('WARNING: Supabase client not initialized');
 const { createClient } = require('redis');
 const RedisStore = require('connect-redis').default;
 
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-  socket: {
-    tls: process.env.REDIS_URL?.startsWith('rediss://'),
-    rejectUnauthorized: false,
-    connectTimeout: 10000,
-    reconnectStrategy: (retries) => {
-      if (retries > 5) return new Error('Redis max retries reached');
-      return Math.min(retries * 200, 2000);
+let redisClient = null;
+let sessionStore = null;
+
+// Only attempt Redis connection if URL is provided
+if (process.env.REDIS_URL) {
+  console.log('Attempting to connect to Redis...');
+  
+  redisClient = createClient({
+    url: process.env.REDIS_URL,
+    socket: {
+      tls: process.env.REDIS_URL?.startsWith('rediss://'),
+      rejectUnauthorized: false,
+      connectTimeout: 30000,
+      reconnectStrategy: (retries) => {
+        console.log(`Redis reconnection attempt ${retries}`);
+        if (retries > 10) {
+          console.error('Redis max retries reached - continuing without Redis');
+          return false;
+        }
+        return Math.min(retries * 1000, 5000);
+      }
+    }
+  });
+
+  redisClient.on('error', (err) => {
+    console.error('Redis error:', err.message);
+  });
+
+  redisClient.on('connect', () => {
+    console.log('Redis connected successfully');
+  });
+
+  redisClient.on('ready', () => {
+    console.log('Redis client ready');
+  });
+
+  redisClient.on('end', () => {
+    console.log('Redis connection ended');
+  });
+
+  // Connect and handle failure gracefully
+  redisClient.connect().catch(err => {
+    console.error('Redis connection failed:', err.message);
+    redisClient = null;
+  });
+
+  // Create store only if client connected successfully
+  if (redisClient) {
+    try {
+      sessionStore = new RedisStore({ 
+        client: redisClient, 
+        prefix: 'sess:',
+        disableTouch: false,
+        ttl: 86400
+      });
+      console.log('Redis session store created');
+    } catch (err) {
+      console.error('Failed to create Redis store:', err.message);
+      sessionStore = null;
     }
   }
-});
+} else {
+  console.warn('REDIS_URL not provided - using memory store (sessions will not persist across restarts)');
+}
 
-redisClient.on('error', (err) => console.error('❌ Redis error:', err.message));
-redisClient.on('connect', () => console.log('✅ Redis connected'));
-redisClient.connect().catch(err => console.error('Redis connect error:', err.message));
+// Session configuration with fallback
+const sessionConfig = {
+  name: 'code-editor-session',
+  secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+};
 
-const sessionStore = new RedisStore({ client: redisClient, prefix: 'sess:' });
+// Use Redis store if available, otherwise memory store
+if (sessionStore) {
+  sessionConfig.store = sessionStore;
+  console.log('Using Redis session store');
+} else {
+  console.log('Using memory session store');
+}
+
+app.use(session(sessionConfig));
 
 /* ================= CORS ================= */
 app.use((req, res, next) => {
@@ -66,28 +136,13 @@ app.use((req, res, next) => {
   next();
 });
 
-/* ================= SESSION ================= */
-app.use(session({
-  name: 'code-editor-session',
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: sessionStore,
-  cookie: {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',  // ✅ FIXED: same-domain on Vercel needs 'lax' not 'none'
-    maxAge: 24 * 60 * 60 * 1000
-  }
-}));
-
 /* ================= BODY PARSING ================= */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ================= REQUEST LOGGING ================= */
 app.use((req, res, next) => {
-  const status = req.session?.isLoggedIn ? `✅ ${req.session.email}` : '❌ not logged in';
+  const status = req.session?.isLoggedIn ? `authenticated ${req.session.email}` : 'not logged in';
   console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
   next();
 });
@@ -111,8 +166,9 @@ app.get('/debug-session', (req, res) => {
   res.json({
     session: req.session,
     sessionID: req.sessionID,
-    storeType: sessionStore?.constructor?.name || 'unknown',
-    redisReady: redisClient.isReady
+    storeType: sessionStore?.constructor?.name || 'MemoryStore',
+    redisReady: redisClient ? redisClient.isReady : false,
+    hasRedisUrl: !!process.env.REDIS_URL
   });
 });
 
