@@ -8,6 +8,9 @@ const path = require('path');
 
 const app = express();
 
+// ✅ CRITICAL: Required for Vercel/proxied environments so secure cookies work
+app.set('trust proxy', 1);
+
 /* ================= DEBUG ENV ================= */
 app.get('/debug-env', (req, res) => {
   res.json({
@@ -32,7 +35,7 @@ if (!supabase) {
 }
 
 /* ================= REDIS SESSION STORE ================= */
-let sessionStore = undefined; // falls back to memory store if Redis fails
+let sessionStore = undefined;
 
 try {
   const { createClient } = require('redis');
@@ -81,6 +84,8 @@ app.use((req, res, next) => {
 });
 
 /* ================= SESSION ================= */
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(session({
   name: 'code-editor-session',
   secret: process.env.SESSION_SECRET || 'fallback-secret-change-me',
@@ -88,9 +93,9 @@ app.use(session({
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction,                    // true on Vercel HTTPS, false locally
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: isProduction ? 'none' : 'lax', // 'none' only valid when secure:true
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
@@ -101,7 +106,7 @@ app.use(express.urlencoded({ extended: true }));
 
 /* ================= REQUEST LOGGING ================= */
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} | session: ${req.session?.isLoggedIn ? '✅ ' + req.session.email : '❌ not logged in'}`);
   next();
 });
 
