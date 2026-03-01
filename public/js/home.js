@@ -78,7 +78,7 @@ maximizeBtn.addEventListener('click', () => {
 // ==================== AUTH ====================
 async function checkAuth() {
     try {
-        const res = await fetch('/auth/verify', { credentials: 'include' });
+        const res = await fetch('/api/auth/verify', { credentials: 'include' });
         if (!res.ok) { window.location.href = '/login.html'; return false; }
         return true;
     } catch (error) {
@@ -93,7 +93,7 @@ function cancel() { modal.style.display = 'none'; }
 
 async function logout() {
     try {
-        await fetch('/logout', { method: 'POST', credentials: 'include' });
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
         window.location.href = '/login.html';
     } catch (error) {
         console.error('Logout failed:', error);
