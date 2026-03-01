@@ -9,16 +9,24 @@ const path = require('path');
 const app = express();
 
 /* ================= SUPABASE ================= */
-const { createClient } = require('@supabase/supabase-js');
+const { createClient: createSupabaseClient } = require('@supabase/supabase-js'); // ✅ renamed
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
   throw new Error('Missing Supabase environment variables. Add them in Vercel Dashboard → Settings → Environment Variables.');
 }
 
-const supabase = createClient(
+const supabase = createSupabaseClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
+
+/* ================= REDIS SESSION STORE ================= */
+const { createClient: createRedisClient } = require('@upstash/redis'); // ✅ renamed
+const RedisStore = require('connect-redis').default;
+
+const redisClient = createRedisClient({
+  url: process.env.REDIS_URL
+});
 
 /* ================= CORS ================= */
 app.use((req, res, next) => {
@@ -38,20 +46,14 @@ app.use((req, res, next) => {
 });
 
 /* ================= SESSION ================= */
-// For development/demo purposes, we'll use in-memory sessions here
-const { createClient } = require('@upstash/redis');
-const RedisStore = require('connect-redis').default;
-
-const redisClient = createClient({
-  url: process.env.REDIS_URL
-});
+// Radis store configuration with secure cookie settings
 app.use(
   session({
     name: 'code-editor-session',
     secret: process.env.SESSION_SECRET || 'fallback-secret',
     resave: false,
     saveUninitialized: false,
-    store: new RedisStore({ client: redisClient }), // ← sessions now persist
+    store: new RedisStore({ client: redisClient }),
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
@@ -75,12 +77,11 @@ app.use((req, res, next) => {
 const { requireAuth } = require('./middleware/auth');
 
 /* ================= API ROUTES ================= */
-// Mount these BEFORE static files so /api/* is never intercepted by static middleware
 const authRouter = require('./routes/auth');
 const projectsRouter = require('./routes/projects');
 
-app.use('/api/auth', authRouter);         // ✅ /api/auth/login, /api/auth/register, /api/auth/logout
-app.use('/api/projects', projectsRouter); // ✅ /api/projects/...
+app.use('/api/auth', authRouter);
+app.use('/api/projects', projectsRouter);
 
 /* ================= TEST / DEBUG ENDPOINTS ================= */
 app.get('/api/test', (req, res) => {
@@ -102,12 +103,10 @@ app.get('/debug-session', (req, res) => {
 });
 
 /* ================= STATIC FILES ================= */
-// Serve CSS, JS, images etc. — after API routes so /api/* is never caught here
 app.use(express.static(path.join(__dirname, '../public')));
 
 /* ================= PAGE ROUTES ================= */
 
-// Root — redirect logged-in users, otherwise serve index
 app.get('/', (req, res) => {
   if (req.session?.isLoggedIn) {
     return res.redirect('/user');
@@ -115,12 +114,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Guest compiler — no auth required
 app.get('/guest/compiler', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
 });
 
-// Protected user pages
 app.get('/user', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/user/home.html'));
 });
@@ -133,7 +130,6 @@ app.get('/pages/user/compiler.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
 });
 
-// Protected admin pages
 app.get('/admin', requireAuth, (req, res) => {
   if (req.session.role !== 'admin') {
     return res.redirect('/user');
@@ -169,7 +165,6 @@ app.use((err, req, res, next) => {
 });
 
 /* ================= START ================= */
-// Vercel uses module.exports — app.listen() is for local dev only
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
