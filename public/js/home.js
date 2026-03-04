@@ -18,6 +18,18 @@ const modal = document.getElementById('myModal');
 const maximizeBtn = document.getElementById('maximizeBtn');
 const editorArea = document.getElementById('editorArea');
 const lineNumbers = document.getElementById('lineNumbers');
+const toggleBtn = document.getElementById('toggleSidebar');
+const sidebar = document.getElementById('sidebar');
+
+// toggle sidebar
+toggleBtn.addEventListener("click", () => {
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle("active");
+    } else {
+        sidebar.classList.toggle("collapsed");
+    }
+});
+
 
 // ==================== HELPERS ====================
 function getProjectContent(project) {
