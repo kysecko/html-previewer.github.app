@@ -30,9 +30,7 @@
       </div>
     </div>
     <div class="sidebar-footer">
-      <button onclick="openModal()" class="logout-icon">
-        <i data-lucide="log-out" class="icon"></i>
-      </button>
+      <button onclick="openModal()">Logout</button>
       <span id="projectCount">0 projects</span>
     </div>
   </div>
@@ -41,23 +39,13 @@
   <div id="mainArea">
     <div id="topBar">
 
-      <!-- added auto collapsed menu for desktop and mobile -->
-      <div class="mobile-menu-container">
-        <button id="mobileMenuBtn" class="mobile-menu-btn">
-          <i data-lucide="more-vertical" class="icon"></i>
-        </button>
-
-        <div id="mobileDropdown" class="mobile-dropdown">
-          <button id="uploadBtnMobile">Upload File</button>
-          <button id="saveBtnMobile">Save</button>
-          <button id="clearBtnMobile">Clear Editor</button>
-          <button id="newBtnMobile">New Project</button>
-          <button onclick="openModal()">Logout</button>
-        </div>
-      </div>
+      <!-- added auto collapsed menu -->
+      <button id="toggleSidebar" class="toggle-btn">
+        <i data-lucide="menu" class="icon"></i>
+      </button>
 
       <div class="h2" style="display: flex; align-items: center; gap: 10px;">
-        <i data-lucide="folder-open" style="color: #ffac1c;"></i>
+        <i data-lucide="folder-open" style="color: #FFAC1C;"></i>
         <div id="currentTitle" title="Click to rename">Untitled Project</div>
       </div>
 

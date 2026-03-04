@@ -20,33 +20,6 @@ const editorArea = document.getElementById('editorArea');
 const lineNumbers = document.getElementById('lineNumbers');
 const toggleBtn = document.getElementById('toggleSidebar');
 const sidebar = document.getElementById('sidebar');
-const mobileBtn = document.getElementById("mobileMenuBtn");
-const dropdown = document.getElementById("mobileDropdown");
-
-// mobile dropdown toggle
-if (mobileBtn) {
-    mobileBtn.addEventListener("click", () => {
-        dropdown.classList.toggle("show");
-    });
-}
-
-/* Connect mobile buttons to real buttons */
-document.getElementById("uploadBtnMobile")?.addEventListener("click", () => {
-    document.getElementById("uploadBtn").click();
-});
-
-document.getElementById("saveBtnMobile")?.addEventListener("click", () => {
-    document.getElementById("saveBtn").click();
-});
-
-document.getElementById("clearBtnMobile")?.addEventListener("click", () => {
-    document.getElementById("clearBtn").click();
-});
-
-document.getElementById("newBtnMobile")?.addEventListener("click", () => {
-    document.getElementById("newBtn").click();
-});
-
 
 // toggle sidebar
 toggleBtn.addEventListener("click", () => {
