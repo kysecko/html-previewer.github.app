@@ -14,7 +14,8 @@
   <!-- Sidebar -->
   <div id="sidebar">
     <div class="sidebar-header">
-      <div onC class="logo-container" style="margin-bottom: 20px; margin-left: 20px; display: flex; align-items: center; align-self: center;">
+      <div onC class="logo-container"
+        style="margin-bottom: 20px; margin-left: 20px; display: flex; align-items: center; align-self: center;">
         <img src="images/logoo.png" alt="logo" style="width: 60px; height: 50px;">
         <h3>Code<span style="color: #FFAC1C;">Previewer</span></h3>
       </div>
@@ -37,10 +38,17 @@
   <!-- Main Area -->
   <div id="mainArea">
     <div id="topBar">
+
+      <!-- added auto collapsed menu -->
+      <button id="toggleSidebar" class="toggle-btn">
+        <i data-lucide="menu" class="icon"></i>
+      </button>
+
       <div class="h2" style="display: flex; align-items: center; gap: 10px;">
         <i data-lucide="folder-open" style="color: #FFAC1C;"></i>
         <div id="currentTitle" title="Click to rename">Untitled Project</div>
       </div>
+
       <div>
         <button id="uploadBtn" class="topbar-btn">
           <i data-lucide="upload" class="icon"></i> Upload File
@@ -105,11 +113,7 @@
       <h2 id="createModalHeading" style="margin-bottom: 8px;">New Project</h2>
       <p id="createModalSubtext" style="color: #aaa; margin-bottom: 20px;">Enter a name for your project</p>
 
-      <input
-        id="newProjectTitleInput"
-        type="text"
-        placeholder="Type project name..."
-        style="
+      <input id="newProjectTitleInput" type="text" placeholder="Type project name..." style="
           width: 100%;
           padding: 10px 14px;
           background: #2a2a2a;
@@ -121,8 +125,7 @@
           box-sizing: border-box;
           outline: none;
           margin-bottom: 24px;
-        "
-      />
+        " />
 
       <div style="display: flex; gap: 12px; justify-content: flex-end;">
         <button onclick="closeCreateModal()" style="

@@ -41,7 +41,7 @@ body {
 #newBtn {
   width: 100%;
   padding: 12px;
-  background: #FFAC1C;
+  background: #ffac1c;
   color: #000;
   border: none;
   border-radius: 6px;
@@ -163,6 +163,54 @@ body {
 .sidebar-footer button:hover {
   background: #c82333;
 }
+/* Toggle Button */
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #ffac1c;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 172, 28, 0.2);
+}
+
+/* Collapsed Sidebar */
+#sidebar {
+  transition: width 0.3s ease;
+}
+
+#sidebar.collapsed {
+  width: 70px;
+}
+
+/* Hide text when collapsed */
+#sidebar.collapsed h3,
+#sidebar.collapsed .project-list-header,
+#sidebar.collapsed .project-name,
+#sidebar.collapsed .project-date,
+#sidebar.collapsed #projectCount,
+#sidebar.collapsed .sidebar-footer span {
+  display: none;
+}
+
+#sidebar.collapsed #newBtn {
+  font-size: 0;
+}
+
+#sidebar.collapsed #newBtn .icon {
+  margin: 0;
+}
+
+/* Make main area expand */
+#sidebar.collapsed + #mainArea {
+  flex: 1;
+}
 
 /* ── Main Area ── */
 #mainArea {
@@ -201,16 +249,16 @@ body {
 }
 
 #uploadBtn {
-  background: #FFAC1C;
+  background: #ffac1c;
   color: #000;
   font-family: "Montserrat";
-  border: 1px solid #FFAC1C;
+  border: 1px solid #ffac1c;
 }
 
 #uploadBtn:hover {
   background: transparent;
-  border: 1px solid #FFAC1C;
-  color: #FFAC1C;
+  border: 1px solid #ffac1c;
+  color: #ffac1c;
   box-shadow: 0 0 12px rgba(255, 172, 28, 0.4);
 }
 
@@ -268,7 +316,7 @@ body {
   font-weight: 600;
   font-size: 14px;
   display: flex;
-  color: #FFAC1C;
+  color: #ffac1c;
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
@@ -287,7 +335,7 @@ body {
   color: #858585;
   padding: 16px 8px;
   text-align: right;
-  font-family: 'Courier New', Consolas, monospace;
+  font-family: "Courier New", Consolas, monospace;
   font-size: 14px;
   line-height: 1.5;
   user-select: none;
@@ -355,7 +403,7 @@ body {
   right: 12px;
   background: none;
   border: none;
-  color: #FFAC1C;
+  color: #ffac1c;
   cursor: pointer;
   padding: 8px;
   border-radius: 6px;
@@ -401,7 +449,7 @@ body {
   top: 5%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
+
   padding: 12px 22px;
   background: #e7ffed;
   border: 2px solid #aafabc;
@@ -411,11 +459,12 @@ body {
   font-weight: 500;
 
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   pointer-events: none;
   z-index: 2000;
 }
-
 
 .status.show {
   opacity: 1;
@@ -479,4 +528,23 @@ body.light-mode #codeEditor::-webkit-scrollbar-thumb {
 
 body.light-mode #codeEditor::-webkit-scrollbar-thumb:hover {
   background: #aaa;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100%;
+    z-index: 3000;
+  }
+
+  #sidebar.active {
+    left: 0;
+  }
+
+  #mainArea {
+    flex: 1;
+  }
 }
