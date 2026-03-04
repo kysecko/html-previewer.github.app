@@ -163,6 +163,16 @@ body {
 .sidebar-footer button:hover {
   background: #c82333;
 }
+
+.logout-icon {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 /* Toggle Button */
 .toggle-btn {
   background: none;
@@ -179,39 +189,37 @@ body {
 .toggle-btn:hover {
   background: rgba(255, 172, 28, 0.2);
 }
-
-/* Collapsed Sidebar */
+/* Sidebar default collapsed on desktop */
 #sidebar {
+  width: 80px;
   transition: width 0.3s ease;
 }
 
-#sidebar.collapsed {
-  width: 70px;
-}
-
-/* Hide text when collapsed */
-#sidebar.collapsed h3,
-#sidebar.collapsed .project-list-header,
-#sidebar.collapsed .project-name,
-#sidebar.collapsed .project-date,
-#sidebar.collapsed #projectCount,
-#sidebar.collapsed .sidebar-footer span {
+/* Hide text */
+#sidebar h3,
+#sidebar .project-list-header,
+#sidebar .project-name,
+#sidebar .project-date,
+#sidebar #projectCount,
+#sidebar .sidebar-footer span {
   display: none;
 }
 
-#sidebar.collapsed #newBtn {
+/* Make new button icon only */
+#newBtn {
   font-size: 0;
+  display: flex;
+  justify-content: center;
 }
 
-#sidebar.collapsed #newBtn .icon {
+#newBtn .icon {
   margin: 0;
 }
 
-/* Make main area expand */
-#sidebar.collapsed + #mainArea {
-  flex: 1;
+/* Hide project list in collapsed mode */
+#projectList {
+  display: none;
 }
-
 /* ── Main Area ── */
 #mainArea {
   flex: 1;
@@ -530,21 +538,49 @@ body.light-mode #codeEditor::-webkit-scrollbar-thumb:hover {
   background: #aaa;
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   #sidebar {
-    position: fixed;
-    left: -280px;
-    top: 0;
-    height: 100%;
-    z-index: 3000;
+    display: none;
   }
 
-  #sidebar.active {
-    left: 0;
+  .mobile-menu-btn {
+    background: none;
+    border: none;
+    color: #ffac1c;
+    cursor: pointer;
   }
 
-  #mainArea {
-    flex: 1;
+  .mobile-menu-container {
+    position: relative;
+  }
+
+  .mobile-dropdown {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    min-width: 160px;
+    z-index: 5000;
+  }
+
+  .mobile-dropdown button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .mobile-dropdown button:hover {
+    background: #2a2a2a;
+  }
+
+  .mobile-dropdown.show {
+    display: flex;
   }
 }
