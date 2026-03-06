@@ -34,8 +34,8 @@ body {
 }
 
 .sidebar-header {
-  gap: 12px;
-  padding: 16px 10px;
+  gap: 8px;
+  padding: 14px 6px;
   border-bottom: 1px solid #333;
   display: flex;
   flex-direction: column;
@@ -77,29 +77,24 @@ body {
 
 #newBtn {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   background: #ffac1c;
   color: #000;
   border: none;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 0; /* hide text when collapsed */
+  font-size: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition:
-    background 0.2s,
-    font-size 0.1s;
   font-family: Montserrat;
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 #sidebar.expanded #newBtn {
   font-size: 14px;
-  padding: 14px;
+  padding: 12px;
 }
 
 #newBtn:hover {
@@ -206,27 +201,32 @@ body {
 }
 
 .sidebar-footer button {
-  padding: 6px 12px;
+  padding: 6px;
+  width: 40px;
+  height: 40px;
   background: #dc3545;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0; /* icon-only when collapsed */
+  font-size: 0;
   font-weight: 500;
   font-family: Montserrat;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  white-space: nowrap;
-  transition: font-size 0.1s;
 }
 
 #sidebar.expanded .sidebar-footer button {
+  width: auto;
+  padding: 8px 12px;
   font-size: 12px;
 }
-
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
 .sidebar-footer button:hover {
   background: #c82333;
 }
