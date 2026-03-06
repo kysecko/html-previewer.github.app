@@ -459,9 +459,9 @@ body {
   overflow-y: hidden;
   overflow-x: hidden;
   border-right: 1px solid #333;
-  width: 50px;
-  min-width: 50px;
-  max-width: 50px;
+  width: 30px;
+  min-width: 30px;
+  max-width: 30px;
   white-space: pre;
   flex-shrink: 0;
 }
