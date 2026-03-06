@@ -11,15 +11,18 @@
 </head>
 
 <body>
+
+  <!-- Backdrop overlay for mobile sidebar -->
+  <div id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
   <div id="sidebar">
     <div class="sidebar-header">
-      <div onC class="logo-container"
-        style="margin-bottom: 20px; margin-left: 20px; display: flex; align-items: center; align-self: center;">
-        <img src="images/logoo.png" alt="logo" style="width: 60px; height: 50px;">
-        <h3>Code<span style="color: #FFAC1C;">Previewer</span></h3>
+      <div class="logo-container" style="margin-bottom: 10px;">
+        <img src="images/logoo.png" alt="logo">
+        <h3>Code<span style="color: #ffac1c;">Previewer</span></h3>
       </div>
-      <button id="newBtn" style="margin-top: 30px;"><i data-lucide="plus" class="icon"></i> New Project</button>
+      <button id="newBtn"><i data-lucide="plus" class="icon"></i> New Project</button>
     </div>
     <div id="projectList">
       <div class="project-list-header">Recent Projects</div>
@@ -30,7 +33,7 @@
       </div>
     </div>
     <div class="sidebar-footer">
-      <button onclick="openModal()">Logout</button>
+      <button onclick="openModal()"><i data-lucide="log-out" class="icon"></i> Logout</button>
       <span id="projectCount">0 projects</span>
     </div>
   </div>
@@ -39,17 +42,19 @@
   <div id="mainArea">
     <div id="topBar">
 
-      <!-- added auto collapsed menu -->
-      <button id="toggleSidebar" class="toggle-btn">
+      <!-- Hamburger toggle (works on both desktop + mobile) -->
+      <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
         <i data-lucide="menu" class="icon"></i>
       </button>
 
+      <!-- Project title -->
       <div class="h2" style="display: flex; align-items: center; gap: 10px;">
-        <i data-lucide="folder-open" style="color: #FFAC1C;"></i>
+        <i data-lucide="folder-open" style="color: #ffac1c;"></i>
         <div id="currentTitle" title="Click to rename">Untitled Project</div>
       </div>
 
-      <div>
+      <!-- Desktop action buttons -->
+      <div class="topbar-actions">
         <button id="uploadBtn" class="topbar-btn">
           <i data-lucide="upload" class="icon"></i> Upload File
         </button>
@@ -57,6 +62,22 @@
           <i data-lucide="save" class="icon"></i> Save
         </button>
         <button id="clearBtn" class="topbar-btn">
+          <i data-lucide="eraser" class="icon"></i> Clear Editor
+        </button>
+      </div>
+
+      <!-- Mobile 3-dot menu -->
+      <button class="mobile-more-btn" onclick="toggleMobileMenu()" id="moreBtn">
+        <i data-lucide="more-vertical" class="icon"></i>
+      </button>
+      <div class="mobile-dropdown" id="mobileDropdown">
+        <button onclick="document.getElementById('fileInput').click(); closeMobileMenu()">
+          <i data-lucide="upload" class="icon"></i> Upload File
+        </button>
+        <button onclick="document.getElementById('saveBtn').click(); closeMobileMenu()">
+          <i data-lucide="save" class="icon"></i> Save
+        </button>
+        <button onclick="document.getElementById('clearBtn').click(); closeMobileMenu()">
           <i data-lucide="eraser" class="icon"></i> Clear Editor
         </button>
       </div>
@@ -112,7 +133,6 @@
     ">
       <h2 id="createModalHeading" style="margin-bottom: 8px;">New Project</h2>
       <p id="createModalSubtext" style="color: #aaa; margin-bottom: 20px;">Enter a name for your project</p>
-
       <input id="newProjectTitleInput" type="text" placeholder="Type project name..." style="
           width: 100%;
           padding: 10px 14px;
@@ -126,7 +146,6 @@
           outline: none;
           margin-bottom: 24px;
         " />
-
       <div style="display: flex; gap: 12px; justify-content: flex-end;">
         <button onclick="closeCreateModal()" style="
           padding: 10px 24px;
@@ -171,7 +190,6 @@
     ">
       <h2 style="margin-bottom: 20px;">Confirm Logout</h2>
       <p style="color: #aaa; margin-bottom: 28px;">Are you sure you want to log out?</p>
-
       <div style="display: flex; gap: 12px; justify-content: flex-end;">
         <button onclick="cancel()" style="
           padding: 10px 24px;
@@ -196,6 +214,53 @@
   </div>
 
   <script src="../../js/home.js"></script>
-</body>
 
+  <script>
+    // ── Sidebar toggle ──
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const isMobile = window.innerWidth <= 768;
+
+      if (sidebar.classList.contains('expanded')) {
+        sidebar.classList.remove('expanded');
+        if (isMobile) backdrop.classList.remove('show');
+      } else {
+        sidebar.classList.add('expanded');
+        if (isMobile) backdrop.classList.add('show');
+      }
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('expanded');
+      document.getElementById('sidebarBackdrop').classList.remove('show');
+    }
+
+    // ── Mobile 3-dot dropdown ──
+    function toggleMobileMenu() {
+      document.getElementById('mobileDropdown').classList.toggle('show');
+    }
+
+    function closeMobileMenu() {
+      document.getElementById('mobileDropdown').classList.remove('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      const btn = document.getElementById('moreBtn');
+      const dropdown = document.getElementById('mobileDropdown');
+      if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+        closeMobileMenu();
+      }
+    });
+
+    // On resize: clean up backdrop if switching to desktop
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) {
+        document.getElementById('sidebarBackdrop').classList.remove('show');
+      }
+    });
+  </script>
+
+</body>
 </html>
