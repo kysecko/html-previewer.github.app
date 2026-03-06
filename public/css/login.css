@@ -198,7 +198,7 @@ button:disabled {
 
 .secondary-link {
   font-weight: 500;
-  color: var(--muted);
+  color: #ffac1c;
   text-decoration: none;
 }
 
