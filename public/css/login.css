@@ -203,7 +203,6 @@ button:disabled {
 }
 
 .secondary-link:hover {
-  color: var(--accent);
   text-decoration: underline;
 }
 
