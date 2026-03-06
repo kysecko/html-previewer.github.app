@@ -201,6 +201,7 @@ body {
   align-items: center;
   gap: 8px;
   overflow: hidden;
+  margin-top: auto;
 }
 
 .sidebar-footer button {
