@@ -95,6 +95,7 @@ body {
   font-family: Montserrat;
   white-space: nowrap;
   overflow: hidden;
+  margin: 0 0 6px 6px;
 }
 
 #sidebar.expanded #newBtn {
