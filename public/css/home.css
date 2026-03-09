@@ -39,14 +39,14 @@ body {
   border-bottom: 1px solid #333;
   display: flex;
   flex-direction: column;
-  align-items: center;         
-  justify-content: center;     
+  align-items: center;
+  justify-content: center;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  justify-content: center;    
+  justify-content: center;
   gap: 10px;
   overflow: hidden;
   white-space: nowrap;
@@ -78,7 +78,7 @@ body {
 }
 
 #newBtn {
-  padding: 6px 12px;
+  padding: 6px;
   background: #ffac1c;
   color: #000;
   border: none;
@@ -96,7 +96,8 @@ body {
   font-family: Montserrat;
   white-space: nowrap;
   overflow: hidden;
-  width: auto;
+  width: 100%; /* ← fills the collapsed sidebar */
+  box-sizing: border-box;
 }
 
 #sidebar.expanded #newBtn {
@@ -114,7 +115,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
-  display: none;  
+  display: none;
 }
 
 #sidebar.expanded #projectList {
