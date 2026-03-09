@@ -43,7 +43,7 @@ section {
   padding: 0 14px;
 }
 
-/* ── Navbar ── */
+/* Navbar */
 .navbar {
   position: fixed;
   top: 0;
@@ -124,7 +124,10 @@ img {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
 }
 
-/* ── Buttons ── */
+/* No underline on Sign In button */
+.nav-links .btn-primary::after { display: none; }
+
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -197,7 +200,7 @@ img {
   margin-top: 4px;
 }
 
-/* ── Hero ── */
+/* Hero */
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -335,7 +338,7 @@ img {
 
 .trust-item i { color: #5a5a5a; }
 
-/* ── Editor Preview ── */
+/* Editor Preview */
 .hero-visual { position: relative; }
 
 .editor-preview {
@@ -468,7 +471,7 @@ img {
 .value   { color: #9a9a9a; }
 .comment { color: #5a5a5a; font-style: italic; }
 
-/* ── Sections ── */
+/* Sections */
 .section {
   padding: 56px 24px;
   background: #000;
@@ -491,7 +494,7 @@ img {
   line-height: 1.7;
 }
 
-/* ── Features ── */
+/* Features */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -566,7 +569,7 @@ img {
 
 .feature-card:hover .feature-cta { color: #fff; }
 
-/* ── Philosophy (dark section) ── */
+/* Philosophy */
 .dark-section {
   background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
   position: relative;
@@ -617,12 +620,12 @@ img {
   line-height: 1;
 }
 
-.philosophy-item:hover .philosophy-number { color: #fff; }
+.philosophy-item:hover .philosophy-number { color: #ffac1c; }
 
 .philosophy-item h3 { margin-bottom: 14px; color: #fff; }
 .philosophy-item p  { color: #7a7a7a; line-height: 1.7; }
 
-/* ── CTA ── */
+/* CTA */
 .cta-section {
   text-align: center;
   padding: 56px 24px;
@@ -675,7 +678,7 @@ img {
   margin-top: 14px;
 }
 
-/* ── Testimonials ── */
+/* Testimonials */
 .testimonials {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -737,7 +740,7 @@ img {
 .author-info strong { color: #fff; font-size: 1rem; }
 .author-info span   { color: #7a7a7a; font-size: 0.9rem; }
 
-/* ── FAQ ── */
+/* FAQ */
 .faq {
   max-width: 800px;
   margin: 0 auto;
@@ -780,7 +783,7 @@ img {
   line-height: 1.6;
 }
 
-/* ── Footer ── */
+/* Footer */
 .footer {
   background: #1a1a1a;
   padding: 56px 24px 24px;
@@ -812,27 +815,47 @@ img {
   line-height: 1.7;
 }
 
+.footer-links {
+  display: flex;
+  flex-direction: column;
+}
+
 .footer-links p {
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.nav-links {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
-  color: #7a7a7a;
+/* Footer links — same hover style as nav links */
+.links {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 8px;
+  color: #8a8a8a;
   text-decoration: none;
   font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+  padding: 4px 0;
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.links::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .links:hover { color: #fff; }
+.links:hover::after { width: 100%; }
 
 .footer-bottom {
   text-align: center;
@@ -842,7 +865,7 @@ img {
   font-size: 0.9rem;
 }
 
-/* ── Animations ── */
+/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -862,7 +885,7 @@ img {
 .feature-card:nth-child(3),
 .philosophy-item:nth-child(3) { animation-delay: 0.4s; }
 
-/* ── Scrollbar ── */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track  { background: #1a1a1a; }
 ::-webkit-scrollbar-thumb  { background: #3a3a3a; border-radius: 5px; }
@@ -871,7 +894,7 @@ img {
 ::selection      { background: #fff; color: #000; }
 ::-moz-selection { background: #fff; color: #000; }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 1024px) {
   body { padding-top: 70px; }
 
