@@ -617,7 +617,7 @@ img {
   line-height: 1;
 }
 
-.philosophy-item:hover .philosophy-number { color: #ffac1c; }
+.philosophy-item:hover .philosophy-number { color: #fff; }
 
 .philosophy-item h3 { margin-bottom: 14px; color: #fff; }
 .philosophy-item p  { color: #7a7a7a; line-height: 1.7; }
