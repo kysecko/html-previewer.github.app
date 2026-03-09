@@ -11,5 +11,40 @@
       "src": "/(.*)",
       "dest": "backend/server.js"
     }
+  ],
+  "rewrites": [
+    {
+      "version": 2,
+      "builds": [
+        {
+          "src": "backend/server.js",
+          "use": "@vercel/node"
+        }
+      ],
+      "routes": [
+        {
+          "src": "/(.*)",
+          "dest": "backend/server.js"
+        }
+      ],
+      "rewrites": [
+        { "source": "/", "destination": "/pages/user/index.html" },
+
+        { "source": "/login", "destination": "/pages/user/login.html" },
+        { "source": "/register", "destination": "/pages/user/register.html" },
+        { "source": "/home", "destination": "/pages/user/home.html" },
+        { "source": "/compiler", "destination": "/pages/user/compiler.html" },
+
+        {
+          "source": "/admin/dashboard",
+          "destination": "/pages/admin/dashboard.html"
+        },
+        {
+          "source": "/admin/settings",
+          "destination": "/pages/admin/settings.html"
+        },
+        { "source": "/admin/users", "destination": "/pages/admin/users.html" }
+      ]
+    }
   ]
 }
