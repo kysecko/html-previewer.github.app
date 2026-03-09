@@ -16,14 +16,14 @@
 --radius-sm:4px;
 --radius:8px;
 --radius-lg:12px;
---spacing-xs:8px;
---spacing-sm:12px;
---spacing:16px;
---spacing-lg:24px;
---spacing-xl:32px;
---spacing-2xl:48px;
---spacing-3xl:64px;
---spacing-4xl:96px;
+--spacing-xs:6px;
+--spacing-sm:10px;
+--spacing:14px;
+--spacing-lg:20px;
+--spacing-xl:24px;
+--spacing-2xl:34px;
+--spacing-3xl:44px;
+--spacing-4xl:56px;
 --transition:.3s cubic-bezier(0.4,0,0.2,1);
 --shadow:0 4px 12px #0003;
 --shadow-lg:0 8px 24px #0000004d
