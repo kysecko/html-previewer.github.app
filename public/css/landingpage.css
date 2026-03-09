@@ -482,7 +482,7 @@ img {
 
 .section-title {
   margin-bottom: 14px;
-  color: #fff;
+  color: #ffac1c;
 }
 
 .section-subtitle {
@@ -525,7 +525,7 @@ img {
 .feature-card:hover::before { transform: translateX(100%); }
 
 .feature-card:hover {
-  border-color: #ffbd2e;
+  border-color: #fff;
   transform: translateY(-8px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
@@ -546,9 +546,9 @@ img {
 }
 
 .feature-card:hover .feature-icon {
-  background: #ffbd2e;
-  color: #fff;
-  border-color: #ffbd2e;
+  background: #fff;
+  color: #000;
+  border-color: #fff;
   transform: rotate(5deg);
 }
 
