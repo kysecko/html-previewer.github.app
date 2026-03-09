@@ -525,7 +525,7 @@ img {
 .feature-card:hover::before { transform: translateX(100%); }
 
 .feature-card:hover {
-  border-color: #fff;
+  border-color: #ffbd2e;
   transform: translateY(-8px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
@@ -546,9 +546,9 @@ img {
 }
 
 .feature-card:hover .feature-icon {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+  background: #ffbd2e;
+  color: #fff;
+  border-color: #ffbd2e;
   transform: rotate(5deg);
 }
 
