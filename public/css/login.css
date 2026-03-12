@@ -28,7 +28,6 @@ body {
   justify-content: center;
 }
 
-
 /* ================= LAYOUT ================= */
 .page {
   width: 100%;
@@ -47,7 +46,6 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-
 
 .image-wrapper {
   height: 100%;
@@ -148,7 +146,45 @@ input {
   border-radius: 6px;
   animation: slideDown 0.3s ease;
 }
+/* ================= LINK STYLE ================= */
+.link-style {
+  color: #ffac1c; /* Bright orange-yellow color */
+  text-decoration: none;
+  font-weight: bold;
+}
 
+.link-style:hover {
+  text-decoration: underline;
+}
+
+/* ================= INPUT LINKS CLASS ================= */
+.input-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--input);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 8px 0 18px;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.input-links:focus-within {
+  border-color: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+}
+
+.input-links input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 14px;
+}
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -219,7 +255,6 @@ button:disabled {
   padding: 16px;
   background: transparent;
 }
-
 
 .modal-content {
   margin-top: 8px;
@@ -310,7 +345,6 @@ button:disabled {
     transform: translateY(0);
   }
 }
-
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
