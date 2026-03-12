@@ -8,20 +8,24 @@ function requireAuth(req, res, next) {
 
   if (req.session?.userId && req.session?.isLoggedIn) {
     console.log('Authentication passed');
+
+    // Prevent browser from caching protected pages
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     return next();
   }
 
   console.log('Authentication failed');
-  
-  // If it's an API request, return JSON error
+
   if (req.path.startsWith('/api/')) {
-    return res.status(401).json({ 
+    return res.status(401).json({
       error: 'Authentication required',
-      redirect: '/login.html' 
+      redirect: '/login.html'
     });
   }
-  
-  // For HTML pages, redirect to login
+
   res.redirect('/login.html');
 }
 
