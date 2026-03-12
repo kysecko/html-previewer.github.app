@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   const emailInput = document.getElementById("email");
@@ -7,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordMessage = document.getElementById("passwordMessage");
   const spinner = document.getElementById("redirectSpinner");
 
-  /* ===== ALERT ELEMENT ===== */
+  /* ALERT ELEMENT */
   const alertContainer = document.createElement("div");
   alertContainer.style.position = "fixed";
   alertContainer.style.top = "24px";
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   };
 
-  /* ===== HELPERS ===== */
+  /* HELPERS */
   const isValidEmail = (email) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 

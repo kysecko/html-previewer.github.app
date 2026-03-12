@@ -32,7 +32,7 @@ toggleBtn.addEventListener("click", () => {
 });
 
 
-// ==================== HELPERS ====================
+// HELPERS 
 function getProjectContent(project) {
     return project.code || '';
 }
@@ -114,7 +114,7 @@ async function logout() {
     }
 }
 
-// ==================== CREATE / RENAME MODAL ====================
+// CREATE / RENAME MODAL OF PROJECT TITLE
 function openCreateModal() {
     _modalMode = 'create';
     _renameTargetId = null;
@@ -189,13 +189,13 @@ async function confirmCreateModal() {
     }
 }
 
-// bind Enter key on the modal input
+// BIND ENTER KEY ON THE MODAL INPUT
 document.getElementById('newProjectTitleInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') confirmCreateModal();
     if (e.key === 'Escape') closeCreateModal();
 });
 
-// ==================== API CALLS ====================
+// API CALLS 
 async function loadProjects() {
     try {
         console.log('Loading projects...');
@@ -369,7 +369,7 @@ async function loadProjectFromDB(id) {
     }
 }
 
-// ==================== RENDER LIST ====================
+// RENDER LIST 
 function renderList() {
     projectCount.textContent = projects.length + ' project' + (projects.length !== 1 ? 's' : '');
 
@@ -430,13 +430,13 @@ function renderList() {
     lucide.createIcons();
 }
 
-// ==================== TITLE CLICK TO RENAME ====================
+// TITLE CLICK TO RENAME 
 currentTitle.style.cursor = 'pointer';
 currentTitle.addEventListener('click', () => {
     if (currentId) openRenameCurrentModal();
 });
 
-// ==================== EVENT HANDLERS ====================
+// EVENT HANDLERS 
 document.getElementById('newBtn').addEventListener('click', () => openCreateModal());
 document.getElementById('saveBtn').addEventListener('click', saveProject);
 
@@ -462,7 +462,7 @@ document.getElementById('clearBtn').addEventListener('click', function () {
     renderList();
 });
 
-// ==================== FILE UPLOAD ====================
+// FILE UPLOAD 
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
 
@@ -524,7 +524,7 @@ fileInput.addEventListener('change', async function (e) {
     reader.readAsText(file);
 });
 
-// ==================== PROJECT HELPERS ====================
+// PROJECT HELPERS 
 function loadProject(id) { loadProjectFromDB(id); }
 
 function downloadProject(id) {
@@ -550,7 +550,7 @@ function deleteProject(id) {
     }
 }
 
-// ==================== RESIZER ====================
+// RESIZER 
 const divider = document.getElementById('divider');
 let isResizing = false;
 
