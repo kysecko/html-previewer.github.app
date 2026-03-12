@@ -177,13 +177,22 @@ input {
   box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
 }
 
-.input-links input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-size: 14px;
+.input-links-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.input-links-container p {
+  font-size: 12px;
+}
+
+.input-links-container a{
+  color: #ffac1c;
+  text-decoration: none;
+}
+.input-links-container a:hover{
+text-decoration: underline;
 }
 @keyframes slideDown {
   from {
