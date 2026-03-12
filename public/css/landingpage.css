@@ -55,25 +55,22 @@ section {
 }
 
 /* MOBILE MENU */
-
 .menu-toggle {
-  display: none;
   background: none;
   border: none;
   color: white;
   cursor: pointer;
   z-index: 10001;
-
   width: 40px;
   height: 40px;
-  display: flex;
   align-items: center;
   justify-content: center;
+  display: none; /* hidden on desktop */
 }
 
 @media (max-width: 768px) {
   .menu-toggle {
-    display: block;
+    display: flex;
   }
 
   .nav-links {
