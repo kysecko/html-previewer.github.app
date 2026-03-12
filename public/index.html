@@ -6,7 +6,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CodePreview | Minimalist Black & White Editor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
@@ -18,21 +19,30 @@
 </head>
 
 <body>
+  
   <!-- Navigation -->
   <header class="navbar" style="background-color: rgba(0, 0, 0, 0.92);" data-aos="fade-down" data-aos-duration="1000">
+
     <div class="logo">
       <img src="images/logoo.png" alt="">
       <h4>Code<span style="color: #FFAC1C;">Previewer</span></h4>
     </div>
-    <div class="nav-links">
+
+    <!-- Mobile Menu Button -->
+    <button class="menu-toggle">
+      <i data-lucide="menu"></i>
+    </button>
+
+    <div class="nav-links" id="navMenu">
       <a href="#features">Features</a>
       <a href="#philosophy">About</a>
       <a href="#testimonials">Feedback</a>
       <a href="login.html" class="btn-primary">
-        <i data-lucide="log-in" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>
+        <i data-lucide="log-in" style="width:16px;height:16px;"></i>
         Sign In
       </a>
     </div>
+
   </header>
 
   <!-- Hero Section -->
@@ -54,8 +64,8 @@
           <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
           Continue as Guest
         </a>
-        <a href="/register.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="400"
-          data-aos-duration="700" data-aos-easing="ease-out-cubic">
+        <a href="/register.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700"
+          data-aos-easing="ease-out-cubic">
           <i data-lucide="user" style="width:18px;height:18px;"></i>
           Join Now
           <span class="btn-subtext">Free account</span>
@@ -85,29 +95,37 @@
           <div class="editor-line-number">2</div>
           <div class="editor-line"><span class="tag">&lt;!DOCTYPE html&gt;</span></div>
           <div class="editor-line-number">3</div>
-          <div class="editor-line"><span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"en"</span><span class="tag">&gt;</span></div>
+          <div class="editor-line"><span class="tag">&lt;html</span> <span class="attr">lang</span>=<span
+              class="value">"en"</span><span class="tag">&gt;</span></div>
           <div class="editor-line-number">4</div>
           <div class="editor-line"><span class="tag">&lt;head&gt;</span></div>
           <div class="editor-line-number">5</div>
-          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="value">"UTF-8"</span><span class="tag">&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span
+              class="value">"UTF-8"</span><span class="tag">&gt;</span></div>
           <div class="editor-line-number">6</div>
-          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;title&gt;</span>My Project<span class="tag">&lt;/title&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;title&gt;</span>My Project<span
+              class="tag">&lt;/title&gt;</span></div>
           <div class="editor-line-number">7</div>
-          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span
+              class="value">"stylesheet"</span> <span class="attr">href</span>=<span
+              class="value">"style.css"</span><span class="tag">&gt;</span></div>
           <div class="editor-line-number">8</div>
           <div class="editor-line"><span class="tag">&lt;/head&gt;</span></div>
           <div class="editor-line-number">9</div>
           <div class="editor-line"><span class="tag">&lt;body&gt;</span></div>
           <div class="editor-line-number">10</div>
-          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;header</span> <span class="attr">class</span>=<span class="value">"navbar"</span><span class="tag">&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;header</span> <span class="attr">class</span>=<span
+              class="value">"navbar"</span><span class="tag">&gt;</span></div>
           <div class="editor-line-number">11</div>
-          <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>Welcome<span class="tag">&lt;/h1&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>Welcome<span
+              class="tag">&lt;/h1&gt;</span></div>
           <div class="editor-line-number">12</div>
           <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;/header&gt;</span></div>
           <div class="editor-line-number">13</div>
           <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;main&gt;</span></div>
           <div class="editor-line-number">14</div>
-          <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Live changes appear here<span class="tag">&lt;/p&gt;</span></div>
+          <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Live changes appear
+            here<span class="tag">&lt;/p&gt;</span></div>
           <div class="editor-line-number">15</div>
           <div class="editor-line">&nbsp;&nbsp;<span class="tag">&lt;/main&gt;</span></div>
           <div class="editor-line-number">16</div>
@@ -175,7 +193,8 @@
           <i data-lucide="smartphone" style="width:28px;height:28px;"></i>
         </div>
         <h3>Mobile Responsive</h3>
-        <p>Code and preview seamlessly on any device — phone, tablet, or desktop. Your workspace adapts to your screen, anywhere you go.</p>
+        <p>Code and preview seamlessly on any device — phone, tablet, or desktop. Your workspace adapts to your screen,
+          anywhere you go.</p>
       </div>
 
     </div>
@@ -199,7 +218,8 @@
       <div class="philosophy-item" data-aos="fade-up" data-aos-delay="300">
         <div class="philosophy-number">02</div>
         <h3>Enhance Readability</h3>
-        <p>High contrast black and white text improves readability and reduces eye strain during long coding sessions.</p>
+        <p>High contrast black and white text improves readability and reduces eye strain during long coding sessions.
+        </p>
       </div>
       <div class="philosophy-item" data-aos="fade-up" data-aos-delay="500">
         <div class="philosophy-number">03</div>
@@ -253,7 +273,7 @@
       </div>
     </div>
   </section>
- 
+
   <!-- Footer Section -->
   <footer class="footer">
     <div class="footer-content">
