@@ -19,7 +19,7 @@
 </head>
 
 <body>
-  
+
   <!-- Navigation -->
   <header class="navbar" style="background-color: rgba(0, 0, 0, 0.92);" data-aos="fade-down" data-aos-duration="1000">
 
@@ -308,7 +308,13 @@
       offset: 120,
       easing: 'ease-in-out'
     });
+    
+    const menuBtn = document.querySelector(".menu-toggle");
+    const navMenu = document.querySelector("#navMenu");
 
+    menuBtn.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
     // FAQ toggle
     document.querySelectorAll('.faq-question').forEach(q => {
       q.addEventListener('click', () => {
@@ -329,6 +335,7 @@
         if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
       });
     });
+
   </script>
 </body>
 
