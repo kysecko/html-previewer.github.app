@@ -10,6 +10,46 @@
     <link rel="stylesheet" href="/css/landingpage.css">
 
     <style>
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header .logo span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffac1c;
+        }
+
+        .header .back-button {
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            background-color: #ffac1c;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .header .back-button:hover {
+            background-color: #d68f00;
+        }
+
         /* Legal Page Styling */
 
         .legal-page {
@@ -48,7 +88,13 @@
 </head>
 
 <body>
-
+    <header class="header">
+        <div class="logo">
+            <img src="/images/logoo.png" alt="CodePreviewer Logo">
+            <span>CodePreviewer</span>
+        </div>
+        <a href="/" class="back-button">Back to Home</a>
+    </header>
     <!-- Privacy Content -->
 
     <section class="legal-page">
