@@ -15,7 +15,7 @@
   <!-- JS -->
   <script src="/js/register.js" defer></script>
 
-  <title>Create Your Account</title>
+  <title>Create an account</title>
 </head>
 
 <body>
@@ -40,13 +40,13 @@
       </div>
 
       <div class="login-wrapper">
-        <div class="logo-container">
+        <!-- <div class="logo-container">
           <img src="/images/logoo.png" class="logo-image" />
           <h4>Code<span style="color:#FFAC1C;">Previewer</span></h4>
-        </div>
+        </div> -->
 
         <h2 class="title-header">Let's start coding!</h2>
-        <p class="subtitle">Create your first account to get started.</p>
+        <p class="subtitle">Join us and start building something amazing.</p>
 
         <form id="registerForm" novalidate>
 
@@ -78,18 +78,18 @@
           <div id="confirmPasswordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
 
           <div id="message" style="margin-bottom: 10px;"></div>
-         
+
           <div class="input-links-container">
-            <input type="checkbox" name="terms" required />
+            <input type="checkbox" id="terms" name="terms" />
             <p>
-              I already have read and agreed to the
+              I have read and agreed to the
               <a href="terms.html">Terms & Conditions</a>
               and
               <a href="privacy.html">Privacy Policy</a>
-              of this system.
+              of CodePreviewer .
             </p>
           </div>
-
+          
           <button type="submit" class="login-btn">Create Account</button>
 
           <p class="paragraph">

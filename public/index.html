@@ -313,19 +313,21 @@
     const navMenu = document.querySelector("#navMenu");
 
     menuBtn.addEventListener("click", () => {
-
       navMenu.classList.toggle("active");
+      const isOpen = navMenu.classList.contains("active");
 
-      const icon = menuBtn.querySelector("i");
-
-      if (navMenu.classList.contains("active")) {
-        icon.setAttribute("data-lucide", "x");
-      } else {
-        icon.setAttribute("data-lucide", "menu");
-      }
-
+      // Clear the button and re-render the correct icon
+      menuBtn.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}"></i>`;
       lucide.createIcons();
+    });
 
+    // Close menu when a nav link is clicked
+    document.querySelectorAll("#navMenu a").forEach(link => {
+      link.addEventListener("click", () => {
+        navMenu.classList.remove("active");
+        menuBtn.innerHTML = `<i data-lucide="menu"></i>`;
+        lucide.createIcons();
+      });
     });
 
     // FAQ toggle
@@ -348,7 +350,6 @@
         if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
       });
     });
-
   </script>
 </body>
 

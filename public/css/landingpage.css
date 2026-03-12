@@ -75,70 +75,9 @@ img {
   height: 32px;
 }
 
-/* ─── Nav Links (desktop) ────────────────────────────── */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #8a8a8a;
-  font-weight: 500;
-  font-size: 0.95rem;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 6px 0;
-}
-
-.nav-links a:hover {
-  color: #fff;
-}
-
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #fff;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links a:hover::after {
-  width: 100%;
-}
-
-.nav-links .btn-primary {
-  background: #fff;
-  color: #000;
-  border: 2px solid #fff;
-  padding: 8px 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-left: 14px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-links .btn-primary:hover {
-  background: #000;
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-}
-
-.nav-links .btn-primary::after {
-  display: none;
-}
-
-/* ─── Mobile Menu Toggle ─────────────────────────────── */
+/* ─── Mobile Menu Toggle — always visible ────────────── */
 .menu-toggle {
-  display: none;
+  display: flex;
   background: none;
   border: none;
   color: #fff;
@@ -148,6 +87,73 @@ img {
   height: 40px;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Nav Links — hidden by default, shown on toggle ─── */
+.nav-links {
+  display: none;
+  position: absolute;
+  top: 61px;
+  left: 0;
+  width: 100%;
+  background: #000;
+  border-bottom: 1px solid #3a3a3a;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 6px 0;
+  z-index: 9998;
+}
+
+.nav-links.active {
+  display: flex;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #8a8a8a;
+  font-weight: 500;
+  font-size: 0.9rem;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  padding: 8px 24px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.nav-links a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-links a::after {
+  display: none;
+}
+
+.nav-links .btn-primary {
+  background: #fff;
+  color: #000;
+  border: 2px solid #fff;
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 8px 24px;
+  width: calc(100% - 48px);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.nav-links .btn-primary:hover {
+  background: #000;
+  color: #fff;
+}
+
+.nav-links .btn-primary::after {
+  display: none;
 }
 
 /* ─── Buttons ────────────────────────────────────────── */
@@ -937,42 +943,6 @@ img {
 
 /* ─── Responsive: 768px ──────────────────────────────── */
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: flex;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 61px;
-    left: 0;
-    width: 100%;
-    background: #000;
-    border-bottom: 1px solid #3a3a3a;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 0;
-    z-index: 9998;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .nav-links a {
-    width: 100%;
-    padding: 14px 24px;
-    text-align: left;
-    border-bottom: 1px solid #1a1a1a;
-  }
-
-  .nav-links .btn-primary {
-    margin: 10px 24px;
-    width: calc(100% - 48px);
-    text-align: center;
-    justify-content: center;
-  }
-
   .navbar { padding: 14px; }
 
   .hero { padding: 44px 14px 34px; }
