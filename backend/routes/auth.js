@@ -10,7 +10,7 @@ function getSupabase() {
   );
 }
 
-/* ================= REGISTER ================= */
+/* REGISTER */
 router.post('/register', async (req, res) => {
   try {
     const supabase = getSupabase();
@@ -42,7 +42,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-/* ================= LOGIN ================= */
+/* LOGIN */
 router.post('/login', async (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
@@ -92,7 +92,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-/* ================= VERIFY ================= */
+/* VERIFY */
 router.get('/verify', (req, res) => {
   if (req.session?.isLoggedIn && req.session?.userId) {
     return res.json({
@@ -106,7 +106,7 @@ router.get('/verify', (req, res) => {
   return res.status(401).json({ success: false, error: 'Not authenticated' });
 });
 
-/* ================= LOGOUT ================= */
+/* LOGOUT */
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ success: false, error: 'Logout failed' });
