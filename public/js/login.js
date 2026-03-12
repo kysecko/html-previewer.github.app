@@ -1,91 +1,103 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const termsCheckbox = document.getElementById('terms');
 
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
+  const emailMessage = document.getElementById('emailMessage');
+  const passwordMessage = document.getElementById('passwordMessage');
+  const spinner = document.getElementById('redirectSpinner');
 
-  const emailMessage = document.getElementById("emailMessage");
-  const passwordMessage = document.getElementById("passwordMessage");
-  const spinner = document.getElementById("redirectSpinner");
+  /* ─── Error Modal ────────────────────────────────────── */
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 50px;
+    z-index: 9999; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  `;
 
-  /* ALERT ELEMENT */
-  const alertContainer = document.createElement("div");
-  alertContainer.style.position = "fixed";
-  alertContainer.style.top = "24px";
-  alertContainer.style.left = "50%";
-  alertContainer.style.transform = "translateX(-50%)";
-  alertContainer.style.background = "#ff4d4d";
-  alertContainer.style.color = "#fff";
-  alertContainer.style.padding = "14px 22px";
-  alertContainer.style.borderRadius = "12px";
-  alertContainer.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
-  alertContainer.style.fontSize = "14px";
-  alertContainer.style.fontWeight = "600";
-  alertContainer.style.opacity = "0";
-  alertContainer.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-  alertContainer.style.zIndex = "9999";
-  alertContainer.style.pointerEvents = "none"; // allow clicking through
-  document.body.appendChild(alertContainer);
+  const modalBox = document.createElement('div');
+  modalBox.style.cssText = `
+    background: #1a1a1a; border: 1px solid #ff4d4d; border-radius: 14px;
+    padding: 28px; width: 90%; max-width: 360px; text-align: center;
+    transform: scale(0.92); transition: transform 0.25s ease;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  `;
 
-  let alertTimer;
+  const modalTitle = document.createElement('p');
+  modalTitle.style.cssText = `
+    color: #ff4d4d; font-size: 15px; font-weight: 700;
+margin-bottom: 6px; font-family: inherit;
+  `;
 
-  const showAlert = (message) => {
-    clearTimeout(alertTimer);
+  const modalMessage = document.createElement('p');
+  modalMessage.style.cssText = `
+    color: #ffaaaa; font-size: 13px; line-height: 1.6;
+margin: 0; font-family: inherit;
+  `;
 
-    alertContainer.textContent = message;
-    alertContainer.style.opacity = "1";
-    alertContainer.style.transform = "translateX(-50%) translateY(0)";
+  modalBox.appendChild(modalTitle);
+  modalBox.appendChild(modalMessage);
+  modal.appendChild(modalBox);
+  document.body.appendChild(modal);
 
-    // hide after 2.5s
-    alertTimer = setTimeout(() => {
-      alertContainer.style.opacity = "0";
-      alertContainer.style.transform = "translateX(-50%) translateY(-10px)";
-    }, 2000);
+  let autoCloseTimer;
+
+  const closeModal = () => {
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+    modalBox.style.transform = 'scale(0.92)';
   };
 
-  /* HELPERS */
+  const showModal = (title, msg) => {
+    clearTimeout(autoCloseTimer);
+    modalTitle.textContent = title;
+    modalMessage.textContent = msg;
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'all';
+    modalBox.style.transform = 'scale(1)';
+    autoCloseTimer = setTimeout(closeModal, 2500);
+  };
+
+  /* ─── Field Helpers ──────────────────────────────────── */
   const isValidEmail = (email) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
   const showFieldError = (input, msgDiv, msg) => {
-    msgDiv.textContent = msg;
-    msgDiv.style.display = "block";
-    msgDiv.style.color = "#ff4d4d";
-    input.parentElement.style.borderColor = "#ff4d4d";
+    if (msgDiv) { msgDiv.textContent = msg; msgDiv.style.display = 'block'; msgDiv.style.color = '#ff4d4d'; }
+    if (input?.parentElement) input.parentElement.style.borderColor = '#ff4d4d';
   };
 
-  const showFieldSuccess = (input, msgDiv, msg = "") => {
-    msgDiv.textContent = msg;
-    msgDiv.style.display = msg ? "block" : "none";
-    msgDiv.style.color = "#22c55e";
-    input.parentElement.style.borderColor = "#22c55e";
+  const showFieldSuccess = (input, msgDiv, msg = '') => {
+    if (msgDiv) { msgDiv.textContent = msg; msgDiv.style.display = msg ? 'block' : 'none'; msgDiv.style.color = '#22c55e'; }
+    if (input?.parentElement) input.parentElement.style.borderColor = '#22c55e';
   };
 
   const clearField = (input, msgDiv) => {
-    msgDiv.textContent = "";
-    msgDiv.style.display = "none";
-    input.parentElement.style.borderColor = "";
+    if (msgDiv) { msgDiv.textContent = ''; msgDiv.style.display = 'none'; }
+    if (input?.parentElement) input.parentElement.style.borderColor = '';
   };
 
-  /* ===== REAL-TIME VALIDATION ===== */
-  emailInput.addEventListener("input", () => {
+  /* ─── Real-time Validation ───────────────────────────── */
+  emailInput.addEventListener('input', () => {
     const val = emailInput.value.trim();
     if (!val) clearField(emailInput, emailMessage);
-    else if (!isValidEmail(val))
-      showFieldError(emailInput, emailMessage, "Invalid email");
-    else showFieldSuccess(emailInput, emailMessage, "Valid email");
+    else if (!isValidEmail(val)) showFieldError(emailInput, emailMessage, 'Invalid email');
+    else showFieldSuccess(emailInput, emailMessage, 'Valid email');
   });
 
-  passwordInput.addEventListener("input", () => {
+  passwordInput.addEventListener('input', () => {
     const val = passwordInput.value;
     if (!val) clearField(passwordInput, passwordMessage);
-    else if (val.length < 8)
-      showFieldError(passwordInput, passwordMessage, "Minimum 8 characters");
-    else showFieldSuccess(passwordInput, passwordMessage, "Valid password");
+    else if (val.length < 8) showFieldError(passwordInput, passwordMessage, 'Minimum 8 characters');
+    else showFieldSuccess(passwordInput, passwordMessage, 'Valid password');
   });
 
-  /* ===== FORM SUBMIT ===== */
-  loginForm.addEventListener("submit", async (e) => {
+  /* ─── Form Submit ────────────────────────────────────── */
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = emailInput.value.trim();
@@ -94,58 +106,60 @@ document.addEventListener("DOMContentLoaded", () => {
     clearField(emailInput, emailMessage);
     clearField(passwordInput, passwordMessage);
 
+    // 1. Email
     if (!email) {
-      showFieldError(emailInput, emailMessage, "Required");
-      showAlert("Email is required");
-      return;
+      showFieldError(emailInput, emailMessage, 'Required');
+      emailInput.focus();
+      return showModal('Email Required', 'Please enter your email address.');
     }
-
     if (!isValidEmail(email)) {
-      showFieldError(emailInput, emailMessage, "Invalid email");
-      showAlert("Invalid email address");
-      return;
+      showFieldError(emailInput, emailMessage, 'Invalid email');
+      emailInput.focus();
+      return showModal('Invalid Email', 'Please enter a valid email address.');
     }
 
+    // 2. Password
     if (!password) {
-      showFieldError(passwordInput, passwordMessage, "Required");
-      showAlert("Password is required");
-      return;
+      showFieldError(passwordInput, passwordMessage, 'Required');
+      passwordInput.focus();
+      return showModal('Password Required', 'Please enter your password.');
+    }
+    if (password.length < 8) {
+      showFieldError(passwordInput, passwordMessage, 'Minimum 8 characters');
+      passwordInput.focus();
+      return showModal('Password Too Short', 'Your password must be at least 8 characters long.');
     }
 
-    if (password.length < 8) {
-      showFieldError(passwordInput, passwordMessage, "Minimum 8 characters");
-      showAlert("Password must be at least 8 characters");
-      return;
+    // 3. Terms
+    if (!termsCheckbox.checked) {
+      termsCheckbox.focus();
+      return showModal('Terms & Conditions', 'Please accept the Terms & Conditions and Privacy Policy of CodePreviewer to continue.');
     }
 
     const submitBtn = loginForm.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in...";
-    submitBtn.style.opacity = "0.6";
+    submitBtn.textContent = 'Logging in...';
+    submitBtn.style.opacity = '0.6';
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
-      if (!res.ok || !data.success) throw new Error("Invalid credentials");
+      if (!res.ok || !data.success) throw new Error('Invalid credentials');
 
-      // loader + redirect
-      spinner.style.display = "flex";
+      spinner.style.display = 'flex';
+      setTimeout(() => { window.location.href = data.redirect || '/user'; }, 500);
 
-      setTimeout(() => {
-        window.location.href = data.redirect || "/user";
-      }, 500);
     } catch (err) {
-      showAlert("Invalid email or password");
-
+      showModal('Login Failed', 'Invalid email or password. Please check your credentials and try again.');
       submitBtn.disabled = false;
-      submitBtn.textContent = "Login";
-      submitBtn.style.opacity = "1";
+      submitBtn.textContent = 'Login';
+      submitBtn.style.opacity = '1';
     }
   });
 });

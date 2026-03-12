@@ -13,7 +13,7 @@
     <!-- JS -->
     <script src="/js/login.js" defer></script>
 
-    <title>Log In to your account</title>
+    <title>Log in to your account</title>
 </head>
 
 <body>
@@ -42,13 +42,13 @@
             </div>
 
             <div class="login-wrapper">
-                <div class="logo-container">
+                <!-- <div class="logo-container">
                     <img src="images/logoo.png" alt="logo" class="logo-image">
                     <h4>Code<span style="color: #FFAC1C;">Previewer</span></h4>
-                </div>
+                </div> -->
 
                 <h2 class="title-header">Welcome Back!</h2>
-                <p class="subtitle">Ready to create something amazing? Sign in.</p>
+                <p class="subtitle">Sign in and start building.</p>
 
                 <form id="loginForm" novalidate>
                     <label for="email">Email Address</label>
@@ -68,13 +68,13 @@
                     <div id="passwordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
 
                     <div class="input-links-container">
-                        <input type="checkbox" name="terms" required />
+                        <input type="checkbox" name="terms" id="terms" name="terms" />
                         <p>
-                            I already have read and agreed to the
-                            <a href="terms.html">Terms and Conditions</a>
+                            I have read and agree to the
+                            <a href="terms.html">Terms & Conditions</a>
                             and
                             <a href="privacy.html">Privacy Policy</a>
-                            of this system.
+                            of CodePreviewer.
                         </p>
                     </div>
 
