@@ -11,7 +11,7 @@ const app = express();
 // CRITICAL: Tells Express to trust Vercel's proxy for secure cookies
 app.set('trust proxy', 1);
 
-/* ================= DEBUG ENV ================= */
+/* DEBUG ENV  */
 app.get('/debug-env', (req, res) => {
   res.json({
     hasSupabaseUrl: !!process.env.SUPABASE_URL,
@@ -23,14 +23,14 @@ app.get('/debug-env', (req, res) => {
   });
 });
 
-/* ================= SUPABASE ================= */
+/* SUPABASE */
 const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
 const supabase = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY
   ? createSupabaseClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
   : null;
 if (!supabase) console.error('WARNING: Supabase client not initialized');
 
-/* ================= REDIS SESSION STORE ================= */
+/* REDIS SESSION STORE */
 const { createClient } = require('redis');
 const RedisStore = require('connect-redis').default;
 
@@ -123,7 +123,7 @@ if (sessionStore) {
 
 app.use(session(sessionConfig));
 
-/* ================= CORS ================= */
+/* CORS */
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin) {
@@ -136,28 +136,28 @@ app.use((req, res, next) => {
   next();
 });
 
-/* ================= BODY PARSING ================= */
+/* BODY PARSING */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ================= REQUEST LOGGING ================= */
+/* REQUEST LOGGING */
 app.use((req, res, next) => {
   const status = req.session?.isLoggedIn ? `authenticated ${req.session.email}` : 'not logged in';
   console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
   next();
 });
 
-/* ================= MIDDLEWARE ================= */
+/* MIDDLEWARE */
 const { requireAuth } = require('./middleware/auth');
 
-/* ================= API ROUTES ================= */
+/* API ROUTES */
 const authRouter = require('./routes/auth');
 const projectsRouter = require('./routes/projects');
 
 app.use('/api/auth', authRouter);
 app.use('/api/projects', projectsRouter);
 
-/* ================= DEBUG ENDPOINTS ================= */
+/* DEBUG ENDPOINTS */
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
 });
@@ -172,10 +172,10 @@ app.get('/debug-session', (req, res) => {
   });
 });
 
-/* ================= STATIC FILES ================= */
+/* STATIC FILES */
 app.use(express.static(path.join(__dirname, '../public')));
 
-/* ================= PAGE ROUTES ================= */
+/* PAGE ROUTES  */
 app.get('/', (req, res) => {
   if (req.session?.isLoggedIn) return res.redirect('/user');
   res.sendFile(path.join(__dirname, '../public/index.html'));
@@ -207,12 +207,12 @@ app.get('/admin/dashboard.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
 });
 
-/* ================= 404 HANDLER ================= */
+/* 404 HANDLER */
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
 });
 
-/* ================= ERROR HANDLER ================= */
+/* ERROR HANDLER */
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({
@@ -221,10 +221,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-/* ================= START ================= */
+/* START */
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
 }
 
 module.exports = app;
