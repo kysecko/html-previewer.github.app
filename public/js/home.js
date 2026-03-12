@@ -710,7 +710,7 @@ async function init() {
 
   lucide.createIcons();
   updateLineNumbers();
-  setTimeout(() => showSuccessModal('Dashboard Ready', 'Welcome back! Your projects have been loaded successfully.'), 500);
+  setTimeout(() => showSuccessModal('Dashboard Loaded!', ' Your projects have been retrieved successfully.'), 500);
 }
 
 document.addEventListener('DOMContentLoaded', init);

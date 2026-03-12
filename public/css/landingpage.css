@@ -75,9 +75,9 @@ img {
   height: 32px;
 }
 
-/* ─── Mobile Menu Toggle — always visible ────────────── */
+/* ─── Mobile Menu Toggle — hidden on desktop ─────────── */
 .menu-toggle {
-  display: flex;
+  display: none;
   background: none;
   border: none;
   color: #fff;
@@ -90,23 +90,12 @@ img {
   flex-shrink: 0;
 }
 
-/* ─── Nav Links — hidden by default, shown on toggle ─── */
+/* ─── Nav Links — desktop: inline row on the right ───── */
 .nav-links {
-  display: none;
-  position: absolute;
-  top: 61px;
-  left: 0;
-  width: 100%;
-  background: #000;
-  border-bottom: 1px solid #3a3a3a;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 6px 0;
-  z-index: 9998;
-}
-
-.nav-links.active {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 .nav-links a {
@@ -116,18 +105,27 @@ img {
   font-size: 0.9rem;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 100%;
-  padding: 8px 24px;
-  border-bottom: 1px solid #1a1a1a;
+  padding: 6px 12px;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .nav-links a::after {
-  display: none;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-links a:hover::after {
+  width: calc(100% - 24px);
 }
 
 .nav-links .btn-primary {
@@ -137,14 +135,14 @@ img {
   padding: 8px 20px;
   font-size: 0.875rem;
   font-weight: 600;
-  margin: 8px 24px;
-  width: calc(100% - 48px);
+  margin-left: 8px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-links .btn-primary:hover {
@@ -941,9 +939,50 @@ img {
   }
 }
 
-/* ─── Responsive: 768px ──────────────────────────────── */
+/* ─── Responsive: 768px — switch to hamburger ────────── */
 @media (max-width: 768px) {
+  body { padding-top: 70px; }
+
   .navbar { padding: 14px; }
+
+  /* Show hamburger, hide inline nav */
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 61px;
+    left: 0;
+    width: 100%;
+    background: #000;
+    border-bottom: 1px solid #3a3a3a;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 6px 0;
+    z-index: 9998;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links a {
+    width: 100%;
+    padding: 8px 24px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .nav-links a::after {
+    display: none;
+  }
+
+  .nav-links .btn-primary {
+    margin: 8px 24px;
+    width: calc(100% - 48px);
+    margin-left: 24px;
+  }
 
   .hero { padding: 44px 14px 34px; }
 

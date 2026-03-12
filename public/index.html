@@ -315,13 +315,11 @@
     menuBtn.addEventListener("click", () => {
       navMenu.classList.toggle("active");
       const isOpen = navMenu.classList.contains("active");
-
-      // Clear the button and re-render the correct icon
       menuBtn.innerHTML = `<i data-lucide="${isOpen ? 'x' : 'menu'}"></i>`;
       lucide.createIcons();
     });
 
-    // Close menu when a nav link is clicked
+    // Close menu when a nav link is clicked (mobile only)
     document.querySelectorAll("#navMenu a").forEach(link => {
       link.addEventListener("click", () => {
         navMenu.classList.remove("active");
@@ -330,6 +328,14 @@
       });
     });
 
+    // Close menu if window is resized to desktop
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 768) {
+        navMenu.classList.remove("active");
+        menuBtn.innerHTML = `<i data-lucide="menu"></i>`;
+        lucide.createIcons();
+      }
+    });
     // FAQ toggle
     document.querySelectorAll('.faq-question').forEach(q => {
       q.addEventListener('click', () => {
