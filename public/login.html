@@ -43,11 +43,11 @@
 
     <div class="page">
         <div class="card">
-            <div class="image-wrapper" data-aos="fade-right" data-aos-duration="1000">
+            <div class="image-wrapper" data-aos="fade-right" data-aos-duration="600">
                 <img src="/images/login-img.png" alt="Login illustration" />
             </div>
 
-            <div class="login-wrapper" data-aos="fade-left" data-aos-duration="1000">
+            <div class="login-wrapper" data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">
                 <!-- <div class="logo-container">
                     <img src="images/logoo.png" alt="logo" class="logo-image">
                     <h4>Code<span style="color: #FFAC1C;">Previewer</span></h4>
@@ -101,6 +101,13 @@
 
     <script>
         lucide.createIcons();
+
+        AOS.init({           
+            duration: 800,
+            once: true,
+            offset: 80,
+            easing: 'ease-out'
+        });
     </script>
 </body>
 
