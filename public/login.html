@@ -8,10 +8,16 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/css/login.css" />
     <link rel="stylesheet" href="css/loader.css">
-    <!-- Icons -->
-    <script src="/libs/lucide.js"></script>
     <!-- JS -->
     <script src="/js/login.js" defer></script>
+
+    <!-- Imports -->
+    <!-- Icons -->
+    <script src="/libs/lucide.js"></script>
+
+    <!-- Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <title>Log in to your account</title>
 </head>
@@ -37,11 +43,11 @@
 
     <div class="page">
         <div class="card">
-            <div class="image-wrapper">
+            <div class="image-wrapper" data-aos="fade-right" data-aos-duration="1000">
                 <img src="/images/login-img.png" alt="Login illustration" />
             </div>
 
-            <div class="login-wrapper">
+            <div class="login-wrapper" data-aos="fade-left" data-aos-duration="1000">
                 <!-- <div class="logo-container">
                     <img src="images/logoo.png" alt="logo" class="logo-image">
                     <h4>Code<span style="color: #FFAC1C;">Previewer</span></h4>
