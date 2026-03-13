@@ -2,75 +2,76 @@
 /* HEADER */
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 20px;
-    background-color: transparent;
-    color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background-color: transparent;
+  color: white;
 }
 
 .header .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .header .logo img {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 .header .logo span {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffac1c;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffac1c;
 }
-
-.header .back-button {
-    font-size: 16px;
-    color: rgb(204, 204, 204);
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.header .back-button:hover {
-    background-color: #d68f00;
-    color: white;
+.header a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #7a7a7a;
 }
 
 /* LEGAL PAGE */
 
 .legal-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 60px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 20px;
 }
 
 .legal-page h1 {
-    margin-bottom: 20px;
-    color: #ffac1c;
+  margin-bottom: 20px;
+  color: #ffac1c;
 }
 
 .legal-page h2 {
-    margin-top: 40px;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 .legal-page p {
-    color: #7a7a7a;
-    line-height: 1.8;
-    margin-bottom: 14px;
+  color: #7a7a7a;
+  line-height: 1.8;
+  margin-bottom: 14px;
 }
 
 .legal-page ul {
-    margin-left: 20px;
-    color: #7a7a7a;
+  margin-left: 20px;
+  color: #7a7a7a;
 }
 
 .legal-page li {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
+}
+.footer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footer p{
+    text-align: center;
+    color: #7a7a7a;
+    margin-bottom: 10px;
 }

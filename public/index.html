@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodePreview | Minimalist Black & White Editor</title>
+  <title>CodePreviewer | Minimalist Black & White Editor</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,29 +48,37 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
-      <h1 data-aos="fade-right" data-aos-duration="1000">
-        your <span style="color: #FFAC1C; font-family: 'Bungee';">ide</span> wherever you <span
-          style="color: #FFAC1C; font-family: 'Bungee';">go</span>
-      </h1>
-      <p class="hero-description" data-aos="fade-right" data-aos-duration="2000"
-        style="font-size: 1.25rem; color: #ffffffcc; line-height: 1.6;">
-        Unlock your coding potential with a clean, fast, and intuitive editor. Write, test, and preview your projects
-        live — all in your browser.
-        Collaborate, experiment, and build without limits, whether you're learning or creating your next big app.
-      </p>
-      <div class="hero-actions">
-        <a href="/pages/compiler.html" class="btn btn-primary" data-aos="zoom-in" data-aos-delay="200"
-          data-aos-duration="700" data-aos-easing="ease-out-back">
-          <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
-          Continue as Guest
-        </a>
-        <a href="/register.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700"
-          data-aos-easing="ease-out-cubic">
-          <i data-lucide="user" style="width:18px;height:18px;"></i>
-          Join Now
-          <span class="btn-subtext">Free account</span>
-        </a>
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08);
+     border: 0.5px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 14px; margin-bottom: 1.5rem;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #FFAC1C; display: inline-block;"></span>
+        <span style="font-size: 13px; color: #ffffffcc; letter-spacing: 0.04em;">Browser-native IDE</span>
       </div>
+
+      <h1 data-aos="fade-right" data-aos-duration="1000"
+        style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 500; line-height: 1.15; margin: 0 0 1.25rem;">
+        Your development environment,<br>
+        <span style="color: #FFAC1C; font-family: 'Bungee', sans-serif;">everywhere you work.</span>
+      </h1>
+
+      <p class="hero-description" data-aos="fade-right" data-aos-duration="2000"
+        style="font-size: 1.125rem; color: #ffffffcc; line-height: 1.75; max-width: 560px; margin: 0 0 1rem;">
+        A fast, focused code editor built for the browser. Write, run, and preview projects instantly —
+        no setup, no installs, no friction. From quick experiments to production-ready builds.
+      </p>
+      <a href="/register.html" class="btn btn-yellow" data-aos="fade-right" data-aos-duration="3000" data-aos-easing="ease-out-cubic">
+        <i data-lucide="arrow-right"></i>
+        <div class="btn-text">
+          Start Building
+        </div>
+      </a>
+
+      <a href="/pages/compiler.html" class="btn-guest" data-aos="fade-right" data-aos-duration="2500" data-aos-easing="ease-out-cubic">
+        <i data-lucide="users"></i>
+        <div class="btn-text">
+          Continue as Guest
+        </div>
+      </a>
+    </div>
     </div>
 
     <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000">
