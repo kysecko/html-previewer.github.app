@@ -5,9 +5,9 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-
 app.set('trust proxy', 1);
 
+// ------------------ CORS ------------------
 app.use(cors({
   origin: [
     'https://html-previewer-github.vercel.app',
@@ -19,12 +19,17 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
+
+// ------------------ Redis & Session ------------------
 const { createClient } = require('redis');
 const RedisStore = require('connect-redis').default;
 
 const redisClient = createClient({ url: process.env.REDIS_URL });
 redisClient.connect().catch(console.error);
-const sessionConfig = {
+
+const isProd = process.env.NODE_ENV === 'production';
+
+app.use(session({
   store: new RedisStore({ client: redisClient }),
   name: 'code-editor-session',
   secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
@@ -32,26 +37,26 @@ const sessionConfig = {
   saveUninitialized: false,
   proxy: true,
   cookie: {
-    secure: true,
+    secure: isProd,            // Only secure cookies in production
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: isProd ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000
   }
-};
+}));
 
-app.use(session(sessionConfig));
-
+// ------------------ Body Parser ------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ------------------ Logging ------------------
 app.use((req, res, next) => {
   const status = req.session?.isLoggedIn ? `authenticated ${req.session.email}` : 'not logged in';
   console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
   next();
 });
 
+// ------------------ Routes ------------------
 const { requireAuth } = require('./middleware/auth');
-
 const authRouter = require('./routes/auth');
 const projectsRouter = require('./routes/projects');
 
@@ -62,39 +67,34 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
 });
 
-app.use(express.static(path.join(__dirname, '/public')));
+// ------------------ Static Files ------------------
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
+// ------------------ Page Routes ------------------
 app.get('/', (req, res) => {
   if (req.session?.isLoggedIn) return res.redirect('/user');
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 app.get('/guest/compiler', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
+  res.sendFile(path.join(publicPath, 'pages/user/compiler.html'));
 });
 
-app.get('/user', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/pages/user/home.html'));
+app.get(['/user', '/pages/user/home.html'], requireAuth, (req, res) => {
+  res.sendFile(path.join(publicPath, 'pages/user/home.html'));
 });
 
-app.get('/pages/user/home.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/pages/user/home.html'));
+app.get(['/pages/user/compiler.html'], requireAuth, (req, res) => {
+  res.sendFile(path.join(publicPath, 'pages/user/compiler.html'));
 });
 
-app.get('/pages/user/compiler.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/pages/user/compiler.html'));
-});
-
-app.get('/admin', requireAuth, (req, res) => {
+app.get(['/admin', '/admin/dashboard.html'], requireAuth, (req, res) => {
   if (req.session.role !== 'admin') return res.redirect('/user');
-  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
+  res.sendFile(path.join(publicPath, 'pages/admin/dashboard.html'));
 });
 
-app.get('/admin/dashboard.html', requireAuth, (req, res) => {
-  if (req.session.role !== 'admin') return res.redirect('/user');
-  res.sendFile(path.join(__dirname, '../public/pages/admin/dashboard.html'));
-});
-
+// ------------------ 404 & Error Handler ------------------
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
 });
@@ -103,17 +103,15 @@ app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    message: isProd ? 'Something went wrong' : err.message
   });
 });
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
+// ------------------ Local Dev Server ------------------
+if (!isProd) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-// Export for Vercel serverless
+// ------------------ Export for Vercel ------------------
 module.exports = app;
