@@ -6,7 +6,7 @@
   "scripts": {
     "build": "javascript-obfuscator src --output public/js --compact true --control-flow-flattening true",
     "start": "node backend/server.js",
-    "dev": "vercel dev"
+    "dev": "node backend/server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.87.1",
