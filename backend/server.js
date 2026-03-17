@@ -105,6 +105,7 @@ const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
   resave: false,
   saveUninitialized: false,
+  proxy: true,                    // NEW: Required when behind proxy (Vercel)
   cookie: {
     secure: true,
     httpOnly: true,
@@ -123,15 +124,24 @@ if (sessionStore) {
 
 app.use(session(sessionConfig));
 
-/* CORS */
+/* CORS - Improved for Vercel + Railway cross-origin */
 app.use((req, res, next) => {
+  const allowedOrigins = [
+    'https://html-previewer-github.vercel.app',
+    'https://html-previewer-github-dka6vuab2-kyseckos-projects.vercel.app',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500'
+  ];
+
   const origin = req.headers.origin;
-  if (origin) {
+  if (allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
   }
+
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+
   if (req.method === 'OPTIONS') return res.status(200).end();
   next();
 });
@@ -226,7 +236,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = app;
 
 module.exports = app;
