@@ -19,8 +19,13 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
+const { createClient } = require('redis');
+const RedisStore = require('connect-redis').default;
 
+const redisClient = createClient({ url: process.env.REDIS_URL });
+redisClient.connect().catch(console.error);
 const sessionConfig = {
+  store: new RedisStore({ client: redisClient }),
   name: 'code-editor-session',
   secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
   resave: false,
@@ -109,11 +114,6 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`Server running on port ${PORT}`);
   });
 }
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+
 // Export for Vercel serverless
 module.exports = app;
