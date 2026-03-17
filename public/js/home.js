@@ -1,5 +1,82 @@
 lucide.createIcons();
 
+console.log('Dashboard script started');
+console.log('Current URL:', window.location.href);
+console.log('Cookies:', document.cookie);
+
+async function init() {
+  console.log('Initializing your dashboard...');
+
+  // Add session debug
+  const sessionData = await debugSession();
+  console.log('Session data:', sessionData);
+
+  const isAuthenticated = await checkAuth();
+  console.log('Is authenticated:', isAuthenticated);
+
+  if (!isAuthenticated) {
+    console.log('Not authenticated');
+    return;
+  }
+
+  console.log('Loading projects...');
+  await loadProjects();
+  console.log('Projects loaded:', projects.length);
+
+  if (!editor.value.trim()) {
+    console.log('Setting default editor content');
+    editor.value =
+      '<!DOCTYPE html>\n' +
+      '<html>\n' +
+      '<head>\n' +
+      '  <title>My Project</title>\n' +
+      '  <style>\n' +
+      '    body {\n' +
+      '      font-family: Arial, sans-serif;\n' +
+      '      margin: 0;\n' +
+      '      padding: 20px;\n' +
+      '      background: #f0f0f0;\n' +
+      '    }\n' +
+      '    .container {\n' +
+      '      max-width: 800px;\n' +
+      '      margin: 0 auto;\n' +
+      '      background: white;\n' +
+      '      padding: 30px;\n' +
+      '      border-radius: 10px;\n' +
+      '      box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n' +
+      '    }\n' +
+      '    h1 { color: #333; }\n' +
+      '    .btn {\n' +
+      '      background: #FFAC1C;\n' +
+      '      color: white;\n' +
+      '      border: none;\n' +
+      '      padding: 10px 20px;\n' +
+      '      border-radius: 5px;\n' +
+      '      cursor: pointer;\n' +
+      '    }\n' +
+      '    .btn:hover { background: #eba52d; }\n' +
+      '  </style>\n' +
+      '</head>\n' +
+      '<body>\n' +
+      '  <div class="container">\n' +
+      '    <h1>Welcome to Code Previewer</h1>\n' +
+      '    <p>This is your live preview area.</p>\n' +
+      '    <button class="btn" onclick="alert(\'Uyy! Gumana boi.\')">Click Me</button>\n' +
+      '  </div>\n' +
+      '</body>\n' +
+      '</html>';
+    updatePreview();
+  }
+
+  console.log('Creating icons...');
+  lucide.createIcons();
+  updateLineNumbers();
+
+  setTimeout(() => {
+    console.log('Showing success modal');
+    showSuccessModal('Dashboard Loaded!', ' Your projects have been retrieved successfully.');
+  }, 500);
+}
 let projects = [];
 let currentId = null;
 let saveTimeout = null;
