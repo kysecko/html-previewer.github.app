@@ -1,0 +1,1 @@
+const API_BASE = 'https://your-app.railway.app'; // update after Railway deploy
