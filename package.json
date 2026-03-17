@@ -4,6 +4,7 @@
   "description": "",
   "main": "backend/server.js",
   "scripts": {
+    "build": "javascript-obfuscator src --output public/js --compact true --control-flow-flattening true",
     "start": "node backend/server.js",
     "dev": "vercel dev"
   },
@@ -19,5 +20,8 @@
     "express-session": "^1.18.2",
     "lucide": "^0.555.0",
     "redis": "^4.6.13"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^5.3.0"
   }
 }
