@@ -1,6 +1,6 @@
 @import url(./shared.css);
 
-/* ================= ROOT VARIABLES ================= */
+/* ROOT VARIABLES */
 :root {
   --bg: #000000;
   --input: #3a3a3a;
@@ -11,7 +11,7 @@
   --radius: 20px;
 }
 
-/* ================= GLOBAL ================= */
+/* GLOBAL */
 * {
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
@@ -28,7 +28,7 @@ body {
   justify-content: center;
 }
 
-/* ================= LAYOUT ================= */
+/* LAYOUT */
 .page {
   width: 100%;
   max-width: 1000px;
@@ -69,20 +69,7 @@ body {
   justify-content: center;
 }
 
-/* ================= LOGO ================= */
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  margin-bottom: 10px;
-}
-
-.logo-image {
-  width: 60px;
-  height: 50px;
-}
-
-/* ================= HEADINGS ================= */
+/* HEADINGS  */
 .title-header {
   font-size: 28px;
   font-weight: 600;
@@ -97,7 +84,7 @@ body {
   text-align: left;
 }
 
-/* ================= FORM ================= */
+/* FORM */
 label {
   font-size: 13px;
   font-weight: 600;
@@ -139,7 +126,7 @@ input {
   font-size: 14px;
 }
 
-/* ================= MESSAGES ================= */
+/* MESSAGES */
 #message {
   font-size: 0.875rem;
   margin-bottom: 12px;
@@ -157,7 +144,6 @@ input {
   text-decoration: underline;
 }
 
-/* /* ─── Input Links ────────────────────────────────────── */
 .input-links-container {
   display: flex;
   flex-direction: row;
@@ -189,7 +175,7 @@ input {
 .input-links-container a:hover {
   text-decoration: underline;
 }
-/* ================= BUTTON ================= */
+/* BUTTON */
 .login-btn {
   margin-top: 14px;
   padding: 12px;
@@ -216,7 +202,7 @@ button:disabled {
   pointer-events: none;
 }
 
-/* ================= LINKS ================= */
+/* LINKS */
 .paragraph {
   margin-top: 20px;
   font-size: 13px;
@@ -234,7 +220,7 @@ button:disabled {
   text-decoration: underline;
 }
 
-/* ================= SUCCESS MODAL ================= */
+/* SUCCESS MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -251,10 +237,8 @@ button:disabled {
 .modal-content {
   margin-top: 8px;
   pointer-events: auto;
-  /* modal itself clickable */
 
   background: #0b2610;
-  /* dark green base */
   color: #ffffff;
   padding: 20px 22px;
   border-radius: 14px;
@@ -262,7 +246,6 @@ button:disabled {
   max-width: 420px;
 
   border: 1px solid rgba(34, 197, 94, 0.4);
-  /* green border */
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(34, 197, 94, 0.15);
@@ -275,7 +258,6 @@ button:disabled {
   font-size: 16px;
   font-weight: 600;
   color: #22c55e;
-  /* bright green */
   text-align: center;
 }
 
@@ -283,7 +265,6 @@ button:disabled {
   margin: 0;
   font-size: 14px;
   color: #d9fdd3;
-  /* soft green text */
   line-height: 1.4;
   text-align: center;
 }
@@ -295,7 +276,6 @@ button:disabled {
   margin: 0 auto 12px;
   border-radius: 50%;
   background: rgba(34, 197, 94, 0.15);
-  /* light green circle */
 
   display: flex;
   align-items: center;
@@ -307,7 +287,6 @@ button:disabled {
   width: 22px;
   height: 22px;
   stroke: #22c55e;
-  /* bright green check */
 }
 
 @keyframes pop {
@@ -338,7 +317,7 @@ button:disabled {
   }
 }
 
-/* ================= RESPONSIVE ================= */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   body {
     align-items: flex-start;

@@ -54,7 +54,7 @@ section {
   padding: 0 14px;
 }
 
-/* ─── Navbar ─────────────────────────────────────────── */
+/* NAVBAR */
 .navbar {
   position: fixed;
   top: 0;
@@ -86,7 +86,7 @@ img {
   height: 32px;
 }
 
-/* ─── Mobile Menu Toggle — hidden on desktop ─────────── */
+/* MOBILE MENU Toggle — hidden on desktop */
 .menu-toggle {
   display: none;
   background: none;
@@ -101,7 +101,7 @@ img {
   flex-shrink: 0;
 }
 
-/* ─── Nav Links — desktop: inline row on the right ───── */
+/* NAV LINKS— desktop: inline row on the right  */
 .nav-links {
   display: flex;
   flex-direction: row;
@@ -165,7 +165,7 @@ img {
   display: none;
 }
 
-/* ─── Buttons ────────────────────────────────────────── */
+/* BUTTONS */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -230,7 +230,7 @@ img {
   display: none;
 }
 
-/* ─── Hero ───────────────────────────────────────────── */
+/* HERO */
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -359,7 +359,7 @@ img {
   border-top: 1px solid #3a3a3a;
 }
 
-/* ─── Editor Preview ─────────────────────────────────── */
+/* EDITOR PREVIEW BUT TO CHANGE SOON */
 .hero-visual {
   position: relative;
 }
@@ -516,7 +516,7 @@ img {
   font-style: italic;
 }
 
-/* ─── Sections ───────────────────────────────────────── */
+/* Sections */
 .section {
   padding: 56px 24px;
   background: #000;
@@ -539,7 +539,7 @@ img {
   line-height: 1.7;
 }
 
-/* ─── Features ───────────────────────────────────────── */
+/* FEATURES */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -556,6 +556,7 @@ img {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .feature-card::before {
@@ -592,7 +593,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
   background: #2a2a2a;
   border: 2px solid #3a3a3a;
   color: #fff;
@@ -629,7 +630,7 @@ img {
   color: #fff;
 }
 
-/* ─── Philosophy ─────────────────────────────────────── */
+/* PHILOSOPHY */
 .dark-section {
   background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
   position: relative;
@@ -656,6 +657,7 @@ img {
 }
 
 .philosophy-item {
+  text-align: center;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid #3a3a3a;
   border-radius: 12px;
@@ -673,6 +675,7 @@ img {
 }
 
 .philosophy-number {
+  text-align: center;
   font-size: 3rem;
   font-weight: 800;
   color: #3a3a3a;
@@ -692,7 +695,7 @@ img {
   line-height: 1.7;
 }
 
-/* ─── CTA ────────────────────────────────────────────── */
+/* CTA */
 .cta-section {
   text-align: center;
   padding: 56px 24px;
@@ -747,7 +750,7 @@ img {
   margin-top: 14px;
 }
 
-/* ─── Testimonials ───────────────────────────────────── */
+/* TESTIMONIALS */
 .testimonials {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -818,7 +821,7 @@ img {
   font-size: 0.9rem;
 }
 
-/* ─── FAQ ────────────────────────────────────────────── */
+/* FAQ */
 .faq {
   max-width: 800px;
   margin: 0 auto;
@@ -860,7 +863,7 @@ img {
   line-height: 1.6;
 }
 
-/* ─── Footer ─────────────────────────────────────────── */
+/* FOOTER */
 .footer {
   background: #1a1a1a;
   padding: 56px 24px 24px;
@@ -947,7 +950,7 @@ img {
   font-size: 0.9rem;
 }
 
-/* ─── Animations ─────────────────────────────────────── */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -977,7 +980,7 @@ img {
   animation-delay: 0.4s;
 }
 
-/* ─── Scrollbar ──────────────────────────────────────── */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -1001,7 +1004,7 @@ img {
   color: #000;
 }
 
-/* ─── Responsive: 1024px ─────────────────────────────── */
+/* 1024px */
 @media (max-width: 1024px) {
   body {
     padding-top: 70px;
@@ -1026,108 +1029,25 @@ img {
   }
 }
 
-/* ─── Responsive: 768px — switch to hamburger ────────── */
 @media (max-width: 768px) {
-  body {
-    padding-top: 70px;
-  }
-
-  .navbar {
-    padding: 14px;
-  }
-
-  /* Show hamburger, hide inline nav */
-  .menu-toggle {
-    display: flex;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 61px;
-    left: 0;
-    width: 100%;
-    background: #000;
-    border-bottom: 1px solid #3a3a3a;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 6px 0;
-    z-index: 9998;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .nav-links a {
-    width: 100%;
-    padding: 8px 24px;
-    border-bottom: 1px solid #1a1a1a;
-  }
-
-  .nav-links a::after {
-    display: none;
-  }
-
-  .nav-links .btn-primary {
-    margin: 8px 24px;
-    width: calc(100% - 48px);
-    margin-left: 24px;
-  }
-
-  .hero {
-    padding: 44px 14px 34px;
-  }
-
   .hero-actions {
     flex-direction: column;
     align-items: center;
+    gap: 16px;
   }
 
-  .btn {
+  .hero-actions .btn,
+  .hero-actions .btn-yellow,
+  .hero-actions .btn-guest {
     width: 100%;
     max-width: 300px;
-  }
-
-  .features,
-  .philosophy-content,
-  .testimonials {
-    grid-template-columns: 1fr;
-  }
-
-  .cta-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  section {
-    padding: 34px 14px;
-  }
-
-  .section-header {
-    margin-bottom: 34px;
-  }
-
-  .hero-subtexts {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-microcopy {
-    font-size: 0.85rem;
-    margin-top: 14px;
-  }
-
-  .trust-indicators {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .editor-tabs {
-    display: none;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 0.95rem;
   }
 }
 
-/* ─── Responsive: 480px ──────────────────────────────── */
+/* 480px */
 @media (max-width: 480px) {
   body {
     padding-top: 60px;
@@ -1155,5 +1075,54 @@ img {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.97);
+    padding: 90px 24px 40px;
+    z-index: 9998;
+    overflow-y: auto;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+  .logo {
+    z-index: 10002;  
+    position: relative;
+  }
+
+  .logo img,
+  .footer-logo img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-links a {
+    font-size: 1.1rem;
+    padding: 12px 0;
+    width: 100%;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .nav-links .btn-primary {
+    margin-left: 0;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
   }
 }
