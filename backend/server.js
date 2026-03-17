@@ -7,6 +7,10 @@ const cors       = require('cors');
 const app = express();
 app.set('trust proxy', 1);
 
+// Detect environments
+const isProd    = process.env.NODE_ENV === 'production';
+const isVercel  = !!process.env.VERCEL;
+
 // ------------------ CORS ------------------
 app.use(cors({
   origin: [
@@ -21,8 +25,6 @@ app.use(cors({
 }));
 
 // ------------------ Session Store Setup ------------------
-const isProd = process.env.NODE_ENV === 'production';
-
 function buildSessionMiddleware() {
   const sessionConfig = {
     name:              'code-editor-session',
@@ -37,8 +39,8 @@ function buildSessionMiddleware() {
     }
   };
 
-  // Only use Redis store if REDIS_URL is set
-  if (process.env.REDIS_URL) {
+  // 🚨 IMPORTANT: Disable Redis on Vercel (serverless cannot maintain connections)
+  if (process.env.REDIS_URL && !isVercel) {
     try {
       const { createClient } = require('redis');
       const RedisStore        = require('connect-redis').default;
@@ -51,7 +53,6 @@ function buildSessionMiddleware() {
       redisClient.on('error',   (err) => console.error('Redis error:', err));
       redisClient.on('connect', ()    => console.log('Redis connected'));
 
-      // Connect but don't await — RedisStore handles reconnection
       redisClient.connect().catch((err) => console.error('Redis connect failed:', err));
 
       sessionConfig.store = new RedisStore({
@@ -66,13 +67,18 @@ function buildSessionMiddleware() {
       console.error('Redis setup failed, falling back to memory store:', err.message);
     }
   } else {
-    console.warn('REDIS_URL not set — using in-memory session store (not suitable for production)');
+    console.warn('⚠️ Redis disabled (Vercel or no REDIS_URL) — using memory store');
   }
 
   return session(sessionConfig);
 }
 
-app.use(buildSessionMiddleware());
+// 🚨 Disable sessions entirely on Vercel (prevents crashes)
+if (!isVercel) {
+  app.use(buildSessionMiddleware());
+} else {
+  console.warn('⚠️ Sessions disabled on Vercel (serverless environment)');
+}
 
 // ------------------ Body Parser ------------------
 app.use(express.json());
@@ -92,20 +98,25 @@ const { requireAuth } = require('./middleware/auth');
 const authRouter      = require('./routes/auth');
 const projectsRouter  = require('./routes/projects');
 
-app.use('/api/auth',     authRouter);
-app.use('/api/projects', projectsRouter);
+// 🚨 Avoid protected routes breaking on Vercel (no session)
+if (!isVercel) {
+  app.use('/api/auth',     authRouter);
+  app.use('/api/projects', projectsRouter);
+} else {
+  console.warn('⚠️ Auth routes disabled on Vercel (no sessions)');
+}
 
 app.get('/api/test', (req, res) => {
   res.json({
     message:   'API is working!',
     timestamp: new Date().toISOString(),
     redis:     !!process.env.REDIS_URL,
-    env:       process.env.NODE_ENV
+    env:       process.env.NODE_ENV,
+    vercel:    isVercel
   });
 });
 
 // ------------------ Static Files ------------------
-// server.js is inside /backend — public is one level up at project root
 const publicPath = path.join(__dirname, '..', 'public');
 app.use(express.static(publicPath));
 
