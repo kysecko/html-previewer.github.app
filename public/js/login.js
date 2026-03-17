@@ -24,15 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Guard — if form not found the listener can't attach
   if (!form) {
-    console.error('[login.js] #loginForm not found in DOM.');
+    console.error('[login.js] ❌ #loginForm not found in DOM.');
     return;
   }
   if (!emailInput || !passwordInput) {
-    console.error('[login.js] #email or #password input not found.');
+    console.error('[login.js] ❌ #email or #password input not found.');
     return;
   }
 
-  console.log('[login.js] Form ready.');
+  console.log('[login.js] ✅ Form ready.');
 
   // ── Error toast modal ──
   const modal = document.createElement('div');
@@ -146,39 +146,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Form submit ──
   form.addEventListener('submit', async (e) => {
+    // CRITICAL: Prevent default form submission
     e.preventDefault();
     e.stopPropagation();
 
+    // Clear previous errors
     clearFieldError(emailInput, emailMessage);
     clearFieldError(passwordInput, passwordMessage);
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // Client-side validation
+    // Validation flags
+    let isValid = true;
+
+    // Email validation
     if (!email) {
       showFieldError(emailInput, emailMessage, 'Email is required');
       emailInput.focus();
-      showModal('Email Required', 'Please enter your email address.');
-      return;
-    }
-    
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showFieldError(emailInput, emailMessage, 'Invalid email address');
       emailInput.focus();
-      showModal('Invalid Email', 'Please enter a valid email address.');
-      return;
+      isValid = false;
     }
-    
+
+    // Password validation
     if (!password) {
       showFieldError(passwordInput, passwordMessage, 'Password is required');
-      passwordInput.focus();
-      showModal('Password Required', 'Please enter your password.');
-      return;
+      if (isValid) passwordInput.focus();
+      isValid = false;
     }
-    
+
+    // Terms validation
     if (termsCheckbox && !termsCheckbox.checked) {
       showModal('Terms & Conditions', 'Please accept the Terms & Conditions to continue.');
+      isValid = false;
+    }
+
+    // If validation fails, show modal and return
+    if (!isValid) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showModal('Email Required', 'Please enter a valid email address.');
+      } else if (!password) {
+        showModal('Password Required', 'Please enter your password.');
+      }
       return;
     }
 
