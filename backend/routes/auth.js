@@ -73,28 +73,44 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
+    // Set session data
     req.session.isLoggedIn = true;
-    req.session.userId    = user.id;
-    req.session.username  = user.username;
-    req.session.email     = user.email;
-    req.session.role      = user.role;
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.email = user.email;
+    req.session.role = user.role;
 
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-        return res.status(500).json({ success: false, error: 'Session error' });
-      }
-      console.log('Login successful:', email, '| Role:', user.role);
-      const redirect = user.role === 'admin' ? '/admin' : '/user';
-      res.json({ success: true, redirect });
+    console.log('Session data set:', {
+      isLoggedIn: req.session.isLoggedIn,
+      userId: req.session.userId,
+      email: req.session.email,
+      role: req.session.role
     });
+
+    // Save session properly with a Promise
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          reject(err);
+        } else {
+          console.log('Session saved successfully');
+          resolve();
+        }
+      });
+    });
+
+    console.log('Login successful:', email, '| Role:', user.role);
+    const redirect = user.role === 'admin' ? '/admin' : '/user';
+
+    // Return success
+    res.json({ success: true, redirect });
 
   } catch (err) {
     console.error('LOGIN ERROR:', err);
-    res.status(500).json({ success: false, error: 'Server error' });
+    res.status(500).json({ success: false, error: 'Server error: ' + err.message });
   }
 });
-
 router.get('/verify', (req, res) => {
   if (req.session?.isLoggedIn && req.session?.userId) {
     return res.json({
