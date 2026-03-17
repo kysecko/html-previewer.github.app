@@ -1,7 +1,4 @@
-require('dotenv').config({
-  path: require('path').resolve(__dirname, '..', '.env')
-});
-
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
@@ -10,22 +7,6 @@ const cors = require('cors');
 const app = express();
 
 app.set('trust proxy', 1);
-
-app.get('/debug-env', (req, res) => {
-  res.json({
-    hasSupabaseUrl: !!process.env.SUPABASE_URL,
-    hasSupabaseAnon: !!process.env.SUPABASE_ANON_KEY,
-    hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    hasSessionSecret: !!process.env.SESSION_SECRET,
-    nodeEnv: process.env.NODE_ENV
-  });
-});
-
-const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-const supabase = process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY
-  ? createSupabaseClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
-  : null;
-if (!supabase) console.error('WARNING: Supabase client not initialized');
 
 app.use(cors({
   origin: [
@@ -76,14 +57,6 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
 });
 
-app.get('/debug-session', (req, res) => {
-  res.json({
-    session: req.session,
-    sessionID: req.sessionID,
-    storeType: 'MemoryStore'
-  });
-});
-
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', (req, res) => {
@@ -129,9 +102,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
+// Export for Vercel serverless
 module.exports = app;
