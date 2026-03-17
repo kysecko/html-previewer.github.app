@@ -1,1 +1,1 @@
-const API_BASE = 'https://your-app.railway.app'; // update after Railway deploy
+const API_BASE = 'https://your-app.railway.apphtml-previewer-github-app.railway.internal'; 
