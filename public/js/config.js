@@ -1,1 +1,1 @@
-const API_BASE = 'https://your-app.railway.apphtml-previewer-github-app.railway.internal'; 
+const API_BASE = window.location.origin;
