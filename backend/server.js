@@ -1,17 +1,15 @@
 require('dotenv').config();
-const express    = require('express');
-const session    = require('express-session');
-const path       = require('path');
-const cors       = require('cors');
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const cors = require('cors');
 
 const app = express();
 app.set('trust proxy', 1);
 
-// Detect environments
-const isProd    = process.env.NODE_ENV === 'production';
-const isVercel  = !!process.env.VERCEL;
+const isProd = process.env.NODE_ENV === 'production';
+const isVercel = !!process.env.VERCEL;
 
-// ------------------ CORS ------------------
 app.use(cors({
   origin: [
     'https://html-previewer-github.vercel.app',
@@ -24,105 +22,107 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-// ------------------ Session Store Setup ------------------
-function buildSessionMiddleware() {
+async function initializeSession() {
   const sessionConfig = {
-    name:              'code-editor-session',
-    secret:            process.env.SESSION_SECRET || 'fallback-secret-for-development',
-    resave:            false,
+    name: 'code-editor-session',
+    secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
+    resave: false,
     saveUninitialized: false,
     cookie: {
-      secure:   isProd,
+      secure: isProd,
       httpOnly: true,
       sameSite: isProd ? 'none' : 'lax',
-      maxAge:   24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000
     }
   };
 
-  // 🚨 IMPORTANT: Disable Redis on Vercel (serverless cannot maintain connections)
   if (process.env.REDIS_URL && !isVercel) {
     try {
       const { createClient } = require('redis');
-      const RedisStore        = require('connect-redis').default;
+      const RedisStore = require('connect-redis').default;
 
       const redisClient = createClient({
-        url:    process.env.REDIS_URL,
-        socket: { tls: true, rejectUnauthorized: false }
+        url: process.env.REDIS_URL,
+        socket: { 
+          tls: true, 
+          rejectUnauthorized: false,
+          connectTimeout: 10000
+        }
       });
 
-      redisClient.on('error',   (err) => console.error('Redis error:', err));
-      redisClient.on('connect', ()    => console.log('Redis connected'));
+      redisClient.on('error', (err) => {
+        console.error('Redis connection error:', err.message);
+      });
 
-      redisClient.connect().catch((err) => console.error('Redis connect failed:', err));
+      await redisClient.connect();
 
       sessionConfig.store = new RedisStore({
-        client:          redisClient,
-        prefix:          'sess:',
-        ttl:             86400,
-        disableTouch:    false
+        client: redisClient,
+        prefix: 'sess:',
+        ttl: 86400,
+        disableTouch: false
       });
 
-      console.log('Session store: Upstash Redis');
+      console.log('Session store: Redis connected');
     } catch (err) {
-      console.error('Redis setup failed, falling back to memory store:', err.message);
+      console.error('Redis connection failed:', err.message);
+      console.log('Session store: Using memory store (fallback)');
     }
   } else {
-    console.warn('⚠️ Redis disabled (Vercel or no REDIS_URL) — using memory store');
+    console.log('Session store: Using memory store');
   }
 
-  return session(sessionConfig);
+  app.use(session(sessionConfig));
 }
 
-// 🚨 Disable sessions entirely on Vercel (prevents crashes)
 if (!isVercel) {
-  app.use(buildSessionMiddleware());
+  initializeSession().catch(err => {
+    console.error('Session initialization failed:', err.message);
+  });
 } else {
-  console.warn('⚠️ Sessions disabled on Vercel (serverless environment)');
+  console.log('Sessions disabled on Vercel');
 }
 
-// ------------------ Body Parser ------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ------------------ Logging ------------------
 app.use((req, res, next) => {
-  const status = req.session?.isLoggedIn
-    ? `authenticated ${req.session.email}`
-    : 'not logged in';
-  console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
+  const authStatus = req.session?.isLoggedIn 
+    ? `authenticated ${req.session.email}` 
+    : 'not authenticated';
+  console.log(`${req.method} ${req.path} - ${authStatus}`);
   next();
 });
 
-// ------------------ Routes ------------------
 const { requireAuth } = require('./middleware/auth');
-const authRouter      = require('./routes/auth');
-const projectsRouter  = require('./routes/projects');
+const authRouter = require('./routes/auth');
+const projectsRouter = require('./routes/projects');
 
-// 🚨 Avoid protected routes breaking on Vercel (no session)
 if (!isVercel) {
-  app.use('/api/auth',     authRouter);
+  app.use('/api/auth', authRouter);
   app.use('/api/projects', projectsRouter);
 } else {
-  console.warn('⚠️ Auth routes disabled on Vercel (no sessions)');
+  console.log('Auth routes disabled on Vercel');
 }
 
 app.get('/api/test', (req, res) => {
   res.json({
-    message:   'API is working!',
+    message: 'API is working',
     timestamp: new Date().toISOString(),
-    redis:     !!process.env.REDIS_URL,
-    env:       process.env.NODE_ENV,
-    vercel:    isVercel
+    environment: process.env.NODE_ENV,
+    vercel: isVercel,
+    redisConfigured: !!process.env.REDIS_URL,
+    sessionActive: !!req.session
   });
 });
 
-// ------------------ Static Files ------------------
 const publicPath = path.join(__dirname, '..', 'public');
 app.use(express.static(publicPath));
 
-// ------------------ Page Routes ------------------
 app.get('/', (req, res) => {
-  if (req.session?.isLoggedIn) return res.redirect('/user');
+  if (req.session?.isLoggedIn) {
+    return res.redirect('/user');
+  }
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
@@ -139,28 +139,32 @@ app.get('/pages/user/compiler.html', requireAuth, (req, res) => {
 });
 
 app.get(['/admin', '/admin/dashboard.html'], requireAuth, (req, res) => {
-  if (req.session.role !== 'admin') return res.redirect('/user');
+  if (req.session.role !== 'admin') {
+    return res.redirect('/user');
+  }
   res.sendFile(path.join(publicPath, 'pages/admin/dashboard.html'));
 });
 
-// ------------------ 404 & Error Handler ------------------
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
-});
-
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({
-    error:   'Internal server error',
-    message: isProd ? 'Something went wrong' : err.message
+  res.status(404).json({ 
+    error: 'Route not found', 
+    path: req.path 
   });
 });
 
-// ------------------ Local Dev Server ------------------
+app.use((err, req, res, next) => {
+  console.error('Server error:', err.message);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: isProd ? 'An error occurred' : err.message
+  });
+});
+
 if (!isProd) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 }
 
-// ------------------ Export for Vercel ------------------
 module.exports = app;
