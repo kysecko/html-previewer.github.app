@@ -9,7 +9,35 @@ function getSupabase() {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 }
+// TEMPORARY DEBUG ENDPOINT
+router.get('/debug/users', async (req, res) => {
+  try {
+    const supabase = getSupabase();
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('id, username, email, role, password')
+      .limit(5);
 
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Don't send full passwords in production!
+    const safeUsers = users.map(u => ({
+      ...u,
+      password: u.password ?
+        (u.password.startsWith('$2a') ? '✅ bcrypt hash' : '❌ NOT bcrypt: ' + u.password.substring(0, 20))
+        : 'missing'
+    }));
+
+    res.json({
+      count: users.length,
+      users: safeUsers
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 router.post('/register', async (req, res) => {
   try {
     const supabase = getSupabase();
@@ -69,10 +97,10 @@ router.post('/login', async (req, res) => {
     }
 
     req.session.isLoggedIn = true;
-    req.session.userId    = user.id;
-    req.session.username  = user.username;
-    req.session.email     = user.email;
-    req.session.role      = user.role;
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.email = user.email;
+    req.session.role = user.role;
 
     req.session.save((err) => {
       if (err) {
