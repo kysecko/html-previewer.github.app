@@ -44,7 +44,8 @@ if (!isVercel && process.env.REDIS_URL) {
       url: process.env.REDIS_URL,
       socket: { 
         tls: true, 
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        connectTimeout: 10000
       }
     });
 
@@ -52,7 +53,14 @@ if (!isVercel && process.env.REDIS_URL) {
       console.error('Redis error:', err.message);
     });
 
-    redisClient.connect().catch(err => {
+    redisClient.on('connect', () => {
+      console.log('Redis connected successfully');
+    });
+
+    // Connect and wait for it to complete
+    redisClient.connect().then(() => {
+      console.log('Redis client ready');
+    }).catch(err => {
       console.error('Redis connection failed:', err.message);
     });
 
@@ -98,7 +106,16 @@ app.get('/api/test', (req, res) => {
     environment: process.env.NODE_ENV,
     vercel: isVercel,
     redisConfigured: !!process.env.REDIS_URL,
+    redisActive: !isVercel && !!process.env.REDIS_URL,
     sessionActive: !!req.session
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
   });
 });
 
@@ -139,7 +156,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Server error:', err.message);
+  console.error('Server error:', err);
   res.status(500).json({
     error: 'Internal server error',
     message: isProd ? 'An error occurred' : err.message
@@ -150,6 +167,8 @@ if (!isProd) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${isProd ? 'production' : 'development'}`);
+    console.log(`Redis: ${!isVercel && process.env.REDIS_URL ? 'enabled' : 'disabled'}`);
   });
 }
 
