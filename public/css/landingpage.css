@@ -586,31 +586,22 @@ img {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.feature-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
+.feature-card-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px;
-  background: #2a2a2a;
-  border: 2px solid #3a3a3a;
-  color: #fff;
-  font-size: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.feature-card:hover .feature-icon {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
-  transform: rotate(5deg);
-}
-
-.feature-card h3 {
+  gap: 12px;
   margin-bottom: 14px;
-  color: #fff;
+}
+
+.feature-card-header .feature-icon {
+  margin: 0; 
+  flex-shrink: 0;
+}
+
+.feature-card-header h3 {
+  font-size: 18px;
+  margin-bottom: 0;
 }
 .feature-card p {
   color: #7a7a7a;
