@@ -1,23 +1,21 @@
-lucide.createIcons();
-if (typeof API_BASE === 'undefined') {
-  console.error("❌ config.js was not loaded! API_BASE is undefined.");
-  alert("Configuration error: config.js failed to load. Please refresh the page.");
-}
+// ── register.js ──
+// Handles registration form. Uses relative /api paths — no Railway, no external host.
+
+if (typeof lucide !== 'undefined') lucide.createIcons();
+
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('registerForm');
-  const successModal = document.getElementById('successModal');
-
-  const usernameInput = document.getElementById('username');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
+  const form                 = document.getElementById('registerForm');
+  const successModal         = document.getElementById('successModal');
+  const usernameInput        = document.getElementById('username');
+  const emailInput           = document.getElementById('email');
+  const passwordInput        = document.getElementById('password');
   const confirmPasswordInput = document.getElementById('confirm-password');
-  const termsCheckbox = document.getElementById('terms');
-
-  const emailMessage = document.getElementById('emailMessage');
-  const passwordMessage = document.getElementById('passwordMessage');
+  const termsCheckbox        = document.getElementById('terms');
+  const emailMessage         = document.getElementById('emailMessage');
+  const passwordMessage      = document.getElementById('passwordMessage');
   const confirmPasswordMessage = document.getElementById('confirmPasswordMessage');
 
-  /* Error Modal */
+  // ── Error toast modal ──
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed; inset: 0;
@@ -37,16 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
 
   const modalTitle = document.createElement('p');
-  modalTitle.style.cssText = `
-    color: #ff4d4d; font-size: 15px; font-weight: 700;
-margin-bottom: 6px; font-family: inherit
-  `;
+  modalTitle.style.cssText = `color: #ff4d4d; font-size: 15px; font-weight: 700; margin-bottom: 6px; font-family: inherit;`;
 
   const modalMessage = document.createElement('p');
-  modalMessage.style.cssText = `
-    color: #ffaaaa; font-size: 13px; line-height: 1.6;
-margin: 0; font-family: inherit;;
-  `;
+  modalMessage.style.cssText = `color: #ffaaaa; font-size: 13px; line-height: 1.6; margin: 0; font-family: inherit;`;
 
   modalBox.appendChild(modalTitle);
   modalBox.appendChild(modalMessage);
@@ -56,34 +48,34 @@ margin: 0; font-family: inherit;;
   let autoCloseTimer;
 
   const closeModal = () => {
-    modal.style.opacity = '0';
+    modal.style.opacity      = '0';
     modal.style.pointerEvents = 'none';
-    modalBox.style.transform = 'scale(0.92)';
+    modalBox.style.transform  = 'scale(0.92)';
   };
 
   const showModal = (title, msg) => {
     clearTimeout(autoCloseTimer);
-    modalTitle.textContent = title;
+    modalTitle.textContent   = title;
     modalMessage.textContent = msg;
-    modal.style.opacity = '1';
+    modal.style.opacity      = '1';
     modal.style.pointerEvents = 'all';
-    modalBox.style.transform = 'scale(1)';
+    modalBox.style.transform  = 'scale(1)';
     autoCloseTimer = setTimeout(closeModal, 2500);
   };
 
-  /* Field Helpers */
-  const showFieldError = (input, messageDiv, errorMsg) => {
-    if (messageDiv) { messageDiv.textContent = errorMsg; messageDiv.style.color = '#FF0000'; messageDiv.style.display = 'block'; }
+  // ── Field helpers ──
+  const showFieldError = (input, msgDiv, errorMsg) => {
+    if (msgDiv)  { msgDiv.textContent = errorMsg; msgDiv.style.color = '#FF0000'; msgDiv.style.display = 'block'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '#FF0000';
   };
 
-  const clearFieldError = (input, messageDiv) => {
-    if (messageDiv) { messageDiv.textContent = ''; messageDiv.style.display = 'none'; }
+  const clearFieldError = (input, msgDiv) => {
+    if (msgDiv)  { msgDiv.textContent = ''; msgDiv.style.display = 'none'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '';
   };
 
-  const showFieldSuccess = (input, messageDiv, successMsg = '') => {
-    if (messageDiv) { messageDiv.textContent = successMsg; messageDiv.style.color = '#2ecc71'; messageDiv.style.display = successMsg ? 'block' : 'none'; }
+  const showFieldSuccess = (input, msgDiv, successMsg = '') => {
+    if (msgDiv)  { msgDiv.textContent = successMsg; msgDiv.style.color = '#2ecc71'; msgDiv.style.display = successMsg ? 'block' : 'none'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '#2ecc71';
   };
 
@@ -91,53 +83,54 @@ margin: 0; font-family: inherit;;
     clearFieldError(emailInput, emailMessage);
     clearFieldError(passwordInput, passwordMessage);
     clearFieldError(confirmPasswordInput, confirmPasswordMessage);
-    usernameInput.parentElement.style.borderColor = '';
+    if (usernameInput?.parentElement) usernameInput.parentElement.style.borderColor = '';
   };
 
-  /* Real-time Validation */
-  usernameInput.addEventListener('input', () => {
+  // ── Real-time validation ──
+  usernameInput?.addEventListener('input', () => {
     const v = usernameInput.value.trim();
-    if (v.length === 0) usernameInput.parentElement.style.borderColor = '';
+    if (!usernameInput.parentElement) return;
+    if (v.length === 0)  usernameInput.parentElement.style.borderColor = '';
     else if (v.length < 3) usernameInput.parentElement.style.borderColor = '#FF0000';
-    else usernameInput.parentElement.style.borderColor = '#2ecc71';
+    else                 usernameInput.parentElement.style.borderColor = '#2ecc71';
   });
 
-  emailInput.addEventListener('input', () => {
-    const v = emailInput.value.trim();
+  emailInput?.addEventListener('input', () => {
+    const v  = emailInput.value.trim();
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!v) clearFieldError(emailInput, emailMessage);
+    if (!v)            clearFieldError(emailInput, emailMessage);
     else if (!re.test(v)) showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
-    else showFieldSuccess(emailInput, emailMessage, 'Valid email');
+    else               showFieldSuccess(emailInput, emailMessage, 'Valid email');
   });
 
-  passwordInput.addEventListener('input', () => {
+  passwordInput?.addEventListener('input', () => {
     const v = passwordInput.value;
-    if (!v) clearFieldError(passwordInput, passwordMessage);
-    else if (v.length < 8) showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
+    if (!v)               clearFieldError(passwordInput, passwordMessage);
+    else if (v.length < 8)  showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
     else if (!/(?=.*[a-z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a lowercase letter');
     else if (!/(?=.*[A-Z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain an uppercase letter');
-    else if (!/(?=.*\d)/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
-    else showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
-    if (confirmPasswordInput.value.length > 0) validateConfirmPassword();
+    else if (!/(?=.*\d)/.test(v))    showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
+    else                  showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
+    if (confirmPasswordInput?.value.length > 0) validateConfirmPassword();
   });
 
   const validateConfirmPassword = () => {
     const v = confirmPasswordInput.value;
-    if (!v) clearFieldError(confirmPasswordInput, confirmPasswordMessage);
+    if (!v)                         clearFieldError(confirmPasswordInput, confirmPasswordMessage);
     else if (v !== passwordInput.value) showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
-    else showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
+    else                            showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
   };
 
-  confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+  confirmPasswordInput?.addEventListener('input', validateConfirmPassword);
 
-  /* ─── Form Submit ────────────────────────────────────── */
-  form.addEventListener('submit', async (e) => {
+  // ── Form submit ──
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAllFieldErrors();
 
-    const username = usernameInput.value.trim();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+    const username        = usernameInput.value.trim();
+    const email           = emailInput.value.trim();
+    const password        = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
     // 1. Username
@@ -209,47 +202,50 @@ margin: 0; font-family: inherit;;
       return showModal('Terms & Conditions', 'Please accept the Terms & Conditions and Privacy Policy of CodePreviewer to continue.');
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
+    const submitBtn    = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    const resetBtn = () => {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor  = 'pointer';
+    };
+
+    submitBtn.disabled    = true;
     submitBtn.textContent = 'Creating your account...';
     submitBtn.style.opacity = '0.7';
-    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.style.cursor  = 'not-allowed';
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
-        method: 'POST',
+      // POST to relative /api/auth/register — no Railway, no API_BASE
+      const res = await fetch('/api/auth/register', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body:    JSON.stringify({ username, email, password })
       });
 
       let data;
-      try { data = await res.json(); } catch {
-        showModal('Server Error', 'The server returned an invalid response. Please try again.');
-        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
-        return;
-      }
+      try   { data = await res.json(); }
+      catch { showModal('Server Error', 'The server returned an invalid response. Please try again.'); resetBtn(); return; }
 
       if (!res.ok) {
         showModal('Registration Failed', data.error || 'Something went wrong. Please try again.');
-        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+        resetBtn();
         return;
       }
 
+      // Show success then redirect to login
       if (successModal) {
-        successModal.style.display = 'flex';
-        successModal.style.alignItems = 'center';
+        successModal.style.display     = 'flex';
+        successModal.style.alignItems  = 'center';
         successModal.style.justifyContent = 'center';
       }
-
       setTimeout(() => { window.location.href = '/login.html'; }, 2000);
 
     } catch (err) {
+      console.error('Register error:', err);
       showModal('Connection Error', 'Something went wrong. Please check your connection and try again.');
-      submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-      submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+      resetBtn();
     }
   });
 });

@@ -1,24 +1,18 @@
-lucide.createIcons();
-
-if (typeof API_BASE === 'undefined') {
-  console.error("config.js was not loaded! API_BASE is undefined.");
-  alert("Configuration error: config.js failed to load. Please refresh the page.");
-}
+// ── login.js ──
+// Handles the login form only — email + password + terms checkbox.
+// Uses relative API paths (no Railway, no API_BASE dependency).
 
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('registerForm');
-  const successModal = document.getElementById('successModal');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 
-  const usernameInput = document.getElementById('username');
-  const emailInput = document.getElementById('email');
+  const form          = document.getElementById('loginForm');
+  const emailInput    = document.getElementById('email');
   const passwordInput = document.getElementById('password');
-  const confirmPasswordInput = document.getElementById('confirm-password');
   const termsCheckbox = document.getElementById('terms');
-
-  const emailMessage = document.getElementById('emailMessage');
+  const emailMessage  = document.getElementById('emailMessage');
   const passwordMessage = document.getElementById('passwordMessage');
-  const confirmPasswordMessage = document.getElementById('confirmPasswordMessage');
 
+  // ── Error toast modal ──
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed; inset: 0;
@@ -38,16 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
 
   const modalTitle = document.createElement('p');
-  modalTitle.style.cssText = `
-    color: #ff4d4d; font-size: 15px; font-weight: 700;
-    margin-bottom: 6px; font-family: inherit
-  `;
+  modalTitle.style.cssText = `color: #ff4d4d; font-size: 15px; font-weight: 700; margin-bottom: 6px; font-family: inherit;`;
 
   const modalMessage = document.createElement('p');
-  modalMessage.style.cssText = `
-    color: #ffaaaa; font-size: 13px; line-height: 1.6;
-    margin: 0; font-family: inherit;
-  `;
+  modalMessage.style.cssText = `color: #ffaaaa; font-size: 13px; line-height: 1.6; margin: 0; font-family: inherit;`;
 
   modalBox.appendChild(modalTitle);
   modalBox.appendChild(modalMessage);
@@ -57,98 +45,64 @@ document.addEventListener('DOMContentLoaded', () => {
   let autoCloseTimer;
 
   const closeModal = () => {
-    modal.style.opacity = '0';
+    modal.style.opacity      = '0';
     modal.style.pointerEvents = 'none';
-    modalBox.style.transform = 'scale(0.92)';
+    modalBox.style.transform  = 'scale(0.92)';
   };
 
   const showModal = (title, msg) => {
     clearTimeout(autoCloseTimer);
-    modalTitle.textContent = title;
+    modalTitle.textContent   = title;
     modalMessage.textContent = msg;
-    modal.style.opacity = '1';
+    modal.style.opacity      = '1';
     modal.style.pointerEvents = 'all';
-    modalBox.style.transform = 'scale(1)';
+    modalBox.style.transform  = 'scale(1)';
     autoCloseTimer = setTimeout(closeModal, 2500);
   };
 
-  const showFieldError = (input, messageDiv, errorMsg) => {
-    if (messageDiv) { messageDiv.textContent = errorMsg; messageDiv.style.color = '#FF0000'; messageDiv.style.display = 'block'; }
+  // ── Field helpers ──
+  const showFieldError = (input, msgDiv, errorMsg) => {
+    if (msgDiv)  { msgDiv.textContent = errorMsg; msgDiv.style.color = '#FF0000'; msgDiv.style.display = 'block'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '#FF0000';
   };
 
-  const clearFieldError = (input, messageDiv) => {
-    if (messageDiv) { messageDiv.textContent = ''; messageDiv.style.display = 'none'; }
+  const clearFieldError = (input, msgDiv) => {
+    if (msgDiv)  { msgDiv.textContent = ''; msgDiv.style.display = 'none'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '';
   };
 
-  const showFieldSuccess = (input, messageDiv, successMsg = '') => {
-    if (messageDiv) { messageDiv.textContent = successMsg; messageDiv.style.color = '#2ecc71'; messageDiv.style.display = successMsg ? 'block' : 'none'; }
+  const showFieldSuccess = (input, msgDiv, successMsg = '') => {
+    if (msgDiv)  { msgDiv.textContent = successMsg; msgDiv.style.color = '#2ecc71'; msgDiv.style.display = successMsg ? 'block' : 'none'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '#2ecc71';
   };
 
-  const clearAllFieldErrors = () => {
+  // ── Real-time validation ──
+  emailInput?.addEventListener('input', () => {
+    const v  = emailInput.value.trim();
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!v)          clearFieldError(emailInput, emailMessage);
+    else if (!re.test(v)) showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
+    else             showFieldSuccess(emailInput, emailMessage, 'Valid email');
+  });
+
+  passwordInput?.addEventListener('input', () => {
+    const v = passwordInput.value;
+    if (!v)         clearFieldError(passwordInput, passwordMessage);
+    else if (v.length < 8) showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
+    else            showFieldSuccess(passwordInput, passwordMessage);
+  });
+
+  // ── Form submit ──
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
     clearFieldError(emailInput, emailMessage);
     clearFieldError(passwordInput, passwordMessage);
-    clearFieldError(confirmPasswordInput, confirmPasswordMessage);
-    usernameInput.parentElement.style.borderColor = '';
-  };
 
-  usernameInput.addEventListener('input', () => {
-    const v = usernameInput.value.trim();
-    if (v.length === 0) usernameInput.parentElement.style.borderColor = '';
-    else if (v.length < 3) usernameInput.parentElement.style.borderColor = '#FF0000';
-    else usernameInput.parentElement.style.borderColor = '#2ecc71';
-  });
-
-  emailInput.addEventListener('input', () => {
-    const v = emailInput.value.trim();
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!v) clearFieldError(emailInput, emailMessage);
-    else if (!re.test(v)) showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
-    else showFieldSuccess(emailInput, emailMessage, 'Valid email');
-  });
-
-  passwordInput.addEventListener('input', () => {
-    const v = passwordInput.value;
-    if (!v) clearFieldError(passwordInput, passwordMessage);
-    else if (v.length < 8) showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
-    else if (!/(?=.*[a-z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a lowercase letter');
-    else if (!/(?=.*[A-Z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain an uppercase letter');
-    else if (!/(?=.*\d)/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
-    else showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
-    if (confirmPasswordInput.value.length > 0) validateConfirmPassword();
-  });
-
-  const validateConfirmPassword = () => {
-    const v = confirmPasswordInput.value;
-    if (!v) clearFieldError(confirmPasswordInput, confirmPasswordMessage);
-    else if (v !== passwordInput.value) showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
-    else showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
-  };
-
-  confirmPasswordInput.addEventListener('input', validateConfirmPassword);
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    clearAllFieldErrors();
-
-    const username = usernameInput.value.trim();
-    const email = emailInput.value.trim();
+    const email    = emailInput.value.trim();
     const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
 
-    if (!username) {
-      usernameInput.parentElement.style.borderColor = '#FF0000';
-      usernameInput.focus();
-      return showModal('Username Required', 'Please enter a username to continue.');
-    }
-    if (username.length < 3) {
-      usernameInput.parentElement.style.borderColor = '#FF0000';
-      usernameInput.focus();
-      return showModal('Username Too Short', 'Username must be at least 3 characters long.');
-    }
-
+    // Validate email
     if (!email) {
       showFieldError(emailInput, emailMessage, 'Email is required');
       emailInput.focus();
@@ -160,89 +114,67 @@ document.addEventListener('DOMContentLoaded', () => {
       return showModal('Invalid Email', 'Please enter a valid email address.');
     }
 
+    // Validate password
     if (!password) {
       showFieldError(passwordInput, passwordMessage, 'Password is required');
       passwordInput.focus();
-      return showModal('Password Required', 'Please create a password to continue.');
-    }
-    if (password.length < 8) {
-      showFieldError(passwordInput, passwordMessage, 'Too short');
-      passwordInput.focus();
-      return showModal('Password Too Short', 'Your password must be at least 8 characters long.');
-    }
-    if (!/(?=.*[a-z])/.test(password)) {
-      showFieldError(passwordInput, passwordMessage, 'Missing lowercase');
-      passwordInput.focus();
-      return showModal('Weak Password', 'Password must contain at least one lowercase letter.');
-    }
-    if (!/(?=.*[A-Z])/.test(password)) {
-      showFieldError(passwordInput, passwordMessage, 'Missing uppercase');
-      passwordInput.focus();
-      return showModal('Weak Password', 'Password must contain at least one uppercase letter.');
-    }
-    if (!/(?=.*\d)/.test(password)) {
-      showFieldError(passwordInput, passwordMessage, 'Missing number');
-      passwordInput.focus();
-      return showModal('Weak Password', 'Password must contain at least one number.');
+      return showModal('Password Required', 'Please enter your password.');
     }
 
-    if (!confirmPassword) {
-      showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Confirmation required');
-      confirmPasswordInput.focus();
-      return showModal('Confirm Your Password', 'Please re-enter your password to confirm.');
-    }
-    if (password !== confirmPassword) {
-      showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
-      confirmPasswordInput.focus();
-      return showModal('Passwords Do Not Match', 'The passwords you entered are not the same. Please try again.');
+    // Validate terms checkbox
+    if (termsCheckbox && !termsCheckbox.checked) {
+      return showModal('Terms & Conditions', 'Please accept the Terms & Conditions and Privacy Policy to continue.');
     }
 
-    if (!termsCheckbox.checked) {
-      termsCheckbox.focus();
-      return showModal('Terms & Conditions', 'Please accept the Terms & Conditions and Privacy Policy of CodePreviewer to continue.');
-    }
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Creating your account...';
+    // Disable button while submitting
+    const submitBtn      = form.querySelector('button[type="submit"]');
+    const originalText   = submitBtn.textContent;
+    submitBtn.disabled   = true;
+    submitBtn.textContent = 'Signing in...';
     submitBtn.style.opacity = '0.7';
-    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.style.cursor  = 'not-allowed';
+
+    const resetBtn = () => {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = originalText;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor  = 'pointer';
+    };
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+      // POST to relative /api/auth/login — no Railway, no API_BASE needed
+      const res = await fetch('/api/auth/login', {
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body:        JSON.stringify({ email, password })
       });
 
       let data;
-      try { data = await res.json(); } catch {
-        showModal('Server Error', 'The server returned an invalid response. Please try again.');
-        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
-        return;
-      }
+      try   { data = await res.json(); }
+      catch { showModal('Server Error', 'The server returned an invalid response. Please try again.'); resetBtn(); return; }
 
       if (!res.ok) {
-        showModal('Registration Failed', data.error || 'Something went wrong. Please try again.');
-        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+        // Show specific error from server (wrong password, not found, etc.)
+        const msg = data?.error || 'Invalid email or password. Please try again.';
+        showFieldError(emailInput, emailMessage, ' ');
+        showFieldError(passwordInput, passwordMessage, msg);
+        showModal('Login Failed', msg);
+        resetBtn();
         return;
       }
 
-      if (successModal) {
-        successModal.style.display = 'flex';
-        successModal.style.alignItems = 'center';
-        successModal.style.justifyContent = 'center';
+      // Redirect based on role returned by server
+      if (data.role === 'admin') {
+        window.location.href = '/pages/admin-dashboard.html';
+      } else {
+        window.location.href = '/pages/home.html';
       }
 
-      setTimeout(() => { window.location.href = '/login.html'; }, 2000);
-
     } catch (err) {
-      showModal('Connection Error', 'Something went wrong. Please check your connection and try again.');
-      submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
-      submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+      console.error('Login error:', err);
+      showModal('Connection Error', 'Could not reach the server. Please check your connection and try again.');
+      resetBtn();
     }
   });
 });
