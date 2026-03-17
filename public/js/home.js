@@ -1,10 +1,5 @@
 lucide.createIcons();
 
-if (typeof API_BASE === 'undefined') {
-  console.error("config.js was not loaded! API_BASE is undefined.");
-  alert("Configuration error: config.js failed to load. Please refresh the page.");
-}
-
 let projects = [];
 let currentId = null;
 let saveTimeout = null;
