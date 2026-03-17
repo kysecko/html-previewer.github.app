@@ -1,186 +1,253 @@
-// login.js - Minimal working version
-console.log('🔵 login.js loaded');
+console.log('login.js loaded');
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🟢 DOM fully loaded');
+  console.log('DOM fully loaded');
 
-  // Initialize Lucide icons
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
-    console.log('✅ Lucide icons initialized');
+    console.log('Lucide icons initialized');
   }
 
   const form = document.getElementById('loginForm');
-  console.log('📝 Form element:', form);
+  console.log('Form element:', form);
 
   if (!form) {
-    console.error('❌ Login form not found!');
+    console.error('Login form not found!');
     return;
   }
 
-  // Remove any existing event listeners (just to be safe)
-  const newForm = form.cloneNode(true);
-  form.parentNode.replaceChild(newForm, form);
-
-  // Get fresh references
-  const freshForm = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const termsCheckbox = document.getElementById('terms');
   const emailMessage = document.getElementById('emailMessage');
   const passwordMessage = document.getElementById('passwordMessage');
 
-  console.log('📧 Email input:', emailInput);
-  console.log('🔑 Password input:', passwordInput);
+  console.log('Email input:', emailInput);
+  console.log('Password input:', passwordInput);
 
   if (!emailInput || !passwordInput) {
-    console.error('❌ Email or password input not found');
+    console.error('Email or password input not found');
     return;
   }
 
-  // Simple validation functions
-  function showError(input, messageDiv, message) {
-    if (messageDiv) {
-      messageDiv.textContent = message;
-      messageDiv.style.color = '#FF0000';
-      messageDiv.style.display = 'block';
+  const modal = document.createElement('div');
+  const modalBox = document.createElement('div');
+  const modalTitle = document.createElement('p');
+  const modalMessage = document.createElement('p');
+
+  modal.style.cssText = `
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.65);
+        display: flex; align-items: flex-start; justify-content: center;
+        padding-top: 50px;
+        z-index: 9999; opacity: 0; pointer-events: none;
+        transition: opacity 0.25s ease;
+    `;
+
+  modalBox.style.cssText = `
+        background: #1a1a1a; border: 1px solid #ff4d4d; border-radius: 14px;
+        padding: 28px; width: 90%; max-width: 360px; text-align: center;
+        transform: scale(0.92); transition: transform 0.25s ease;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    `;
+
+  modalTitle.style.cssText = `
+        color: #ff4d4d; font-size: 15px; font-weight: 700; margin-bottom: 6px; font-family: inherit;
+    `;
+
+  modalMessage.style.cssText = `
+        color: #ffaaaa; font-size: 13px; line-height: 1.6; margin: 0; font-family: inherit;
+    `;
+
+  modalBox.appendChild(modalTitle);
+  modalBox.appendChild(modalMessage);
+  modal.appendChild(modalBox);
+  document.body.appendChild(modal);
+
+  let autoCloseTimer;
+
+  const closeModal = () => {
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+    modalBox.style.transform = 'scale(0.92)';
+  };
+
+  const showModal = (title, msg) => {
+    clearTimeout(autoCloseTimer);
+    modalTitle.textContent = title;
+    modalMessage.textContent = msg;
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'all';
+    modalBox.style.transform = 'scale(1)';
+    autoCloseTimer = setTimeout(closeModal, 3000);
+  };
+
+  const showFieldError = (input, msgDiv, errorMsg) => {
+    if (msgDiv) {
+      msgDiv.textContent = errorMsg;
+      msgDiv.style.color = '#FF0000';
+      msgDiv.style.display = 'block';
     }
     if (input?.parentElement) {
       input.parentElement.style.borderColor = '#FF0000';
     }
-  }
+  };
 
-  function clearError(input, messageDiv) {
-    if (messageDiv) {
-      messageDiv.textContent = '';
-      messageDiv.style.display = 'none';
+  const clearFieldError = (input, msgDiv) => {
+    if (msgDiv) {
+      msgDiv.textContent = '';
+      msgDiv.style.display = 'none';
     }
     if (input?.parentElement) {
       input.parentElement.style.borderColor = '';
     }
-  }
+  };
 
-  function showSuccess(input, messageDiv, message = '') {
-    if (messageDiv && message) {
-      messageDiv.textContent = message;
-      messageDiv.style.color = '#2ecc71';
-      messageDiv.style.display = 'block';
+  const showFieldSuccess = (input, msgDiv, successMsg = '') => {
+    if (msgDiv) {
+      msgDiv.textContent = successMsg;
+      msgDiv.style.color = '#2ecc71';
+      msgDiv.style.display = successMsg ? 'block' : 'none';
     }
     if (input?.parentElement) {
       input.parentElement.style.borderColor = '#2ecc71';
     }
-  }
+  };
 
-  // Real-time validation
   emailInput.addEventListener('input', () => {
-    const email = emailInput.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-      clearError(emailInput, emailMessage);
-    } else if (!emailRegex.test(email)) {
-      showError(emailInput, emailMessage, 'Please enter a valid email');
+    const v = emailInput.value.trim();
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!v) {
+      clearFieldError(emailInput, emailMessage);
+    } else if (!re.test(v)) {
+      showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
     } else {
-      showSuccess(emailInput, emailMessage, '✓ Valid email');
+      showFieldSuccess(emailInput, emailMessage, 'Valid email');
     }
   });
 
   passwordInput.addEventListener('input', () => {
-    const password = passwordInput.value;
-
-    if (!password) {
-      clearError(passwordInput, passwordMessage);
-    } else if (password.length < 8) {
-      showError(passwordInput, passwordMessage, 'Password too short');
+    const v = passwordInput.value;
+    if (!v) {
+      clearFieldError(passwordInput, passwordMessage);
+    } else if (v.length < 8) {
+      showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
     } else {
-      showSuccess(passwordInput, passwordMessage);
+      showFieldSuccess(passwordInput, passwordMessage);
     }
   });
 
-  // Form submission
-  freshForm.addEventListener('submit', async (e) => {
-    console.log('🚀 Form submitted!');
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Clear previous errors
-    clearError(emailInput, emailMessage);
-    clearError(passwordInput, passwordMessage);
+    clearFieldError(emailInput, emailMessage);
+    clearFieldError(passwordInput, passwordMessage);
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // Validate
-    if (!email) {
-      showError(emailInput, emailMessage, 'Email is required');
-      alert('Email is required');
-      return;
-    }
+    let isValid = true;
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(emailInput, emailMessage, 'Invalid email');
-      alert('Please enter a valid email');
-      return;
+    if (!email) {
+      showFieldError(emailInput, emailMessage, 'Email is required');
+      emailInput.focus();
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFieldError(emailInput, emailMessage, 'Invalid email address');
+      emailInput.focus();
+      isValid = false;
     }
 
     if (!password) {
-      showError(passwordInput, passwordMessage, 'Password is required');
-      alert('Password is required');
-      return;
+      showFieldError(passwordInput, passwordMessage, 'Password is required');
+      if (isValid) passwordInput.focus();
+      isValid = false;
     }
 
     if (termsCheckbox && !termsCheckbox.checked) {
-      alert('Please accept the terms and conditions');
+      showModal('Terms & Conditions', 'Please accept the Terms & Conditions to continue.');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showModal('Email Required', 'Please enter a valid email address.');
+      } else if (!password) {
+        showModal('Password Required', 'Please enter your password.');
+      }
       return;
     }
 
-    // Disable button
-    const submitBtn = freshForm.querySelector('button[type="submit"]');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : 'Login';
+
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Signing in...';
+      submitBtn.style.opacity = '0.7';
+      submitBtn.style.cursor = 'not-allowed';
     }
 
     try {
-      console.log('Sending login request...');
+      console.log('Sending login request for:', email);
 
-      const response = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, password })
       });
 
-      console.log('Response status:', response.status);
+      console.log('Response status:', res.status);
 
-      const data = await response.json();
-      console.log('Response data:', data);
-
-      if (data.success) {
-        console.log('Login successful, redirecting to:', data.redirect);
-        window.location.href = data.redirect || '/user';
-      } else {
-        alert('Login failed: ' + (data.error || 'Unknown error'));
+      let data;
+      try {
+        data = await res.json();
+        console.log('Response data:', data);
+      } catch (jsonError) {
+        console.error('JSON parse error:', jsonError);
+        showModal('Server Error', 'The server returned an invalid response. Please try again.');
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Login';
+          submitBtn.textContent = originalText;
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
         }
+        return;
       }
 
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Connection error: ' + error.message);
+      if (!res.ok || !data.success) {
+        const msg = data?.error || 'Invalid email or password. Please try again.';
+        showFieldError(emailInput, emailMessage, ' ');
+        showFieldError(passwordInput, passwordMessage, msg);
+        showModal('Login Failed', msg);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+        }
+        return;
+      }
+
+      window.location.href = data.redirect || '/user';
+
+    } catch (err) {
+      console.error('Login error:', err);
+      showModal('Connection Error', 'Could not reach the server. Please check your connection and try again.');
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Login';
+        submitBtn.textContent = originalText;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
       }
     }
   });
 
-  console.log('✅ Form submit handler attached');
+  console.log('Form submit handler attached');
 });
 
-// Test API connectivity
 fetch('/api/test')
   .then(r => r.json())
   .then(data => console.log('API test:', data))
