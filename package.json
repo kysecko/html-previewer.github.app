@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "backend/server.js",
-  "scripts": {
-    "build": "javascript-obfuscator src --output public/js --compact true --control-flow-flattening true",
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js"
-  },
+"scripts": {
+  "build": "echo 'No build needed'",
+  "start": "node backend/server.js",
+  "dev": "node backend/server.js",
+  "obfuscate": "javascript-obfuscator src --output public/js --compact true --control-flow-flattening true"
+},
   "dependencies": {
     "@supabase/supabase-js": "^2.87.1",
     "aos": "^2.3.4",
