@@ -40,7 +40,7 @@ let sessionStore = null;
 // Only attempt Redis connection if URL is provided
 if (process.env.REDIS_URL) {
   console.log('Attempting to connect to Redis...');
-  
+
   redisClient = createClient({
     url: process.env.REDIS_URL,
     socket: {
@@ -83,8 +83,8 @@ if (process.env.REDIS_URL) {
   // Create store only if client connected successfully
   if (redisClient) {
     try {
-      sessionStore = new RedisStore({ 
-        client: redisClient, 
+      sessionStore = new RedisStore({
+        client: redisClient,
         prefix: 'sess:',
         disableTouch: false,
         ttl: 86400
@@ -108,7 +108,7 @@ const sessionConfig = {
   cookie: {
     secure: true,
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000
   }
 };
@@ -224,7 +224,7 @@ app.use((err, req, res, next) => {
 /* START */
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
 module.exports = app;
