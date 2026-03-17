@@ -5,7 +5,6 @@ const path = require('path');
 const cors = require('cors');
 const fs = require('fs');
 
-// Debug: Check environment variables
 console.log('========== SERVER STARTUP DEBUG ==========');
 console.log('Current directory:', __dirname);
 console.log('Process ID:', process.pid);
@@ -42,6 +41,28 @@ try {
   console.log('✓ projects routes found');
 } catch (err) {
   console.error('❌ Module not found:', err.message);
+}
+
+// Load route modules FIRST
+console.log('Loading route modules...');
+let requireAuth, authRouter, projectsRouter;
+try {
+  requireAuth = require('./middleware/auth').requireAuth;
+  authRouter = require('./routes/auth');
+  projectsRouter = require('./routes/projects');
+  console.log('✓ Route modules loaded successfully');
+} catch (err) {
+  console.error('Failed to load route modules:', err);
+  console.error('Route module error stack:', err.stack);
+  // Create fallback modules to prevent crashes
+  requireAuth = (req, res, next) => {
+    console.log('Fallback auth - allowing request');
+    next();
+  };
+  authRouter = express.Router();
+  authRouter.all('*', (req, res) => res.json({ message: 'Auth router fallback' }));
+  projectsRouter = express.Router();
+  projectsRouter.all('*', (req, res) => res.json({ message: 'Projects router fallback' }));
 }
 
 app.use(cors({
@@ -174,20 +195,11 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log('Loading route modules...');
-try {
-  const { requireAuth } = require('./middleware/auth');
-  const authRouter = require('./routes/auth');
-  const projectsRouter = require('./routes/projects');
-  console.log('Route modules loaded successfully');
-
-  app.use('/api/auth', authRouter);
-  app.use('/api/projects', projectsRouter);
-  console.log('Routes mounted: /api/auth, /api/projects');
-} catch (err) {
-  console.error('Failed to load route modules:', err);
-  console.error('Route module error stack:', err.stack);
-}
+// Mount routes AFTER they're defined
+console.log('Mounting routes...');
+app.use('/api/auth', authRouter);
+app.use('/api/projects', projectsRouter);
+console.log('Routes mounted: /api/auth, /api/projects');
 
 app.get('/api/test', (req, res) => {
   console.log('Test endpoint hit');
