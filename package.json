@@ -4,25 +4,27 @@
   "description": "",
   "main": "backend/server.js",
   "scripts": {
-    "build": "echo 'No build needed'",
     "start": "node backend/server.js",
-    "dev": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "build": "echo 'No build needed'",
+    "vercel-build": "echo 'No build needed'",
     "obfuscate": "javascript-obfuscator src --output public/js --compact true --control-flow-flattening true"
   },
   "dependencies": {
-  "@supabase/supabase-js": "^2.87.1",
-  "aos": "^2.3.4",
-  "bcryptjs": "^3.0.3",
-  "body-parser": "^1.20.1",
-  "connect-redis": "^7.1.1",
-  "cors": "^2.8.5",
-  "dotenv": "^16.0.0",
-  "express": "^4.18.2",
-  "express-session": "^1.18.2",
-  "lucide": "^0.555.0",
-  "redis": "^4.6.13"
-},
+    "@supabase/supabase-js": "^2.87.1",
+    "aos": "^2.3.4",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.1",
+    "connect-redis": "^7.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "express-session": "^1.18.2",
+    "lucide": "^0.555.0",
+    "redis": "^4.7.1"
+  },
   "devDependencies": {
-    "javascript-obfuscator": "^5.3.0"
+    "javascript-obfuscator": "^5.3.0",
+    "nodemon": "^3.0.1"
   }
 }
