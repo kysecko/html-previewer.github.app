@@ -9,7 +9,6 @@ function requireAuth(req, res, next) {
   if (req.session?.userId && req.session?.isLoggedIn) {
     console.log('Authentication passed');
 
-    // Prevent browser from caching protected pages
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');

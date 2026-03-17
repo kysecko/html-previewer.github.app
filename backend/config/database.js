@@ -1,7 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: require('path').resolve(__dirname, '..', '..', '.env') });
 
-// Validate environment variables
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
   console.error('Missing Supabase environment variables in database.js!');
   console.error('SUPABASE_URL:', process.env.SUPABASE_URL ? '✓' : '✗');
@@ -14,7 +13,6 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
-// Test connection
 (async () => {
   try {
     const { data, error } = await supabase.from('users').select('count').limit(1);

@@ -1,4 +1,3 @@
-// ==== LUCIDE ICONS ====
 const icons = {
   "file-code": `<svg ...>...</svg>`,
   "sun": `<svg ...>...</svg>`,
@@ -16,18 +15,19 @@ function createElement(svgString){
   template.innerHTML = svgString.trim();
   return template.content.firstChild;
 }
+
 function replaceLucideIcons(){
   document.querySelectorAll('i[data-lucide]').forEach(el => {
     const name = el.getAttribute('data-lucide');
     if(icons[name]) el.replaceWith(createElement(icons[name]));
   });
 }
+
 document.addEventListener('DOMContentLoaded', replaceLucideIcons);
 
-// ==== DASHBOARD LOGIC ====
 async function loadDashboard() {
   try {
-    const res = await fetch('/api/auth/verify', { credentials: 'include' }); // ✅ FIXED
+    const res = await fetch('/api/auth/verify', { credentials: 'include' });
     const data = await res.json();
 
     if(!data.success || data.role !== 'admin'){
@@ -77,10 +77,9 @@ async function loadUsersList(){
   }
 }
 
-// Logout
 document.getElementById('logout').addEventListener('click', async ()=>{
   try{
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }); // ✅ FIXED
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
   }catch(err){ console.error(err); }
   window.location.href = '/login.html';
 });

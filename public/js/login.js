@@ -1,21 +1,24 @@
 lucide.createIcons();
-// ===== SAFETY CHECK - Add at the very top =====
+
 if (typeof API_BASE === 'undefined') {
-  console.error("❌ config.js was not loaded! API_BASE is undefined.");
+  console.error("config.js was not loaded! API_BASE is undefined.");
   alert("Configuration error: config.js failed to load. Please refresh the page.");
 }
-// ==============================================
+
 document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
+  const form = document.getElementById('registerForm');
+  const successModal = document.getElementById('successModal');
+
+  const usernameInput = document.getElementById('username');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm-password');
   const termsCheckbox = document.getElementById('terms');
 
   const emailMessage = document.getElementById('emailMessage');
   const passwordMessage = document.getElementById('passwordMessage');
-  const spinner = document.getElementById('redirectSpinner');
+  const confirmPasswordMessage = document.getElementById('confirmPasswordMessage');
 
-  /* ─── Error Modal */
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed; inset: 0;
@@ -37,13 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalTitle = document.createElement('p');
   modalTitle.style.cssText = `
     color: #ff4d4d; font-size: 15px; font-weight: 700;
-margin-bottom: 6px; font-family: inherit;
+    margin-bottom: 6px; font-family: inherit
   `;
 
   const modalMessage = document.createElement('p');
   modalMessage.style.cssText = `
     color: #ffaaaa; font-size: 13px; line-height: 1.6;
-margin: 0; font-family: inherit;
+    margin: 0; font-family: inherit;
   `;
 
   modalBox.appendChild(modalTitle);
@@ -69,104 +72,177 @@ margin: 0; font-family: inherit;
     autoCloseTimer = setTimeout(closeModal, 2500);
   };
 
-  /* ─── Field Helpers ──────────────────────────────────── */
-  const isValidEmail = (email) =>
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-
-  const showFieldError = (input, msgDiv, msg) => {
-    if (msgDiv) { msgDiv.textContent = msg; msgDiv.style.display = 'block'; msgDiv.style.color = '#ff4d4d'; }
-    if (input?.parentElement) input.parentElement.style.borderColor = '#ff4d4d';
+  const showFieldError = (input, messageDiv, errorMsg) => {
+    if (messageDiv) { messageDiv.textContent = errorMsg; messageDiv.style.color = '#FF0000'; messageDiv.style.display = 'block'; }
+    if (input?.parentElement) input.parentElement.style.borderColor = '#FF0000';
   };
 
-  const showFieldSuccess = (input, msgDiv, msg = '') => {
-    if (msgDiv) { msgDiv.textContent = msg; msgDiv.style.display = msg ? 'block' : 'none'; msgDiv.style.color = '#22c55e'; }
-    if (input?.parentElement) input.parentElement.style.borderColor = '#22c55e';
-  };
-
-  const clearField = (input, msgDiv) => {
-    if (msgDiv) { msgDiv.textContent = ''; msgDiv.style.display = 'none'; }
+  const clearFieldError = (input, messageDiv) => {
+    if (messageDiv) { messageDiv.textContent = ''; messageDiv.style.display = 'none'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '';
   };
 
-  /* ─── Real-time Validation ───────────────────────────── */
+  const showFieldSuccess = (input, messageDiv, successMsg = '') => {
+    if (messageDiv) { messageDiv.textContent = successMsg; messageDiv.style.color = '#2ecc71'; messageDiv.style.display = successMsg ? 'block' : 'none'; }
+    if (input?.parentElement) input.parentElement.style.borderColor = '#2ecc71';
+  };
+
+  const clearAllFieldErrors = () => {
+    clearFieldError(emailInput, emailMessage);
+    clearFieldError(passwordInput, passwordMessage);
+    clearFieldError(confirmPasswordInput, confirmPasswordMessage);
+    usernameInput.parentElement.style.borderColor = '';
+  };
+
+  usernameInput.addEventListener('input', () => {
+    const v = usernameInput.value.trim();
+    if (v.length === 0) usernameInput.parentElement.style.borderColor = '';
+    else if (v.length < 3) usernameInput.parentElement.style.borderColor = '#FF0000';
+    else usernameInput.parentElement.style.borderColor = '#2ecc71';
+  });
+
   emailInput.addEventListener('input', () => {
-    const val = emailInput.value.trim();
-    if (!val) clearField(emailInput, emailMessage);
-    else if (!isValidEmail(val)) showFieldError(emailInput, emailMessage, 'Invalid email');
+    const v = emailInput.value.trim();
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!v) clearFieldError(emailInput, emailMessage);
+    else if (!re.test(v)) showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
     else showFieldSuccess(emailInput, emailMessage, 'Valid email');
   });
 
   passwordInput.addEventListener('input', () => {
-    const val = passwordInput.value;
-    if (!val) clearField(passwordInput, passwordMessage);
-    else if (val.length < 8) showFieldError(passwordInput, passwordMessage, 'Minimum 8 characters');
-    else showFieldSuccess(passwordInput, passwordMessage, 'Valid password');
+    const v = passwordInput.value;
+    if (!v) clearFieldError(passwordInput, passwordMessage);
+    else if (v.length < 8) showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
+    else if (!/(?=.*[a-z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a lowercase letter');
+    else if (!/(?=.*[A-Z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain an uppercase letter');
+    else if (!/(?=.*\d)/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
+    else showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
+    if (confirmPasswordInput.value.length > 0) validateConfirmPassword();
   });
 
-  /* ─── Form Submit ────────────────────────────────────── */
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  const validateConfirmPassword = () => {
+    const v = confirmPasswordInput.value;
+    if (!v) clearFieldError(confirmPasswordInput, confirmPasswordMessage);
+    else if (v !== passwordInput.value) showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
+    else showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
+  };
 
+  confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearAllFieldErrors();
+
+    const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
 
-    clearField(emailInput, emailMessage);
-    clearField(passwordInput, passwordMessage);
+    if (!username) {
+      usernameInput.parentElement.style.borderColor = '#FF0000';
+      usernameInput.focus();
+      return showModal('Username Required', 'Please enter a username to continue.');
+    }
+    if (username.length < 3) {
+      usernameInput.parentElement.style.borderColor = '#FF0000';
+      usernameInput.focus();
+      return showModal('Username Too Short', 'Username must be at least 3 characters long.');
+    }
 
-    // 1. Email
     if (!email) {
-      showFieldError(emailInput, emailMessage, 'Required');
+      showFieldError(emailInput, emailMessage, 'Email is required');
       emailInput.focus();
       return showModal('Email Required', 'Please enter your email address.');
     }
-    if (!isValidEmail(email)) {
-      showFieldError(emailInput, emailMessage, 'Invalid email');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFieldError(emailInput, emailMessage, 'Invalid email address');
       emailInput.focus();
       return showModal('Invalid Email', 'Please enter a valid email address.');
     }
 
-    // 2. Password
     if (!password) {
-      showFieldError(passwordInput, passwordMessage, 'Required');
+      showFieldError(passwordInput, passwordMessage, 'Password is required');
       passwordInput.focus();
-      return showModal('Password Required', 'Please enter your password.');
+      return showModal('Password Required', 'Please create a password to continue.');
     }
     if (password.length < 8) {
-      showFieldError(passwordInput, passwordMessage, 'Minimum 8 characters');
+      showFieldError(passwordInput, passwordMessage, 'Too short');
       passwordInput.focus();
       return showModal('Password Too Short', 'Your password must be at least 8 characters long.');
     }
+    if (!/(?=.*[a-z])/.test(password)) {
+      showFieldError(passwordInput, passwordMessage, 'Missing lowercase');
+      passwordInput.focus();
+      return showModal('Weak Password', 'Password must contain at least one lowercase letter.');
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      showFieldError(passwordInput, passwordMessage, 'Missing uppercase');
+      passwordInput.focus();
+      return showModal('Weak Password', 'Password must contain at least one uppercase letter.');
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      showFieldError(passwordInput, passwordMessage, 'Missing number');
+      passwordInput.focus();
+      return showModal('Weak Password', 'Password must contain at least one number.');
+    }
 
-    // 3. Terms
+    if (!confirmPassword) {
+      showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Confirmation required');
+      confirmPasswordInput.focus();
+      return showModal('Confirm Your Password', 'Please re-enter your password to confirm.');
+    }
+    if (password !== confirmPassword) {
+      showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
+      confirmPasswordInput.focus();
+      return showModal('Passwords Do Not Match', 'The passwords you entered are not the same. Please try again.');
+    }
+
     if (!termsCheckbox.checked) {
       termsCheckbox.focus();
       return showModal('Terms & Conditions', 'Please accept the Terms & Conditions and Privacy Policy of CodePreviewer to continue.');
     }
 
-    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Logging in...';
-    submitBtn.style.opacity = '0.6';
+    submitBtn.textContent = 'Creating your account...';
+    submitBtn.style.opacity = '0.7';
+    submitBtn.style.cursor = 'not-allowed';
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: 'POST',
-        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, email, password })
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error('Invalid credentials');
+      let data;
+      try { data = await res.json(); } catch {
+        showModal('Server Error', 'The server returned an invalid response. Please try again.');
+        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
+        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+        return;
+      }
 
-      spinner.style.display = 'flex';
-      setTimeout(() => { window.location.href = data.redirect || '/user'; }, 500);
+      if (!res.ok) {
+        showModal('Registration Failed', data.error || 'Something went wrong. Please try again.');
+        submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
+        submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+        return;
+      }
+
+      if (successModal) {
+        successModal.style.display = 'flex';
+        successModal.style.alignItems = 'center';
+        successModal.style.justifyContent = 'center';
+      }
+
+      setTimeout(() => { window.location.href = '/login.html'; }, 2000);
 
     } catch (err) {
-      showModal('Login Failed', 'Invalid email or password. Please check your credentials and try again.');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Login';
-      submitBtn.style.opacity = '1';
+      showModal('Connection Error', 'Something went wrong. Please check your connection and try again.');
+      submitBtn.disabled = false; submitBtn.textContent = originalBtnText;
+      submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
     }
   });
 });

@@ -1,14 +1,14 @@
 lucide.createIcons();
-// ===== SAFETY CHECK - Add at the very top =====
+
 if (typeof API_BASE === 'undefined') {
-  console.error("❌ config.js was not loaded! API_BASE is undefined.");
+  console.error("config.js was not loaded! API_BASE is undefined.");
   alert("Configuration error: config.js failed to load. Please refresh the page.");
 }
+
 let projects = [];
 let currentId = null;
 let saveTimeout = null;
 
-// modal mode: 'create' | 'rename-current' | 'rename-sidebar'
 let _modalMode = 'create';
 let _renameTargetId = null;
 
@@ -25,7 +25,6 @@ const lineNumbers = document.getElementById('lineNumbers');
 const toggleBtn = document.getElementById('toggleSidebar');
 const sidebar = document.getElementById('sidebar');
 
-// toggle sidebar
 toggleBtn.addEventListener("click", () => {
   if (window.innerWidth <= 768) {
     sidebar.classList.toggle("active");
@@ -34,7 +33,6 @@ toggleBtn.addEventListener("click", () => {
   }
 });
 
-/* ─── Error Modal (red) ──────────────────────────────── */
 const errorModal = document.createElement('div');
 errorModal.style.cssText = `
   position: fixed; inset: 0;
@@ -88,7 +86,6 @@ const showErrorModal = (title, msg) => {
   errorModalTimer = setTimeout(closeErrorModal, 3000);
 };
 
-/* ─── Success Modal (green) ──────────────────────────── */
 const successModal2 = document.createElement('div');
 successModal2.style.cssText = `
   position: fixed; inset: 0;
@@ -142,7 +139,6 @@ const showSuccessModal = (title, msg) => {
   successModalTimer = setTimeout(closeSuccessModal, 3000);
 };
 
-/* ─── Helpers ────────────────────────────────────────── */
 function getProjectContent(project) {
   return project.code || '';
 }
@@ -183,7 +179,6 @@ function updatePreview() {
   }
 }
 
-/* ─── Maximize ───────────────────────────────────────── */
 let isMaximized = false;
 
 maximizeBtn.addEventListener('click', () => {
@@ -195,7 +190,6 @@ maximizeBtn.addEventListener('click', () => {
   lucide.createIcons();
 });
 
-/* ─── Auth ───────────────────────────────────────────── */
 async function checkAuth() {
   try {
     const res = await fetch('/api/auth/verify', { credentials: 'include' });
@@ -221,7 +215,6 @@ async function logout() {
   }
 }
 
-/* ─── Create / Rename Modal ──────────────────────────── */
 function openCreateModal() {
   _modalMode = 'create';
   _renameTargetId = null;
@@ -301,7 +294,6 @@ document.getElementById('newProjectTitleInput').addEventListener('keydown', (e) 
   if (e.key === 'Escape') closeCreateModal();
 });
 
-/* ─── API Calls ──────────────────────────────────────── */
 async function loadProjects() {
   try {
     const res = await fetch('/api/projects', { credentials: 'include' });
@@ -467,7 +459,6 @@ async function loadProjectFromDB(id) {
   }
 }
 
-/* ─── Render List ────────────────────────────────────── */
 function renderList() {
   projectCount.textContent = projects.length + ' project' + (projects.length !== 1 ? 's' : '');
 
@@ -527,13 +518,11 @@ function renderList() {
   lucide.createIcons();
 }
 
-/* ─── Title Click to Rename ──────────────────────────── */
 currentTitle.style.cursor = 'pointer';
 currentTitle.addEventListener('click', () => {
   if (currentId) openRenameCurrentModal();
 });
 
-/* ─── Event Handlers ─────────────────────────────────── */
 document.getElementById('newBtn').addEventListener('click', () => openCreateModal());
 document.getElementById('saveBtn').addEventListener('click', saveProject);
 
@@ -559,7 +548,6 @@ document.getElementById('clearBtn').addEventListener('click', function () {
   renderList();
 });
 
-/* ─── File Upload ────────────────────────────────────── */
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
 
@@ -619,7 +607,6 @@ fileInput.addEventListener('change', async function (e) {
   reader.readAsText(file);
 });
 
-/* ─── Project Helpers ────────────────────────────────── */
 function loadProject(id) { loadProjectFromDB(id); }
 
 function downloadProject(id) {
@@ -644,7 +631,6 @@ function deleteProject(id) {
   }
 }
 
-/* ─── Resizer ────────────────────────────────────────── */
 const divider = document.getElementById('divider');
 let isResizing = false;
 
@@ -659,7 +645,6 @@ document.addEventListener('mousemove', function (e) {
   }
 });
 
-/* ─── Init ───────────────────────────────────────────── */
 async function init() {
   console.log('Initializing your dashboard...');
 

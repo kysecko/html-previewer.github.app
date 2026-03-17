@@ -1,9 +1,7 @@
-// Loading of the icons
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof lucide !== "undefined") lucide.createIcons();
 });
 
-// Declaration of variables and elements 
 const codeArea = document.getElementById("sourceCode"),
     lineNumbers = document.getElementById("lineNumbers"),
     themeText = document.getElementById("theme-text"),
@@ -18,7 +16,6 @@ const codeArea = document.getElementById("sourceCode"),
         window.location.href = '/';
     };
 
-// Theme toggling functions
 function toggleTheme() {
     document.body.classList.toggle("light-mode");
     if (document.body.classList.contains("light-mode")) {
@@ -41,7 +38,7 @@ function loadTheme() {
     }
     if (typeof lucide !== "undefined") lucide.createIcons();
 }
-// Code editor functions
+
 function updateLineNumbers() {
     const lines = codeArea.value.split("\n").length;
     lineNumbers.textContent = Array.from(
@@ -49,13 +46,16 @@ function updateLineNumbers() {
         (_, i) => i + 1
     ).join("\n");
 }
+
 codeArea.addEventListener("input", () => {
     updateLineNumbers();
     runCode();
 });
+
 codeArea.addEventListener("scroll", () => {
     lineNumbers.scrollTop = codeArea.scrollTop;
 });
+
 codeArea.addEventListener("keydown", (e) => {
     if (e.key === "Tab") {
         e.preventDefault();
@@ -70,20 +70,17 @@ codeArea.addEventListener("keydown", (e) => {
     }
 });
 
-// Yung title ng html code
 function extractTitle(html) {
     const match = html.match(/<title>(.*?)<\/title>/i);
     return match ? match[1].trim() || "Untitled" : "Untitled";
 }
 
-// Function to run the code and update preview
 function runCode() {
     document.getElementById("preview").srcdoc = codeArea.value;
     const span = document.querySelector("#tabTitle span");
     if (span) span.textContent = extractTitle(codeArea.value);
 }
 
-// Layout toggling and resizing functions
 function toggleLayout() {
     isWrapped = !isWrapped;
     document.body.classList.toggle("wrapped", isWrapped);
@@ -110,11 +107,13 @@ function loadLayout() {
         previewWrapper.style.height = "50%";
     }
 }
+
 resizer.addEventListener("mousedown", () => {
     isResizing = true;
     document.body.style.userSelect = "none";
     document.body.style.cursor = isWrapped ? "row-resize" : "col-resize";
 });
+
 document.addEventListener("mousemove", (e) => {
     if (!isResizing) return;
     if (isWrapped) {
@@ -131,6 +130,7 @@ document.addEventListener("mousemove", (e) => {
         }
     }
 });
+
 document.addEventListener("mouseup", () => {
     isResizing = false;
     document.body.style.userSelect = "";
@@ -152,6 +152,7 @@ function init() {
     updateLineNumbers();
     runCode();
 }
+
 window.addEventListener("load", () => {
     loadTheme();
     loadLayout();

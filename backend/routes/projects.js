@@ -4,13 +4,11 @@ const { createClient } = require('@supabase/supabase-js');
 
 console.log('PROJECTS ROUTES LOADED AND WORKING');
 
-// Initialize Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
 
-// ========== TEST ENDPOINTS ==========
 router.get('/test', (req, res) => {
   console.log('GET /api/projects/test - Test endpoint hit');
   res.json({
@@ -20,12 +18,10 @@ router.get('/test', (req, res) => {
   });
 });
 
-// Get all projects for user
 router.get('/', async (req, res) => {
   try {
     console.log(' GET /api/projects - Fetching projects');
 
-    // Check authentication
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       console.log(' Not authenticated');
       return res.status(401).json({ error: 'Not authenticated' });
@@ -46,7 +42,6 @@ router.get('/', async (req, res) => {
 
     console.log(`Found ${data?.length || 0} projects`);
 
-    // Transform data for frontend
     const transformedData = (data || []).map(project => ({
       id: project.id,
       title: project.title || 'Untitled Project',
@@ -63,14 +58,11 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Create new project
-// Create new project - UPDATED with better error handling
 router.post('/', async (req, res) => {
   try {
     console.log('POST /api/projects - Creating project');
     console.log('Session user ID:', req.session.userId);
 
-    // Check authentication
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       console.log(' Not authenticated');
       return res.status(401).json({ error: 'Not authenticated' });
@@ -82,7 +74,6 @@ router.post('/', async (req, res) => {
     console.log(`Creating project for user ${userId}: "${title}"`);
     console.log('Code length:', code.length);
 
-    // Prepare project data - make sure all required fields are included
     const projectData = {
       user_id: userId,
       title: title.trim() || 'Untitled Project',
@@ -93,7 +84,6 @@ router.post('/', async (req, res) => {
 
     console.log('Project data to insert:', projectData);
 
-    // Try insert with detailed error handling
     const { data, error } = await supabase
       .from('projects')
       .insert([projectData])
@@ -108,7 +98,6 @@ router.post('/', async (req, res) => {
         hint: error.hint
       });
       
-      // If RLS error, suggest fixing policies
       if (error.code === '42501') {
         return res.status(403).json({ 
           error: 'RLS Policy violation',
@@ -123,7 +112,6 @@ router.post('/', async (req, res) => {
 
     console.log(`Project created successfully:`, data);
 
-    // Return the created project
     const responseData = {
       id: data.id,
       title: data.title,
@@ -145,12 +133,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get single project
 router.get('/:id', async (req, res) => {
   try {
     console.log(`GET /api/projects/${req.params.id}`);
 
-    // Check authentication
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
@@ -171,7 +157,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    // Transform data
     const transformedData = {
       id: data.id,
       title: data.title,
@@ -188,13 +173,11 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update project - SIMPLIFIED AND WORKING
 router.put('/:id', async (req, res) => {
   try {
     console.log(`PUT /api/projects/${req.params.id}`);
     console.log('Request body:', req.body);
 
-    // Check authentication
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
@@ -203,7 +186,6 @@ router.put('/:id', async (req, res) => {
     const projectId = req.params.id;
     const userId = req.session.userId;
 
-    // Build update object
     const updateData = {
       updated_at: new Date().toISOString()
     };
@@ -217,7 +199,6 @@ router.put('/:id', async (req, res) => {
 
     console.log('Update data:', updateData);
 
-    // First check if project exists
     const { data: existingProject, error: checkError } = await supabase
       .from('projects')
       .select('id')
@@ -229,7 +210,6 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Project not found or access denied' });
     }
 
-    // Perform the update
     const { error: updateError } = await supabase
       .from('projects')
       .update(updateData)
@@ -243,7 +223,6 @@ router.put('/:id', async (req, res) => {
 
     console.log('Update executed successfully');
 
-    // Fetch updated project
     const { data: updatedProject, error: fetchError } = await supabase
       .from('projects')
       .select('*')
@@ -260,7 +239,6 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Failed to fetch updated project' });
     }
 
-    // Return updated data
     const responseData = {
       id: updatedProject.id,
       title: updatedProject.title,
@@ -279,12 +257,10 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete project
 router.delete('/:id', async (req, res) => {
   try {
     console.log(`DELETE /api/projects/${req.params.id}`);
 
-    // Check authentication
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
