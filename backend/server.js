@@ -20,24 +20,16 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-// ------------------ Redis & Session ------------------
-const { createClient } = require('redis');
-const RedisStore = require('connect-redis').default;
-
-const redisClient = createClient({ url: process.env.REDIS_URL });
-redisClient.connect().catch(console.error);
-
+// ------------------ Session ------------------
 const isProd = process.env.NODE_ENV === 'production';
 
 app.use(session({
-  store: new RedisStore({ client: redisClient }),
   name: 'code-editor-session',
   secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
   resave: false,
   saveUninitialized: false,
-  proxy: true,
   cookie: {
-    secure: isProd,            // Only secure cookies in production
+    secure: isProd,
     httpOnly: true,
     sameSite: isProd ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000
