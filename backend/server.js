@@ -1,8 +1,8 @@
 require('dotenv').config();
-const express = require('express');
-const session = require('express-session');
-const path    = require('path');
-const cors    = require('cors');
+const express    = require('express');
+const session    = require('express-session');
+const path       = require('path');
+const cors       = require('cors');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -20,21 +20,59 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-// ------------------ Session ------------------
+// ------------------ Session Store Setup ------------------
 const isProd = process.env.NODE_ENV === 'production';
 
-app.use(session({
-  name: 'code-editor-session',
-  secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: isProd,
-    httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
-    maxAge: 24 * 60 * 60 * 1000
+function buildSessionMiddleware() {
+  const sessionConfig = {
+    name:              'code-editor-session',
+    secret:            process.env.SESSION_SECRET || 'fallback-secret-for-development',
+    resave:            false,
+    saveUninitialized: false,
+    cookie: {
+      secure:   isProd,
+      httpOnly: true,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge:   24 * 60 * 60 * 1000
+    }
+  };
+
+  // Only use Redis store if REDIS_URL is set
+  if (process.env.REDIS_URL) {
+    try {
+      const { createClient } = require('redis');
+      const RedisStore        = require('connect-redis').default;
+
+      const redisClient = createClient({
+        url:    process.env.REDIS_URL,
+        socket: { tls: true, rejectUnauthorized: false }
+      });
+
+      redisClient.on('error',   (err) => console.error('Redis error:', err));
+      redisClient.on('connect', ()    => console.log('Redis connected'));
+
+      // Connect but don't await — RedisStore handles reconnection
+      redisClient.connect().catch((err) => console.error('Redis connect failed:', err));
+
+      sessionConfig.store = new RedisStore({
+        client:          redisClient,
+        prefix:          'sess:',
+        ttl:             86400,
+        disableTouch:    false
+      });
+
+      console.log('Session store: Upstash Redis');
+    } catch (err) {
+      console.error('Redis setup failed, falling back to memory store:', err.message);
+    }
+  } else {
+    console.warn('REDIS_URL not set — using in-memory session store (not suitable for production)');
   }
-}));
+
+  return session(sessionConfig);
+}
+
+app.use(buildSessionMiddleware());
 
 // ------------------ Body Parser ------------------
 app.use(express.json());
@@ -58,11 +96,16 @@ app.use('/api/auth',     authRouter);
 app.use('/api/projects', projectsRouter);
 
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
+  res.json({
+    message:   'API is working!',
+    timestamp: new Date().toISOString(),
+    redis:     !!process.env.REDIS_URL,
+    env:       process.env.NODE_ENV
+  });
 });
 
 // ------------------ Static Files ------------------
-// FIX: server.js is inside /backend, so public is one level up at root
+// server.js is inside /backend — public is one level up at project root
 const publicPath = path.join(__dirname, '..', 'public');
 app.use(express.static(publicPath));
 
