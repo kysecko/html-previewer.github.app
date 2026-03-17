@@ -22,66 +22,56 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-async function initializeSession() {
-  const sessionConfig = {
-    name: 'code-editor-session',
-    secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: isProd,
-      httpOnly: true,
-      sameSite: isProd ? 'none' : 'lax',
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  };
-
-  if (process.env.REDIS_URL && !isVercel) {
-    try {
-      const { createClient } = require('redis');
-      const RedisStore = require('connect-redis').default;
-
-      const redisClient = createClient({
-        url: process.env.REDIS_URL,
-        socket: { 
-          tls: true, 
-          rejectUnauthorized: false,
-          connectTimeout: 10000
-        }
-      });
-
-      redisClient.on('error', (err) => {
-        console.error('Redis connection error:', err.message);
-      });
-
-      await redisClient.connect();
-
-      sessionConfig.store = new RedisStore({
-        client: redisClient,
-        prefix: 'sess:',
-        ttl: 86400,
-        disableTouch: false
-      });
-
-      console.log('Session store: Redis connected');
-    } catch (err) {
-      console.error('Redis connection failed:', err.message);
-      console.log('Session store: Using memory store (fallback)');
-    }
-  } else {
-    console.log('Session store: Using memory store');
+const sessionConfig = {
+  name: 'code-editor-session',
+  secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: isProd,
+    httpOnly: true,
+    sameSite: isProd ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000
   }
+};
 
-  app.use(session(sessionConfig));
-}
+if (!isVercel && process.env.REDIS_URL) {
+  try {
+    const { createClient } = require('redis');
+    const RedisStore = require('connect-redis').default;
 
-if (!isVercel) {
-  initializeSession().catch(err => {
-    console.error('Session initialization failed:', err.message);
-  });
+    const redisClient = createClient({
+      url: process.env.REDIS_URL,
+      socket: { 
+        tls: true, 
+        rejectUnauthorized: false
+      }
+    });
+
+    redisClient.on('error', (err) => {
+      console.error('Redis error:', err.message);
+    });
+
+    redisClient.connect().catch(err => {
+      console.error('Redis connection failed:', err.message);
+    });
+
+    sessionConfig.store = new RedisStore({
+      client: redisClient,
+      prefix: 'sess:',
+      ttl: 86400
+    });
+
+    console.log('Using Redis session store');
+  } catch (err) {
+    console.error('Redis setup failed:', err.message);
+    console.log('Using memory session store');
+  }
 } else {
-  console.log('Sessions disabled on Vercel');
+  console.log('Using memory session store');
 }
+
+app.use(session(sessionConfig));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -98,12 +88,8 @@ const { requireAuth } = require('./middleware/auth');
 const authRouter = require('./routes/auth');
 const projectsRouter = require('./routes/projects');
 
-if (!isVercel) {
-  app.use('/api/auth', authRouter);
-  app.use('/api/projects', projectsRouter);
-} else {
-  console.log('Auth routes disabled on Vercel');
-}
+app.use('/api/auth', authRouter);
+app.use('/api/projects', projectsRouter);
 
 app.get('/api/test', (req, res) => {
   res.json({
