@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const path = require('path');
-const cors = require('cors');
+const path    = require('path');
+const cors    = require('cors');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -42,17 +42,19 @@ app.use(express.urlencoded({ extended: true }));
 
 // ------------------ Logging ------------------
 app.use((req, res, next) => {
-  const status = req.session?.isLoggedIn ? `authenticated ${req.session.email}` : 'not logged in';
+  const status = req.session?.isLoggedIn
+    ? `authenticated ${req.session.email}`
+    : 'not logged in';
   console.log(`${req.method} ${req.originalUrl} | ${status} | sid: ${req.sessionID}`);
   next();
 });
 
 // ------------------ Routes ------------------
 const { requireAuth } = require('./middleware/auth');
-const authRouter = require('./routes/auth');
-const projectsRouter = require('./routes/projects');
+const authRouter      = require('./routes/auth');
+const projectsRouter  = require('./routes/projects');
 
-app.use('/api/auth', authRouter);
+app.use('/api/auth',     authRouter);
 app.use('/api/projects', projectsRouter);
 
 app.get('/api/test', (req, res) => {
@@ -60,7 +62,8 @@ app.get('/api/test', (req, res) => {
 });
 
 // ------------------ Static Files ------------------
-const publicPath = path.join(__dirname, 'public');
+// FIX: server.js is inside /backend, so public is one level up at root
+const publicPath = path.join(__dirname, '..', 'public');
 app.use(express.static(publicPath));
 
 // ------------------ Page Routes ------------------
@@ -77,7 +80,7 @@ app.get(['/user', '/pages/user/home.html'], requireAuth, (req, res) => {
   res.sendFile(path.join(publicPath, 'pages/user/home.html'));
 });
 
-app.get(['/pages/user/compiler.html'], requireAuth, (req, res) => {
+app.get('/pages/user/compiler.html', requireAuth, (req, res) => {
   res.sendFile(path.join(publicPath, 'pages/user/compiler.html'));
 });
 
@@ -94,7 +97,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({
-    error: 'Internal server error',
+    error:   'Internal server error',
     message: isProd ? 'Something went wrong' : err.message
   });
 });
