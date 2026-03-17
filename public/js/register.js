@@ -1,10 +1,8 @@
 lucide.createIcons();
-// ===== SAFETY CHECK - Add at the very top =====
 if (typeof API_BASE === 'undefined') {
   console.error("❌ config.js was not loaded! API_BASE is undefined.");
   alert("Configuration error: config.js failed to load. Please refresh the page.");
 }
-// ==============================================
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('registerForm');
   const successModal = document.getElementById('successModal');
@@ -19,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordMessage = document.getElementById('passwordMessage');
   const confirmPasswordMessage = document.getElementById('confirmPasswordMessage');
 
-  /* ─── Error Modal ────────────────────────────────────── */
+  /* Error Modal */
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed; inset: 0;
@@ -73,7 +71,7 @@ margin: 0; font-family: inherit;;
     autoCloseTimer = setTimeout(closeModal, 2500);
   };
 
-  /* ─── Field Helpers ──────────────────────────────────── */
+  /* Field Helpers */
   const showFieldError = (input, messageDiv, errorMsg) => {
     if (messageDiv) { messageDiv.textContent = errorMsg; messageDiv.style.color = '#FF0000'; messageDiv.style.display = 'block'; }
     if (input?.parentElement) input.parentElement.style.borderColor = '#FF0000';
@@ -96,7 +94,7 @@ margin: 0; font-family: inherit;;
     usernameInput.parentElement.style.borderColor = '';
   };
 
-  /* ─── Real-time Validation ───────────────────────────── */
+  /* Real-time Validation */
   usernameInput.addEventListener('input', () => {
     const v = usernameInput.value.trim();
     if (v.length === 0) usernameInput.parentElement.style.borderColor = '';
