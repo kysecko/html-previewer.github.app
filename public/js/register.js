@@ -1,5 +1,3 @@
-// ── register.js ──
-// Handles registration form. Uses relative /api paths — no Railway, no external host.
 
 if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -123,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   confirmPasswordInput?.addEventListener('input', validateConfirmPassword);
 
-  // ── Form submit ──
+  // Form submit 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAllFieldErrors();

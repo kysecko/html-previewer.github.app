@@ -181,6 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn ? submitBtn.textContent : 'Login';
+    const spinner = document.getElementById('redirectSpinner');
+    if (spinner) spinner.style.display = 'flex';
 
     if (submitBtn) {
       submitBtn.disabled = true;
@@ -209,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('JSON parse error:', jsonError);
         showModal('Server Error', 'The server returned an invalid response. Please try again.');
         if (submitBtn) {
+          if (spinner) spinner.style.display = 'none';
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
           submitBtn.style.opacity = '1';
@@ -222,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showFieldError(emailInput, emailMessage, ' ');
         showFieldError(passwordInput, passwordMessage, msg);
         showModal('Login Failed', msg);
+        if (spinner) spinner.style.display = 'none';
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
@@ -231,11 +235,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (spinner) spinner.style.display = 'none';
       window.location.href = data.redirect || '/user';
 
     } catch (err) {
       console.error('Login error:', err);
       showModal('Connection Error', 'Could not reach the server. Please check your connection and try again.');
+      if (spinner) spinner.style.display = 'none';
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
