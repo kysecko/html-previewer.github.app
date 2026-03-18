@@ -31,17 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // toggle password
   if (togglePassword) {
     togglePassword.addEventListener('click', () => {
-      const isHidden = passwordInput.type === 'password';
+      const isPassword = passwordInput.type === 'password';
 
-      // toggle input type
-      passwordInput.type = isHidden ? 'text' : 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
 
-      // change icon
-      togglePassword.innerHTML = isHidden
-        ? '<i data-lucide="eye-off" style="color: white;"></i>'
-        : '<i data-lucide="eye" style="color: white;"></i>';
+      const newIcon = isPassword ? 'eye-off' : 'eye';
+      togglePassword.innerHTML = `<i data-lucide="${newIcon}"></i>`;
 
-      // re-render lucide icon
       lucide.createIcons();
     });
   }
