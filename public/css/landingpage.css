@@ -86,7 +86,7 @@ img {
   height: 32px;
 }
 
-/* MOBILE MENU Toggle — hidden on desktop */
+/* MOBILE MENU Toggle */
 .menu-toggle {
   display: none;
   background: none;
@@ -604,6 +604,7 @@ img {
   margin-bottom: 0;
 }
 .feature-card p {
+  text-align: center;
   color: #7a7a7a;
   line-height: 1.7;
 }
