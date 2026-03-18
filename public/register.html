@@ -1,100 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/login.css" />
+    <title>Create an account</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/css/login.css" />
-  <title>Create an account</title>
-</head>
-
-<body>
-
-  <!-- Success Modal (hidden by default) -->
-  <div id="successModal" style="
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); z-index: 9999;
-    align-items: center; justify-content: center;
-  ">
-    <div style="
-      background: #1a1a1a; border: 1px solid #2ecc71; border-radius: 16px;
-      padding: 36px 28px; width: 90%; max-width: 360px; text-align: center;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    ">
-      <h2 style="color: #2ecc71; font-size: 18px; margin: 0 0 8px; font-family: inherit;">Registration Successful!</h2>
-      <p style="color: #aaa; font-size: 13px; margin: 0; font-family: inherit;">Redirecting you to the login page...</p>
-    </div>
-  </div>
-
-  <div class="page">
-    <div class="card">
-      <div class="image-wrapper">
-        <img src="/images/register-img.png" alt="Registration illustration" />
+  <body>
+    <!-- Success Modal (hidden by default) -->
+    <div
+      id="successModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: #1a1a1a;
+          border: 1px solid #2ecc71;
+          border-radius: 16px;
+          padding: 36px 28px;
+          width: 90%;
+          max-width: 360px;
+          text-align: center;
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        "
+      >
+        <h2
+          style="
+            color: #2ecc71;
+            font-size: 18px;
+            margin: 0 0 8px;
+            font-family: inherit;
+          "
+        >
+          Registration Successful!
+        </h2>
+        <p
+          style="color: #aaa; font-size: 13px; margin: 0; font-family: inherit"
+        >
+          Redirecting you to the login page...
+        </p>
       </div>
+    </div>
 
-      <div class="login-wrapper">
-        <h2 class="title-header">Let's start coding!</h2>
-        <p class="subtitle">Join us and start building something amazing.</p>
+    <div class="page">
+      <div class="card">
+        <div class="image-wrapper">
+          <img src="/images/register-img.png" alt="Registration illustration" />
+        </div>
 
-        <form id="registerForm" novalidate>
+        <div class="login-wrapper">
+          <h2 class="title-header">Let's start coding!</h2>
+          <p class="subtitle">Join us and start building something amazing.</p>
 
-          <label for="username">Username</label>
-          <div class="input-container">
-            <i data-lucide="user-round"></i>
-            <input type="text" id="username" name="username" placeholder="Choose a username" />
-          </div>
+          <form id="registerForm" novalidate>
+            <label for="username">Username</label>
+            <div class="input-container">
+              <i data-lucide="user-round"></i>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Choose a username"
+              />
+            </div>
 
-          <label for="email">Email Address</label>
-          <div class="input-container">
-            <i data-lucide="at-sign"></i>
-            <input type="email" id="email" name="email" placeholder="Enter valid email" />
-          </div>
-          <div id="emailMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
+            <label for="email">Email Address</label>
+            <div class="input-container">
+              <i data-lucide="at-sign"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter valid email"
+              />
+            </div>
+            <div
+              id="emailMessage"
+              style="margin-bottom: 10px; font-size: 12px"
+            ></div>
 
-          <label for="password">Password</label>
-          <div class="input-container">
-            <i data-lucide="lock-keyhole"></i>
-            <input type="password" id="password" name="password" placeholder="Create a password" />
-          </div>
-          <div id="passwordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
+            <label for="password">Password</label>
+            <div class="input-container">
+              <i data-lucide="lock-keyhole"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a password"
+              />
+              <button
+                id="toggle-password"
+                style="
+                  cursor: pointer;
+                  display: flex;
+                  background: transparent;
+                  border: none;
+                "
+              >
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
 
-          <label for="confirm-password">Confirm Password</label>
-          <div class="input-container">
-            <i data-lucide="lock-keyhole"></i>
-            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm password" />
-          </div>
-          <div id="confirmPasswordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
+            <div
+              id="passwordMessage"
+              style="margin-bottom: 10px; font-size: 12px"
+            ></div>
 
-          <div class="input-links-container">
-            <input type="checkbox" id="terms" name="terms" />
-            <p>
-              By continuing, you agree to our
-              <a href="/terms.html">Terms & Conditions</a>
-              and
-              <a href="/privacy.html">Privacy Policy</a>
-              of CodePreviewer.
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-container">
+              <i data-lucide="lock-keyhole"></i>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                placeholder="Confirm password"
+              />
+              <button
+                id="toggle-password"
+                style="
+                  cursor: pointer;
+                  display: flex;
+                  background: transparent;
+                  border: none;
+                "
+              >
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <div
+              id="confirmPasswordMessage"
+              style="margin-bottom: 10px; font-size: 12px"
+            ></div>
+
+            <div class="input-links-container">
+              <input type="checkbox" id="terms" name="terms" />
+              <p>
+                By continuing, you agree to our
+                <a href="/terms.html">Terms & Conditions</a>
+                and
+                <a href="/privacy.html">Privacy Policy</a>
+                of CodePreviewer.
+              </p>
+            </div>
+
+            <button type="submit" class="login-btn">Create Account</button>
+
+            <p class="paragraph">
+              Already have an account?
+              <a href="/login.html" class="secondary-link">Sign in</a>
             </p>
-          </div>
-
-          <button type="submit" class="login-btn">Create Account</button>
-
-          <p class="paragraph">
-            Already have an account?
-            <a href="/login.html" class="secondary-link">Sign in</a>
-          </p>
-          <p class="paragraph">
-            <a href="/guest/compiler" class="secondary-link" style="color: #d1d1d1;">Continue as Guest</a>
-          </p>
-        </form>
+            <p class="paragraph">
+              <a
+                href="/guest/compiler"
+                class="secondary-link"
+                style="color: #d1d1d1"
+                >Continue as Guest</a
+              >
+            </p>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Icons -->
-  <script src="/libs/lucide.js"></script>
-  <!-- JS -->
-  <script src="/js/register.js" defer></script>
-</body>
-
+    <!-- Icons -->
+    <script src="/libs/lucide.js"></script>
+    <!-- JS -->
+    <script src="/js/register.js" defer></script>
+  </body>
 </html>
