@@ -38,6 +38,7 @@ try {
   require.resolve('./routes/auth');
   console.log('✓ auth routes found');
   require.resolve('./routes/projects');
+  require.resolve('./routes/users');
   console.log('✓ projects routes found');
 } catch (err) {
   console.error('❌ Module not found:', err.message);
@@ -45,9 +46,10 @@ try {
 
 // Load route modules FIRST
 console.log('Loading route modules...');
-let requireAuth, authRouter, projectsRouter;
+let requireAuth, authRouter, projectsRouter, usersRouter;
 try {
   requireAuth = require('./middleware/auth').requireAuth;
+  usersRouter = require('./routes/users');
   authRouter = require('./routes/auth');
   projectsRouter = require('./routes/projects');
   console.log('✓ Route modules loaded successfully');
@@ -99,7 +101,7 @@ console.log('Session config created:', {
   cookieSecure: sessionConfig.cookie.secure 
 });
 
-if (process.env.REDIS_URL) {
+if (!isVercel && process.env.REDIS_URL) {
   console.log('Attempting to configure Redis...');
   try {
     const { createClient } = require('redis');
@@ -154,7 +156,10 @@ if (process.env.REDIS_URL) {
     console.log('Falling back to memory session store');
   }
 } else {
-  console.log('No REDIS_URL set — using memory session store (sessions will not persist across serverless instances)');
+  console.log('Using memory session store:', { 
+    isVercel, 
+    hasRedisUrl: !!process.env.REDIS_URL 
+  });
 }
 
 console.log('Applying session middleware...');
@@ -196,6 +201,7 @@ app.use((req, res, next) => {
 console.log('Mounting routes...');
 app.use('/api/auth', authRouter);
 app.use('/api/projects', projectsRouter);
+app.use('/api/users', usersRouter);
 console.log('Routes mounted: /api/auth, /api/projects');
 
 app.get('/api/test', (req, res) => {
