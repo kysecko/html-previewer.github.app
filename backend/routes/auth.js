@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs'); // This is correct
+const bcrypt = require('bcryptjs');
 const { createClient } = require('@supabase/supabase-js');
 
 function getSupabase() {
@@ -9,8 +9,7 @@ function getSupabase() {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 }
-await supabase.from('users').update({ last_login_at: new Date().toISOString() }).eq('id', user.id);
-// Test route to verify router is working
+
 router.get('/ping', (req, res) => {
   res.json({ message: 'Auth router is working', timestamp: new Date().toISOString() });
 });
@@ -73,37 +72,32 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
-    // Set session data
+    // ✅ Update last_login_at — INSIDE the async function, correct placement
+    try {
+      await supabase
+        .from('users')
+        .update({ last_login_at: new Date().toISOString() })
+        .eq('id', user.id);
+    } catch (updateErr) {
+      console.warn('last_login_at update failed (column may not exist yet):', updateErr.message);
+      // Non-fatal — login continues even if this fails
+    }
+
     req.session.isLoggedIn = true;
     req.session.userId = user.id;
     req.session.username = user.username;
     req.session.email = user.email;
     req.session.role = user.role;
 
-    console.log('Session data set:', {
-      isLoggedIn: req.session.isLoggedIn,
-      userId: req.session.userId,
-      email: req.session.email,
-      role: req.session.role
-    });
-
-    // Save session properly with a Promise
     await new Promise((resolve, reject) => {
       req.session.save((err) => {
-        if (err) {
-          console.error('Session save error:', err);
-          reject(err);
-        } else {
-          console.log('Session saved successfully');
-          resolve();
-        }
+        if (err) { console.error('Session save error:', err); reject(err); }
+        else { console.log('Session saved successfully'); resolve(); }
       });
     });
 
     console.log('Login successful:', email, '| Role:', user.role);
     const redirect = user.role === 'admin' ? '/admin' : '/user';
-
-    // Return success
     res.json({ success: true, redirect });
 
   } catch (err) {
@@ -111,6 +105,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ success: false, error: 'Server error: ' + err.message });
   }
 });
+
 router.get('/verify', (req, res) => {
   if (req.session?.isLoggedIn && req.session?.userId) {
     return res.json({
