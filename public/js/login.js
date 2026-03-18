@@ -30,13 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // toggle password
   if (togglePassword) {
-    togglePassword.addEventListener('click', () => {
+    togglePassword.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any accidental form triggers
+
       const isPassword = passwordInput.type === 'password';
 
       passwordInput.type = isPassword ? 'text' : 'password';
 
       const newIcon = isPassword ? 'eye-off' : 'eye';
-      togglePassword.innerHTML = `<i data-lucide="${newIcon}" style="color:#fff;"></i>`;
+      togglePassword.innerHTML = `<i data-lucide="${newIcon}"></i>`;
 
       lucide.createIcons();
     });

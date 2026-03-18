@@ -125,13 +125,27 @@ input {
   color: var(--text);
   font-size: 14px;
 }
+.input-container i,
+.input-container svg {
+  /* Added svg here */
+  width: 18px; /* Slightly larger for better visibility */
+  height: 18px;
+  color: var(--muted);
+  flex-shrink: 0; /* Prevents the icon from squishing */
+  display: block;
+}
 
+/* Ensure the toggle button doesn't hide overflow */
 #toggle-password {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  margin-left: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 8px;
+  color: #ffffff;
 }
 /* MESSAGES */
 #message {
