@@ -29,11 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // toggle password
-  togglePassword.addEventListener('click', () => {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-  });
+  if (togglePassword) {
+    togglePassword.addEventListener('click', () => {
+      const isHidden = passwordInput.type === 'password';
 
+      // toggle input type
+      passwordInput.type = isHidden ? 'text' : 'password';
+
+      // change icon
+      togglePassword.innerHTML = isHidden
+        ? '<i data-lucide="eye-off"></i>'
+        : '<i data-lucide="eye"></i>';
+
+      // re-render lucide icon
+      lucide.createIcons();
+    });
+  }
   // ── Error toast modal ──
   const modal = document.createElement('div');
   const modalBox = document.createElement('div');
