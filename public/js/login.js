@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // change icon
       togglePassword.innerHTML = isHidden
-        ? '<i data-lucide="eye-off"></i>'
-        : '<i data-lucide="eye"></i>';
+        ? '<i data-lucide="eye-off" style="color: white;"></i>'
+        : '<i data-lucide="eye" style="color: white;"></i>';
 
       // re-render lucide icon
       lucide.createIcons();
