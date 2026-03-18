@@ -47,40 +47,24 @@ try {
 // Load route modules FIRST
 console.log('Loading route modules...');
 let requireAuth, authRouter, projectsRouter, usersRouter;
-
 try {
   requireAuth = require('./middleware/auth').requireAuth;
-  console.log('✓ auth middleware loaded');
-} catch (err) {
-  console.error('❌ auth middleware failed:', err.message);
-  requireAuth = (req, res, next) => next();
-}
-
-try {
-  authRouter = require('./routes/auth');
-  console.log('✓ auth router loaded');
-} catch (err) {
-  console.error('❌ auth router failed:', err.message, err.stack);
-  authRouter = express.Router();
-  authRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Auth router failed: ' + err.message }));
-}
-
-try {
-  projectsRouter = require('./routes/projects');
-  console.log('✓ projects router loaded');
-} catch (err) {
-  console.error('❌ projects router failed:', err.message);
-  projectsRouter = express.Router();
-  projectsRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Projects router failed' }));
-}
-
-try {
   usersRouter = require('./routes/users');
-  console.log('✓ users router loaded');
+  authRouter = require('./routes/auth');
+  projectsRouter = require('./routes/projects');
+  console.log('✓ Route modules loaded successfully');
 } catch (err) {
-  console.error('❌ users router failed:', err.message);
-  usersRouter = express.Router();
-  usersRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Users router failed' }));
+  console.error('Failed to load route modules:', err);
+  console.error('Route module error stack:', err.stack);
+  // Create fallback modules to prevent crashes
+  requireAuth = (req, res, next) => {
+    console.log('Fallback auth - allowing request');
+    next();
+  };
+  authRouter = express.Router();
+  authRouter.all('*', (req, res) => res.json({ message: 'Auth router fallback' }));
+  projectsRouter = express.Router();
+  projectsRouter.all('*', (req, res) => res.json({ message: 'Projects router fallback' }));
 }
 
 app.use(cors({
@@ -117,7 +101,7 @@ console.log('Session config created:', {
   cookieSecure: sessionConfig.cookie.secure 
 });
 
-if (!isVercel && process.env.REDIS_URL) {
+if (process.env.REDIS_URL) {
   console.log('Attempting to configure Redis...');
   try {
     const { createClient } = require('redis');
