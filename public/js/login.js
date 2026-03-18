@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       passwordInput.type = isPassword ? 'text' : 'password';
 
       const newIcon = isPassword ? 'eye-off' : 'eye';
-      togglePassword.innerHTML = `<i data-lucide="${newIcon}"></i>`;
+      togglePassword.innerHTML = `<i data-lucide="${newIcon}" style="color:#fff;"></i>`;
 
       lucide.createIcons();
     });
