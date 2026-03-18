@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
@@ -7,6 +8,7 @@
   <link rel="stylesheet" href="/css/login.css" />
   <title>Create an account</title>
 </head>
+
 <body>
 
   <!-- Success Modal (hidden by default) -->
@@ -31,39 +33,39 @@
       <div class="image-wrapper">
         <img src="/images/register-img.png" alt="Registration illustration" />
       </div>
+
       <div class="login-wrapper">
         <h2 class="title-header">Let's start coding!</h2>
         <p class="subtitle">Join us and start building something amazing.</p>
 
         <form id="registerForm" novalidate>
-          <label>Username</label>
+
+          <label for="username">Username</label>
           <div class="input-container">
             <i data-lucide="user-round"></i>
-            <input id="username" type="text" placeholder="Choose a username" />
+            <input type="text" id="username" name="username" placeholder="Choose a username" />
           </div>
 
-          <label>Email Address</label>
+          <label for="email">Email Address</label>
           <div class="input-container">
             <i data-lucide="at-sign"></i>
-            <input id="email" type="email" placeholder="Enter valid email" />
+            <input type="email" id="email" name="email" placeholder="Enter valid email" />
           </div>
           <div id="emailMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
 
-          <label>Password</label>
+          <label for="password">Password</label>
           <div class="input-container">
             <i data-lucide="lock-keyhole"></i>
-            <input id="password" type="password" placeholder="Create a password" />
+            <input type="password" id="password" name="password" placeholder="Create a password" />
           </div>
           <div id="passwordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
 
-          <label>Confirm Password</label>
+          <label for="confirm-password">Confirm Password</label>
           <div class="input-container">
             <i data-lucide="lock-keyhole"></i>
-            <input id="confirm-password" type="password" placeholder="Confirm password" />
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm password" />
           </div>
           <div id="confirmPasswordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
-
-          <div id="message" style="margin-bottom: 10px;"></div>
 
           <div class="input-links-container">
             <input type="checkbox" id="terms" name="terms" />
@@ -71,7 +73,8 @@
               By continuing, you agree to our
               <a href="/terms.html">Terms & Conditions</a>
               and
-              <a href="/privacy.html">Privacy Policy</a>.
+              <a href="/privacy.html">Privacy Policy</a>
+              of CodePreviewer.
             </p>
           </div>
 
@@ -89,8 +92,10 @@
     </div>
   </div>
 
-  <!-- Scripts at bottom of body, no defer needed -->
+  <!-- Icons -->
   <script src="/libs/lucide.js"></script>
-  <script src="/js/register.js"></script>
+  <!-- JS -->
+  <script src="/js/register.js" defer></script>
 </body>
+
 </html>
