@@ -47,24 +47,40 @@ try {
 // Load route modules FIRST
 console.log('Loading route modules...');
 let requireAuth, authRouter, projectsRouter, usersRouter;
+
 try {
   requireAuth = require('./middleware/auth').requireAuth;
-  usersRouter = require('./routes/users');
-  authRouter = require('./routes/auth');
-  projectsRouter = require('./routes/projects');
-  console.log('✓ Route modules loaded successfully');
+  console.log('✓ auth middleware loaded');
 } catch (err) {
-  console.error('Failed to load route modules:', err);
-  console.error('Route module error stack:', err.stack);
-  // Create fallback modules to prevent crashes
-  requireAuth = (req, res, next) => {
-    console.log('Fallback auth - allowing request');
-    next();
-  };
+  console.error('❌ auth middleware failed:', err.message);
+  requireAuth = (req, res, next) => next();
+}
+
+try {
+  authRouter = require('./routes/auth');
+  console.log('✓ auth router loaded');
+} catch (err) {
+  console.error('❌ auth router failed:', err.message, err.stack);
   authRouter = express.Router();
-  authRouter.all('*', (req, res) => res.json({ message: 'Auth router fallback' }));
+  authRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Auth router failed: ' + err.message }));
+}
+
+try {
+  projectsRouter = require('./routes/projects');
+  console.log('✓ projects router loaded');
+} catch (err) {
+  console.error('❌ projects router failed:', err.message);
   projectsRouter = express.Router();
-  projectsRouter.all('*', (req, res) => res.json({ message: 'Projects router fallback' }));
+  projectsRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Projects router failed' }));
+}
+
+try {
+  usersRouter = require('./routes/users');
+  console.log('✓ users router loaded');
+} catch (err) {
+  console.error('❌ users router failed:', err.message);
+  usersRouter = express.Router();
+  usersRouter.all('*', (req, res) => res.status(500).json({ success: false, error: 'Users router failed' }));
 }
 
 app.use(cors({
@@ -94,14 +110,14 @@ const sessionConfig = {
   }
 };
 
-console.log('Session config created:', {
+console.log('Session config created:', { 
   name: sessionConfig.name,
   hasSecret: !!sessionConfig.secret,
   resave: sessionConfig.resave,
-  cookieSecure: sessionConfig.cookie.secure
+  cookieSecure: sessionConfig.cookie.secure 
 });
 
-if (process.env.REDIS_URL) {
+if (!isVercel && process.env.REDIS_URL) {
   console.log('Attempting to configure Redis...');
   try {
     const { createClient } = require('redis');
@@ -112,8 +128,8 @@ if (process.env.REDIS_URL) {
 
     const redisClient = createClient({
       url: process.env.REDIS_URL,
-      socket: {
-        tls: true,
+      socket: { 
+        tls: true, 
         rejectUnauthorized: false,
         connectTimeout: 10000
       }
@@ -156,9 +172,9 @@ if (process.env.REDIS_URL) {
     console.log('Falling back to memory session store');
   }
 } else {
-  console.log('Using memory session store:', {
-    isVercel,
-    hasRedisUrl: !!process.env.REDIS_URL
+  console.log('Using memory session store:', { 
+    isVercel, 
+    hasRedisUrl: !!process.env.REDIS_URL 
   });
 }
 
@@ -178,20 +194,20 @@ app.use((req, res, next) => {
     cookie: req.headers.cookie ? 'present' : 'none',
     userAgent: req.headers['user-agent']?.substring(0, 50)
   });
-
+  
   // Capture response
   const oldSend = res.send;
-  res.send = function (data) {
+  res.send = function(data) {
     console.log(`  Response ${res.statusCode} for ${req.method} ${req.url}`);
     oldSend.apply(res, arguments);
   };
-
+  
   next();
 });
 
 app.use((req, res, next) => {
-  const authStatus = req.session?.isLoggedIn
-    ? `authenticated ${req.session.email}`
+  const authStatus = req.session?.isLoggedIn 
+    ? `authenticated ${req.session.email}` 
     : 'not authenticated';
   console.log(`Auth check: ${req.method} ${req.path} - ${authStatus}`);
   next();
@@ -309,8 +325,8 @@ app.get(['/admin', '/admin/dashboard.html'], requireAuth, (req, res) => {
 
 app.use((req, res) => {
   console.log('404 Not Found:', req.method, req.path);
-  res.status(404).json({
-    error: 'Route not found',
+  res.status(404).json({ 
+    error: 'Route not found', 
     path: req.path,
     method: req.method
   });
