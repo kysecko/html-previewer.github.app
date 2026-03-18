@@ -1,51 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Styles -->
   <link rel="stylesheet" href="/css/login.css" />
-
-  <!-- Icons -->
   <script src="/libs/lucide.js"></script>
-
-  <!-- JS -->
   <script src="/js/register.js" defer></script>
-
   <title>Create an account</title>
 </head>
-
 <body>
-  <div class="page">
 
-    <!-- Successs Modal nakahide by default -->
-    <div id="successModal" class="modal">
-      <div class="modal-content">
-        <div class="success-icon">
-          <i data-lucide="check-check"></i>
-        </div>
-
-        <h2>Registration Successful!</h2>
-        <p>You will be redirected to the login page.</p>
-      </div>
+  <!-- Success Modal (hidden by default) -->
+  <div id="successModal" style="
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 9999;
+    align-items: center; justify-content: center;
+  ">
+    <div style="
+      background: #1a1a1a; border: 1px solid #2ecc71; border-radius: 16px;
+      padding: 36px 28px; width: 90%; max-width: 360px; text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    ">
+      <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+      <h2 style="color: #2ecc71; font-size: 18px; margin: 0 0 8px; font-family: inherit;">Registration Successful!</h2>
+      <p style="color: #aaa; font-size: 13px; margin: 0; font-family: inherit;">Redirecting you to the login page...</p>
     </div>
+  </div>
 
-
+  <div class="page">
     <div class="card">
       <div class="image-wrapper">
         <img src="/images/register-img.png" alt="Registration illustration" />
       </div>
-
       <div class="login-wrapper">
-
         <h2 class="title-header">Let's start coding!</h2>
         <p class="subtitle">Join us and start building something amazing.</p>
 
         <form id="registerForm" novalidate>
-
           <label>Username</label>
           <div class="input-container">
             <i data-lucide="user-round"></i>
@@ -79,9 +71,9 @@
             <input type="checkbox" id="terms" name="terms" />
             <p>
               By continuing, you agree to our
-              <a href="terms.html">Terms & Conditions</a>
+              <a href="/terms.html">Terms & Conditions</a>
               and
-              <a href="privacy.html">Privacy Policy</a>.
+              <a href="/privacy.html">Privacy Policy</a>.
             </p>
           </div>
 
@@ -100,5 +92,4 @@
   </div>
 
 </body>
-
 </html>
