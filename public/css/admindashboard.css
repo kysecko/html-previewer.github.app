@@ -1341,3 +1341,89 @@ input[type="checkbox"]:focus-visible {
 .hidden {
   display: none !important;
 }
+
+/* ========== Additional Styles ========== */
+
+/* Role badges */
+.badge-role {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-admin {
+  background: var(--warning-light);
+  color: var(--primary);
+  border: 1px solid rgba(255,172,28,0.3);
+}
+.badge-user {
+  background: var(--info-light);
+  color: var(--info);
+  border: 1px solid rgba(59,130,246,0.3);
+}
+
+/* Status badges */
+.badge-status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge-active {
+  background: var(--success-light);
+  color: var(--success);
+}
+.badge-active::before {
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success);
+}
+.badge-inactive {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-muted);
+}
+.badge-inactive::before {
+  background: var(--text-muted);
+}
+
+/* Table special rows */
+.loading-row, .empty-row, .error-row {
+  text-align: center;
+  padding: 48px 16px !important;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+.error-row { color: var(--danger); }
+
+/* Truncate long emails */
+.td-email {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.td-username { font-weight: 600; }
+.td-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Stat card animation */
+.stat-card.visible {
+  animation: slideInUp 0.4s ease forwards;
+}
