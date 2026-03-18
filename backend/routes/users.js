@@ -21,10 +21,9 @@ router.get('/', requireAdmin, async (req, res) => {
   try {
     const supabase = getSupabase();
 
-    // Select only columns that actually exist in your custom users table
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, username, email, role, created_at')
+      .select('id, username, email, role, created_at, last_login_at')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -32,14 +31,19 @@ router.get('/', requireAdmin, async (req, res) => {
       return res.status(500).json({ success: false, error: error.message });
     }
 
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
     const formatted = users.map(u => ({
       id:        u.id,
       username:  u.username,
       email:     u.email,
       role:      u.role,
       createdAt: u.created_at,
-      lastLogin: null,   // not tracked yet — add last_login_at column to enable
-      active:    false   // set to false until last_login_at column is added
+      lastLogin: u.last_login_at,
+      active:    u.last_login_at
+                   ? new Date(u.last_login_at) > thirtyDaysAgo
+                   : false
     }));
 
     return res.json({ success: true, users: formatted, total: formatted.length });
@@ -57,18 +61,21 @@ router.get('/stats', requireAdmin, async (req, res) => {
 
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, role');
+      .select('id, role, last_login_at');
 
     if (error) {
       console.error('Stats fetch error:', JSON.stringify(error));
       return res.status(500).json({ success: false, error: error.message });
     }
 
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
     const stats = {
       total:   users.length,
       admins:  users.filter(u => u.role === 'admin').length,
       regular: users.filter(u => u.role !== 'admin').length,
-      active:  0  // will show real data once last_login_at column is added
+      active:  users.filter(u => u.last_login_at && new Date(u.last_login_at) > thirtyDaysAgo).length,
     };
 
     return res.json({ success: true, stats });
