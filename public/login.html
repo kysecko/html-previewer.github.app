@@ -1,95 +1,113 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles -->
     <link rel="stylesheet" href="/css/login.css" />
-    <link rel="stylesheet" href="/css/loader.css">
-
+    <link rel="stylesheet" href="/css/loader.css" />
 
     <title>Log in to your account</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Redirect Spinner -->
-    <div id="redirectSpinner" class="spinner-overlay" style="display:none;">
-        <div class="spinner-bg"></div>
-        <div class="banter-loader">
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-            <div class="banter-loader__box"></div>
-        </div>
+    <div id="redirectSpinner" class="spinner-overlay" style="display: none">
+      <div class="spinner-bg"></div>
+      <div class="banter-loader">
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+        <div class="banter-loader__box"></div>
+      </div>
     </div>
-
-
 
     <div class="page">
-        <div class="card">
-            <div class="image-wrapper">
-                <img src="/images/login-img.png" alt="Login illustration" />
-            </div>
-
-            <div class="login-wrapper">
-
-                <h2 class="title-header">Welcome Back!</h2>
-                <p class="subtitle">Sign in and start building.</p>
-
-                <form id="loginForm" novalidate>
-                    <label for="email">Email Address</label>
-                    <div class="input-container">
-                        <i data-lucide="at-sign"></i>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
-                    </div>
-                    <div id="emailMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
-
-                    <label for="password" class="password-label">Password</label>
-                    <div class="input-container">
-                        <i data-lucide="lock-keyhole"></i>
-                        <input type="password" id="password" name="password" placeholder="Enter your password"
-                            required />
-                    </div>
-
-                    <div id="passwordMessage" style="margin-bottom: 10px; font-size: 12px;"></div>
-
-                    <div class="input-links-container">
-                        <input type="checkbox" name="terms" id="terms" name="terms" />
-                        <p>
-                            I have read and agree to the
-                            <a href="terms.html">Terms & Conditions</a>
-                            and
-                            <a href="privacy.html">Privacy Policy</a>
-                            of CodePreviewer.
-                        </p>
-                    </div>
-
-                    <button type="submit" class="login-btn">Login</button>
-
-                    <p class="paragraph">
-                        Don't have an account?
-                        <a href="register.html" class="secondary-link">Create Account</a>
-                    </p>
-                    <p class="paragraph">
-                        <a href="/pages/compiler.html" class="secondary-link" style="color: #d1d1d1;">Continue as
-                            Guest</a>
-                    </p>
-                </form>
-            </div>
+      <div class="card">
+        <div class="image-wrapper">
+          <img src="/images/login-img.png" alt="Login illustration" />
         </div>
+
+        <div class="login-wrapper">
+          <h2 class="title-header">Welcome Back!</h2>
+          <p class="subtitle">Sign in and start building.</p>
+
+          <form id="loginForm" novalidate>
+            <label for="email">Email Address</label>
+            <div class="input-container">
+              <i data-lucide="at-sign"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div
+              id="emailMessage"
+              style="margin-bottom: 10px; font-size: 12px"
+            ></div>
+
+            <label for="password" class="password-label">Password</label>
+            <div class="input-container">
+              <i data-lucide="lock-keyhole"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+              />
+              <button id="toggle-password" style="cursor: pointer; border: none; background: transparent;">
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+
+            <div
+              id="passwordMessage"
+              style="margin-bottom: 10px; font-size: 12px"
+            ></div>
+
+            <div class="input-links-container">
+              <input type="checkbox" name="terms" id="terms" name="terms" />
+              <p>
+                I have read and agree to the
+                <a href="terms.html">Terms & Conditions</a>
+                and
+                <a href="privacy.html">Privacy Policy</a>
+                of CodePreviewer.
+              </p>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+
+            <p class="paragraph">
+              Don't have an account?
+              <a href="register.html" class="secondary-link">Create Account</a>
+            </p>
+            <p class="paragraph">
+              <a
+                href="/pages/compiler.html"
+                class="secondary-link"
+                style="color: #d1d1d1"
+                >Continue as Guest</a
+              >
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
-    
+
     <!-- Icons -->
     <script src="/libs/lucide.js"></script>
-    <!-- JS --> 
+    <!-- JS -->
     <script src="/js/login.js" defer></script>
-</body>
-
+  </body>
 </html>

@@ -16,15 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const usernameInput          = document.getElementById('username');
-  const emailInput             = document.getElementById('email');
-  const passwordInput          = document.getElementById('password');
-  const confirmPasswordInput   = document.getElementById('confirm-password');
-  const termsCheckbox          = document.getElementById('terms');
-  const emailMessage           = document.getElementById('emailMessage');
-  const passwordMessage        = document.getElementById('passwordMessage');
+  const usernameInput = document.getElementById('username');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm-password');
+  const termsCheckbox = document.getElementById('terms');
+  const emailMessage = document.getElementById('emailMessage');
+  const passwordMessage = document.getElementById('passwordMessage');
   const confirmPasswordMessage = document.getElementById('confirmPasswordMessage');
-  const successModal           = document.getElementById('successModal');
+  const successModal = document.getElementById('successModal');
 
   if (!usernameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
     console.error('One or more inputs not found');
@@ -75,18 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const closeModal = () => {
     clearTimeout(autoCloseTimer);
-    modal.style.opacity       = '0';
+    modal.style.opacity = '0';
     modal.style.pointerEvents = 'none';
-    modalBox.style.transform  = 'scale(0.92)';
+    modalBox.style.transform = 'scale(0.92)';
   };
 
   const showModal = (title, msg) => {
     clearTimeout(autoCloseTimer);
-    modalTitle.textContent    = title;
-    modalMessage.textContent  = msg;
-    modal.style.opacity       = '1';
+    modalTitle.textContent = title;
+    modalMessage.textContent = msg;
+    modal.style.opacity = '1';
     modal.style.pointerEvents = 'all';
-    modalBox.style.transform  = 'scale(1)';
+    modalBox.style.transform = 'scale(1)';
     autoCloseTimer = setTimeout(closeModal, 3000);
   };
 
@@ -115,36 +115,36 @@ document.addEventListener('DOMContentLoaded', () => {
   usernameInput.addEventListener('input', () => {
     const v = usernameInput.value.trim();
     if (!usernameInput.parentElement) return;
-    if (v.length === 0)    usernameInput.parentElement.style.borderColor = '';
+    if (v.length === 0) usernameInput.parentElement.style.borderColor = '';
     else if (v.length < 3) usernameInput.parentElement.style.borderColor = '#FF0000';
-    else                   usernameInput.parentElement.style.borderColor = '#2ecc71';
+    else usernameInput.parentElement.style.borderColor = '#2ecc71';
   });
   emailInput.addEventListener('input', () => {
-    const v  = emailInput.value.trim();
+    const v = emailInput.value.trim();
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!v)               clearFieldError(emailInput, emailMessage);
+    if (!v) clearFieldError(emailInput, emailMessage);
     else if (!re.test(v)) showFieldError(emailInput, emailMessage, 'Please enter a valid email address');
-    else                  showFieldSuccess(emailInput, emailMessage, 'Valid email');
+    else showFieldSuccess(emailInput, emailMessage, 'Valid email');
   });
   passwordInput.addEventListener('input', () => {
     const v = passwordInput.value;
-    if (!v)                          clearFieldError(passwordInput, passwordMessage);
-    else if (v.length < 8)           showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
+    if (!v) clearFieldError(passwordInput, passwordMessage);
+    else if (v.length < 8) showFieldError(passwordInput, passwordMessage, 'Password must be at least 8 characters');
     else if (!/(?=.*[a-z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a lowercase letter');
     else if (!/(?=.*[A-Z])/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain an uppercase letter');
-    else if (!/(?=.*\d)/.test(v))    showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
-    else                             showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
+    else if (!/(?=.*\d)/.test(v)) showFieldError(passwordInput, passwordMessage, 'Password must contain a number');
+    else showFieldSuccess(passwordInput, passwordMessage, 'Strong password');
     if (confirmPasswordInput.value.length > 0) validateConfirmPassword();
   });
   const validateConfirmPassword = () => {
     const v = confirmPasswordInput.value;
-    if (!v)                            clearFieldError(confirmPasswordInput, confirmPasswordMessage);
+    if (!v) clearFieldError(confirmPasswordInput, confirmPasswordMessage);
     else if (v !== passwordInput.value) showFieldError(confirmPasswordInput, confirmPasswordMessage, 'Passwords do not match');
-    else                               showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
+    else showFieldSuccess(confirmPasswordInput, confirmPasswordMessage, 'Passwords match');
   };
   confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
-  // ── Form submit ──
+  // Form submit 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -154,9 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
     clearFieldError(confirmPasswordInput, confirmPasswordMessage);
     if (usernameInput.parentElement) usernameInput.parentElement.style.borderColor = '';
 
-    const username        = usernameInput.value.trim();
-    const email           = emailInput.value.trim();
-    const password        = passwordInput.value;
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
     let isValid = true;
@@ -199,22 +199,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const submitBtn    = form.querySelector('button[type="submit"]');
+    const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn ? submitBtn.textContent : 'Create Account';
 
     if (submitBtn) {
-      submitBtn.disabled      = true;
-      submitBtn.textContent   = 'Creating your account...';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating your account...';
       submitBtn.style.opacity = '0.7';
-      submitBtn.style.cursor  = 'not-allowed';
+      submitBtn.style.cursor = 'not-allowed';
     }
 
     try {
       console.log('Sending register request for:', email);
       const res = await fetch('/api/auth/register', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, email, password })
       });
       console.log('Response status:', res.status);
 
@@ -238,8 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Show success modal then redirect
       if (successModal) {
-        successModal.style.display        = 'flex';
-        successModal.style.alignItems     = 'center';
+        successModal.style.display = 'flex';
+        successModal.style.alignItems = 'center';
         successModal.style.justifyContent = 'center';
       }
       setTimeout(() => { window.location.href = '/login.html'; }, 2500);
