@@ -116,21 +116,7 @@ label {
   height: 16px;
   color: var(--muted);
 }
-.input-container i,
-.input-container svg {
-  width: 20px;
-  height: 20px;
-  color: #ffffff; /* Or whatever color you prefer */
-  flex-shrink: 0;
-}
 
-#toggle-password {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  margin-left: 5px;
-}
 input {
   flex: 1;
   background: transparent;
@@ -140,6 +126,13 @@ input {
   font-size: 14px;
 }
 
+#toggle-password {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  margin-left: 5px;
+}
 /* MESSAGES */
 #message {
   font-size: 0.875rem;
