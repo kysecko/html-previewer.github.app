@@ -6,7 +6,7 @@ console.log('PROJECTS ROUTES LOADED AND WORKING');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 router.get('/test', (req, res) => {
