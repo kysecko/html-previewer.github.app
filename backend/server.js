@@ -99,7 +99,7 @@ console.log('Session config created:', {
   cookieSecure: sessionConfig.cookie.secure 
 });
 
-if (!isVercel && process.env.REDIS_URL) {
+if (process.env.REDIS_URL) {
   console.log('Attempting to configure Redis...');
   try {
     const { createClient } = require('redis');
@@ -154,10 +154,7 @@ if (!isVercel && process.env.REDIS_URL) {
     console.log('Falling back to memory session store');
   }
 } else {
-  console.log('Using memory session store:', { 
-    isVercel, 
-    hasRedisUrl: !!process.env.REDIS_URL 
-  });
+  console.log('No REDIS_URL set — using memory session store (sessions will not persist across serverless instances)');
 }
 
 console.log('Applying session middleware...');
