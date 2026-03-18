@@ -94,14 +94,14 @@ const sessionConfig = {
   }
 };
 
-console.log('Session config created:', { 
+console.log('Session config created:', {
   name: sessionConfig.name,
   hasSecret: !!sessionConfig.secret,
   resave: sessionConfig.resave,
-  cookieSecure: sessionConfig.cookie.secure 
+  cookieSecure: sessionConfig.cookie.secure
 });
 
-if (!isVercel && process.env.REDIS_URL) {
+if (process.env.REDIS_URL) {
   console.log('Attempting to configure Redis...');
   try {
     const { createClient } = require('redis');
@@ -112,8 +112,8 @@ if (!isVercel && process.env.REDIS_URL) {
 
     const redisClient = createClient({
       url: process.env.REDIS_URL,
-      socket: { 
-        tls: true, 
+      socket: {
+        tls: true,
         rejectUnauthorized: false,
         connectTimeout: 10000
       }
@@ -156,9 +156,9 @@ if (!isVercel && process.env.REDIS_URL) {
     console.log('Falling back to memory session store');
   }
 } else {
-  console.log('Using memory session store:', { 
-    isVercel, 
-    hasRedisUrl: !!process.env.REDIS_URL 
+  console.log('Using memory session store:', {
+    isVercel,
+    hasRedisUrl: !!process.env.REDIS_URL
   });
 }
 
@@ -178,20 +178,20 @@ app.use((req, res, next) => {
     cookie: req.headers.cookie ? 'present' : 'none',
     userAgent: req.headers['user-agent']?.substring(0, 50)
   });
-  
+
   // Capture response
   const oldSend = res.send;
-  res.send = function(data) {
+  res.send = function (data) {
     console.log(`  Response ${res.statusCode} for ${req.method} ${req.url}`);
     oldSend.apply(res, arguments);
   };
-  
+
   next();
 });
 
 app.use((req, res, next) => {
-  const authStatus = req.session?.isLoggedIn 
-    ? `authenticated ${req.session.email}` 
+  const authStatus = req.session?.isLoggedIn
+    ? `authenticated ${req.session.email}`
     : 'not authenticated';
   console.log(`Auth check: ${req.method} ${req.path} - ${authStatus}`);
   next();
@@ -309,8 +309,8 @@ app.get(['/admin', '/admin/dashboard.html'], requireAuth, (req, res) => {
 
 app.use((req, res) => {
   console.log('404 Not Found:', req.method, req.path);
-  res.status(404).json({ 
-    error: 'Route not found', 
+  res.status(404).json({
+    error: 'Route not found',
     path: req.path,
     method: req.method
   });

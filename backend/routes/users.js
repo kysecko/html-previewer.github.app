@@ -16,71 +16,66 @@ function requireAdmin(req, res, next) {
   return res.status(403).json({ success: false, error: 'Admin access required' });
 }
 
-// GET /api/users — returns all users (admin only)
+// GET /api/users
 router.get('/', requireAdmin, async (req, res) => {
   try {
     const supabase = getSupabase();
 
+    // Select only columns that actually exist in your custom users table
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, username, email, role, created_at, last_sign_in_at')
+      .select('id, username, email, role, created_at')
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Users fetch error:', error);
+      console.error('Users fetch error:', JSON.stringify(error));
       return res.status(500).json({ success: false, error: error.message });
     }
 
-    // Consider a user "active" if they logged in within the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
     const formatted = users.map(u => ({
-      id:          u.id,
-      username:    u.username,
-      email:       u.email,
-      role:        u.role,
-      createdAt:   u.created_at,
-      lastLogin:   u.last_sign_in_at,
-      active:      u.last_sign_in_at
-                     ? new Date(u.last_sign_in_at) > thirtyDaysAgo
-                     : false
+      id:        u.id,
+      username:  u.username,
+      email:     u.email,
+      role:      u.role,
+      createdAt: u.created_at,
+      lastLogin: null,   // not tracked yet — add last_login_at column to enable
+      active:    false   // set to false until last_login_at column is added
     }));
 
     return res.json({ success: true, users: formatted, total: formatted.length });
 
   } catch (err) {
     console.error('USERS ERROR:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: 'Server error: ' + err.message });
   }
 });
 
-// GET /api/users/stats — summary counts
+// GET /api/users/stats
 router.get('/stats', requireAdmin, async (req, res) => {
   try {
     const supabase = getSupabase();
 
     const { data: users, error } = await supabase
       .from('users')
-      .select('id, role, last_sign_in_at');
+      .select('id, role');
 
-    if (error) return res.status(500).json({ success: false, error: error.message });
-
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    if (error) {
+      console.error('Stats fetch error:', JSON.stringify(error));
+      return res.status(500).json({ success: false, error: error.message });
+    }
 
     const stats = {
       total:   users.length,
       admins:  users.filter(u => u.role === 'admin').length,
       regular: users.filter(u => u.role !== 'admin').length,
-      active:  users.filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) > thirtyDaysAgo).length,
+      active:  0  // will show real data once last_login_at column is added
     };
 
     return res.json({ success: true, stats });
 
   } catch (err) {
     console.error('STATS ERROR:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: 'Server error: ' + err.message });
   }
 });
 

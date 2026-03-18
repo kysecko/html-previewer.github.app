@@ -9,7 +9,7 @@ function getSupabase() {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 }
-
+await supabase.from('users').update({ last_login_at: new Date().toISOString() }).eq('id', user.id);
 // Test route to verify router is working
 router.get('/ping', (req, res) => {
   res.json({ message: 'Auth router is working', timestamp: new Date().toISOString() });
