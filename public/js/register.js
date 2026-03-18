@@ -31,11 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // toggle password
+  // ── Toggle password visibility (inline SVG — no lucide dependency) ──
   const eyeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
   const eyeOffIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
 
   const togglePassword = document.getElementById('toggle-password');
+  const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+
   if (togglePassword) {
     togglePassword.innerHTML = eyeIcon;
     togglePassword.style.color = 'inherit';
@@ -46,6 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
       togglePassword.innerHTML = isPassword ? eyeOffIcon : eyeIcon;
     });
   }
+
+  if (toggleConfirmPassword) {
+    toggleConfirmPassword.innerHTML = eyeIcon;
+    toggleConfirmPassword.style.color = 'inherit';
+    toggleConfirmPassword.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = confirmPasswordInput.type === 'password';
+      confirmPasswordInput.type = isPassword ? 'text' : 'password';
+      toggleConfirmPassword.innerHTML = isPassword ? eyeOffIcon : eyeIcon;
+    });
+  }
+
   // ── Error toast modal ──
   const modal = document.createElement('div');
   const modalBox = document.createElement('div');
@@ -105,11 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
     autoCloseTimer = setTimeout(closeModal, 3000);
   };
 
-  // Close on backdrop click/tap
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  // Close button
   modalClose.addEventListener('click', closeModal);
-  // Close on Escape (desktop)
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
   // ── Field helpers ──
@@ -159,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
-  // Form submit 
+  // ── Form submit ──
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -173,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
-
     let isValid = true;
 
     if (!username || username.length < 3) {
@@ -251,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Show success modal then redirect
       if (successModal) {
         successModal.style.display = 'flex';
         successModal.style.alignItems = 'center';
