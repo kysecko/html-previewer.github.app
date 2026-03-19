@@ -31,64 +31,7 @@
   cursor: pointer;
   color: #7a7a7a;
 }
-
-/* LEGAL PAGE */
-
-.legal-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 60px 20px;
-}
-
-.legal-page h1 {
-  margin-bottom: 20px;
+.header:hover {
   color: #ffac1c;
 }
 
-.legal-page h2 {
-  margin-top: 40px;
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-}
-
-.legal-page p {
-  color: #7a7a7a;
-  line-height: 1.8;
-  margin-bottom: 14px;
-}
-
-.legal-page ul {
-  margin-left: 20px;
-  color: #7a7a7a;
-}
-
-.legal-page li {
-  margin-bottom: 8px;
-}
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.footer p {
-  text-align: center;
-  color: #7a7a7a;
-  margin-bottom: 10px;
-}
-@media (max-width: 600px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .header .logo {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .header a {
-    font-size: 14px;
-    align-self: flex-end;
-  }
-}
