@@ -7,7 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     console.log('Lucide icons initialized');
   }
+  // redirect spinner
+  const redirectSpinner = document.getElementById('redirectSpinner');
 
+  const showSpinner = () => {
+    if (redirectSpinner) redirectSpinner.style.display = 'flex';
+  };
   const form = document.getElementById('loginForm');
   console.log('Form element:', form);
 
@@ -247,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      showSpinner();
       window.location.href = data.redirect || '/user';
 
     } catch (err) {
