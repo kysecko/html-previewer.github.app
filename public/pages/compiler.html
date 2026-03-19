@@ -1,70 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodePreviewer | Guest Compiler</title>
+    <link rel="stylesheet" href="/css/guestCompiler.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodePreviewer | Guest Compiler</title>
-
-  <script src="/libs/lucide.js"></script>
-  <link rel="stylesheet" href="/css/guestCompiler.css" />
-</head>
-
-<body>
-  <div id="editor-wrapper" class="panel-wrapper">
-    <div class="panel-header">
-      <div class="panel-title" onclick="showLandingPage()">
-        <i data-lucide="file-code"></i>HTML Editor
-      </div>
-      <div class="panel-controls">
-        <button class="header-toggle-btn" onclick="toggleTheme()">
-          <i id="theme-icon" data-lucide="sun"></i>
-          <span id="theme-text">Light</span>
-        </button>
-      </div>
-    </div>
-    <div class="panel-content">
-      <div id="editor">
-        <div class="editor-container">
-          <div class="editor-wrapper">
-            <div class="line-numbers" id="lineNumbers">1</div>
-            <textarea id="sourceCode" spellcheck="false"
-              placeholder="Start by typing or pasting your HTML, CSS code here..."></textarea>
-          </div>
+  <body>
+    <!-- ── EDITOR PANEL ── -->
+    <div id="editor-wrapper" class="panel-wrapper">
+      <div class="panel-header">
+        <div
+          class="panel-title"
+          onclick="showLandingPage()"
+          title="Back to home"
+        >
+          <i data-lucide="file-code"></i>
+          <span>Code Editor</span>
+        </div>
+        <div class="panel-controls">
+          <button class="header-toggle-btn" onclick="toggleTheme()">
+            <i id="theme-icon" data-lucide="sun"></i>
+            <span id="theme-text">Light</span>
+          </button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="resizer" id="resizer"></div>
-
-  <div id="preview-wrapper" class="panel-wrapper">
-    <div class="panel-header">
-      <div class="panel-title"><i data-lucide="eye"></i>Live Preview</div>
-      <div class="panel-controls">
-        <button class="panel-btn" title="Toggle layout" onclick="toggleLayout()">
-          <i data-lucide="columns"></i>
-        </button>
-      </div>
-    </div>
-    <div class="panel-content">
-      <div id="preview-container">
-        <div class="preview-wrapper">
-          <div class="chrome-bar">
-            <div class="tab-shape" id="tabTitle">
-              <i data-lucide="file-text"></i>
-              <span>Untitled</span>
+      <div class="panel-content">
+        <div id="editor">
+          <div class="editor-container">
+            <div class="editor-scroll-wrapper">
+              <div class="line-numbers" id="lineNumbers">1</div>
+              <textarea
+                id="sourceCode"
+                spellcheck="false"
+                placeholder="Start typing or paste your HTML here..."
+              ></textarea>
             </div>
           </div>
-          <iframe id="preview"></iframe>
+        </div>
+      </div>
+
+      <!-- status bar -->
+      <div class="status-bar">
+        <span id="lineColInfo">Ln 1, Col 1</span>
+        <span class="status-divider"></span>
+        <span>HTML</span>
+        <span class="status-divider"></span>
+        <span id="charCount">0 chars</span>
+      </div>
+    </div>
+
+    <!-- ── RESIZER ── -->
+    <div class="resizer" id="resizer">
+      <div class="resizer-handle"></div>
+    </div>
+
+    <!-- ── PREVIEW PANEL ── -->
+    <div id="preview-wrapper" class="panel-wrapper">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="eye"></i>
+          <span>Live Previewer</span>
+        </div>
+        <div class="panel-controls">
+          <button
+            class="panel-btn"
+            title="Toggle layout"
+            onclick="toggleLayout()"
+          >
+            <i data-lucide="columns"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-content">
+        <div id="preview-container">
+          <div class="preview-wrapper">
+            <div class="chrome-bar">
+              <div class="tab-shape" id="tabTitle">
+                <i data-lucide="file-text"></i>
+                <span>Untitled</span>
+              </div>
+            </div>
+            <iframe
+              id="preview"
+              sandbox="allow-scripts allow-same-origin"
+            ></iframe>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="/js/guestCompiler.js"></script>
-  
-</body>
-
+    <script src="/libs/lucide.js"></script>
+    <script src="/js/guestCompiler.js"></script>
+  </body>
 </html>

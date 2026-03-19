@@ -9,12 +9,12 @@ const codeArea = document.getElementById("sourceCode"),
     resizer = document.getElementById("resizer"),
     editorWrapper = document.getElementById("editor-wrapper"),
     previewWrapper = document.getElementById("preview-wrapper");
-    let isResizing = false,
+let isResizing = false,
     isWrapped = false;
 
-    showLandingPage = () => {
-        window.location.href = '/';
-    };
+showLandingPage = () => {
+    window.location.href = '/';
+};
 
 function toggleTheme() {
     document.body.classList.toggle("light-mode");
@@ -138,23 +138,35 @@ document.addEventListener("mouseup", () => {
 });
 
 function init() {
+    // Initial code with boilerplate
     codeArea.value = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Example Title</title>
-</head>
-<body>
-    <h1>Hello, Bai's!</h1>
-</body>
-</html>`;
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <style>
+      </style>
+    </head>
+    <body>
+    <script>
+    </script>
+    </body>
+    </html>`;
     updateLineNumbers();
-    runCode();
+    runCode();  // Ensure the preview is updated
+}
+
+function runCode() {
+    const previewIframe = document.getElementById("preview");
+    previewIframe.srcdoc = codeArea.value;
+    const span = document.querySelector("#tabTitle span");
+    if (span) span.textContent = extractTitle(codeArea.value);
+    console.log("Updated iframe with code:", codeArea.value);  // Debugging output
 }
 
 window.addEventListener("load", () => {
     loadTheme();
     loadLayout();
-    init();
+    init();   
 });
