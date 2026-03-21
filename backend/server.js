@@ -3,30 +3,28 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs');
 
 const app = express();
 app.set('trust proxy', 1);
 
-// Environment check
+// Sinusuri kung nasa production o Vercel environment
 const isProd = process.env.NODE_ENV === 'production';
 const isVercel = !!process.env.VERCEL;
 
 // ==============================
-// PAG LOAD NG MGA ROUTES
+// PAG-LOAD NG MGA ROUTES AT MIDDLEWARE
 // ==============================
 
 let requireAuth, authRouter, projectsRouter, usersRouter;
 
 try {
-  // Kinukuha ang middleware at routes
-  requireAuth = require('./middleware/auth').requireAuth;
-  usersRouter = require('./routes/users');
-  authRouter = require('./routes/auth');
+  requireAuth    = require('./middleware/auth').requireAuth;
+  usersRouter    = require('./routes/users');
+  authRouter     = require('./routes/auth');
   projectsRouter = require('./routes/projects');
 } catch (err) {
-  // Kapag may error sa pag-load, gagamit ng fallback para hindi mag-crash
-  console.error('Error loading route modules:', err.message);
+  // Kapag may error sa pag-load, gagamit ng fallback para hindi mag-crash ang server
+  console.error('Error sa pag-load ng mga route module:', err.message);
 
   requireAuth = (req, res, next) => next();
 
@@ -41,7 +39,7 @@ try {
 }
 
 // ==============================
-// CORS CONFIGURATION
+// CORS — SINO ANG PWEDENG MAG-ACCESS SA API
 // ==============================
 
 app.use(cors({
@@ -63,14 +61,14 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: isProd, // HTTPS only kapag production
+    secure: isProd,           // HTTPS lang kapag production
     httpOnly: true,
     sameSite: isProd ? 'none' : 'lax',
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
+    maxAge: 24 * 60 * 60 * 1000  // 1 araw
   }
 };
 
-// Redis (optional)
+// Redis para sa session storage (opsyonal)
 if (process.env.REDIS_URL) {
   try {
     const { createClient } = require('redis');
@@ -86,26 +84,23 @@ if (process.env.REDIS_URL) {
 
     redisClient.connect().catch(() => {});
 
-    sessionConfig.store = new RedisStore({
-      client: redisClient
-    });
+    sessionConfig.store = new RedisStore({ client: redisClient });
 
   } catch (err) {
-    console.error('Redis setup failed:', err.message);
+    console.error('Hindi na-setup ang Redis:', err.message);
   }
 }
 
-// Apply session
 app.use(session(sessionConfig));
 
 // ==============================
-// MIDDLEWARES
+// PANGKALAHATANG MIDDLEWARE
 // ==============================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Simpleng request logger (dev only)
+// Simpleng logger ng mga request (para sa development lang)
 if (!isProd) {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
@@ -117,19 +112,19 @@ if (!isProd) {
 // API ROUTES
 // ==============================
 
-app.use('/api/auth', authRouter);
+app.use('/api/auth',     authRouter);
 app.use('/api/projects', projectsRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/users',    usersRouter);
 
-// Test endpoint
+// Pangsubok na endpoint para malaman kung gumagana ang API
 app.get('/api/test', (req, res) => {
   res.json({
-    message: 'API working',
+    message: 'API gumagana',
     session: !!req.session
   });
 });
 
-// Health check
+// Health check — para malaman kung buhay ang server
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -138,107 +133,74 @@ app.get('/api/health', (req, res) => {
 });
 
 // ==============================
-// STATIC FILES
+// STATIC FILES — CSS, JS, IMAGES
 // ==============================
 
-// Public folder path
+// Ang lahat ng static files ay nasa public folder
 const publicPath = path.join(__dirname, '..', 'public');
-
-// Static files (CSS, JS, images)
 app.use(express.static(publicPath));
 
 // ==============================
-// CLEAN URL HANDLER (.html remover)
+// MGA PAGE ROUTES (CLEAN URLS)
 // ==============================
 
-app.get('*', (req, res, next) => {
-
-  // I-skip ang API routes
-  if (req.path.startsWith('/api')) return next();
-
-  // I-skip kung may extension (css, js, png, etc.)
-  if (path.extname(req.path)) return next();
-
-  let filePath;
-
-  // Root page
-  if (req.path === '/') {
-    filePath = path.join(publicPath, 'index.html');
-  } else {
-    filePath = path.join(publicPath, req.path + '.html');
-  }
-
-  // Check kung existing file
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (!err) return res.sendFile(filePath);
-    next();
-  });
-});
-
-// ==============================
-// PAGE ROUTES
-// ==============================
-
-// Home
 app.get('/', (req, res) => {
-  if (req.session?.isLoggedIn) {
-    return res.redirect('/user');
-  }
+  if (req.session?.isLoggedIn) return res.redirect('/user');
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-// Guest compiler
+// Mga pampublikong pahina — nasa public root
+app.get('/login',    (req, res) => res.sendFile(path.join(publicPath, 'login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(publicPath, 'register.html')));
+
+// Compiler para sa mga bisita — nasa pages/user/
 app.get('/guest/compiler', (req, res) => {
-  res.sendFile(path.join(publicPath, 'pages/user/compiler.html'));
+  res.sendFile(path.join(publicPath, 'pages/compiler.html'));
 });
 
-// User page (secured)
+// Mga pahina na kailangan ng login — nasa pages/user/
 app.get('/user', requireAuth, (req, res) => {
   res.sendFile(path.join(publicPath, 'pages/user/home.html'));
 });
 
-// User compiler
 app.get('/user/compiler', requireAuth, (req, res) => {
-  res.sendFile(path.join(publicPath, 'pages/user/compiler.html'));
+  res.sendFile(path.join(publicPath, 'pages/compiler.html'));
 });
 
-// Admin dashboard
+// Admin dashboard — nasa pages/admin/
 app.get('/admin', requireAuth, (req, res) => {
-  if (req.session.role !== 'admin') {
-    return res.redirect('/user');
-  }
+  if (req.session.role !== 'admin') return res.redirect('/user');
   res.sendFile(path.join(publicPath, 'pages/admin/dashboard.html'));
 });
-
 // ==============================
 // ERROR HANDLING
 // ==============================
 
-// 404 handler
+// 404 — hindi nahanap ang hiniling na pahina o endpoint
 app.use((req, res) => {
   res.status(404).json({
-    error: 'Not found',
+    error: 'Hindi nahanap',
     path: req.path
   });
 });
 
-// Global error handler
+// Pangkalahatang error handler para sa lahat ng hindi inaasahang error
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     error: 'Server error',
-    message: isProd ? 'Something went wrong' : err.message
+    message: isProd ? 'May nangyaring mali' : err.message
   });
 });
 
 // ==============================
-// SERVER START
+// PAGPAPATAKBO NG SERVER (development lang)
 // ==============================
 
 if (!isProd) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server tumatakbo sa port ${PORT}`);
   });
 }
 
