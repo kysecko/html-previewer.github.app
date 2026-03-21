@@ -204,7 +204,6 @@ body.wrapped #preview-wrapper {
 }
 
 .editor-container:focus-within {
-  border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(255, 172, 28, 0.08);
 }
 
