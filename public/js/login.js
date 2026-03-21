@@ -1,11 +1,8 @@
-console.log('login.js loaded');
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded');
 
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
-    console.log('Lucide icons initialized');
   }
   // redirect spinner
   const redirectSpinner = document.getElementById('redirectSpinner');
@@ -14,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (redirectSpinner) redirectSpinner.style.display = 'flex';
   };
   const form = document.getElementById('loginForm');
-  console.log('Form element:', form);
 
   if (!form) {
     console.error('Login form not found!');
@@ -26,9 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const termsCheckbox = document.getElementById('terms');
   const emailMessage = document.getElementById('emailMessage');
   const passwordMessage = document.getElementById('passwordMessage');
-
-  console.log('Email input:', emailInput);
-  console.log('Password input:', passwordInput);
 
   if (!emailInput || !passwordInput) {
     console.error('Email or password input not found');
@@ -211,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      console.log('Sending login request for:', email);
 
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -220,12 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ email, password })
       });
 
-      console.log('Response status:', res.status);
-
       let data;
       try {
         data = await res.json();
-        console.log('Response data:', data);
       } catch (jsonError) {
         console.error('JSON parse error:', jsonError);
         showModal('Server Error', 'The server returned an invalid response. Please try again.');
@@ -267,10 +256,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  console.log('Form submit handler attached');
 });
-
-fetch('/api/test')
-  .then(r => r.json())
-  .then(data => console.log('API test:', data))
-  .catch(err => console.error('API test failed:', err));
