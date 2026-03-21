@@ -125,13 +125,20 @@ input {
   color: var(--text);
   font-size: 14px;
 }
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
 .input-container i,
 .input-container svg {
-  /* Added svg here */
-  width: 18px; /* Slightly larger for better visibility */
+  width: 18px;  
   height: 18px;
   color: var(--muted);
-  flex-shrink: 0; /* Prevents the icon from squishing */
+  flex-shrink: 0;  
   display: block;
 }
 
