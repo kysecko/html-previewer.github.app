@@ -1,4 +1,4 @@
-// ─── DOM Refs ─────────────────────────────────────────────────────────────────
+// DOM Refs  
 const codeArea = document.getElementById("sourceCode");
 const lineNumbers = document.getElementById("lineNumbers");
 const themeText = document.getElementById("theme-text");
@@ -10,19 +10,19 @@ const previewWrapper = document.getElementById("preview-wrapper");
 let isResizing = false;
 let isWrapped = false;
 
-// ─── Lucide Icons Bootstrap ───────────────────────────────────────────────────
+// Lucide Icons Bootstrap
 function initIcons() {
     if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
 document.addEventListener("DOMContentLoaded", initIcons);
 
-// ─── Navigation ───────────────────────────────────────────────────────────────
+// Navigation  
 function showLandingPage() {
     window.location.href = "/";
 }
 
-// ─── Theme ────────────────────────────────────────────────────────────────────
+// Theme  
 function toggleTheme() {
     document.body.classList.toggle("light-mode");
     const isLight = document.body.classList.contains("light-mode");
@@ -41,13 +41,13 @@ function loadTheme() {
     initIcons();
 }
 
-// ─── Line Numbers ─────────────────────────────────────────────────────────────
+// Line Numbers   
 function updateLineNumbers() {
     const count = codeArea.value.split("\n").length;
     lineNumbers.textContent = Array.from({ length: count }, (_, i) => i + 1).join("\n");
 }
 
-// ─── Status Bar ───────────────────────────────────────────────────────────────
+// Status Bar  
 function updateStatusBar() {
     const val = codeArea.value;
     const beforeCursor = val.substring(0, codeArea.selectionStart);
@@ -61,7 +61,7 @@ function updateStatusBar() {
     if (charCount) charCount.textContent = `${val.length} chars`;
 }
 
-// ─── Editor Events ────────────────────────────────────────────────────────────
+// Editor Events  
 codeArea.addEventListener("input", () => {
     updateLineNumbers();
     updateStatusBar();
@@ -89,7 +89,7 @@ codeArea.addEventListener("keydown", (e) => {
     }
 });
 
-// ─── Preview ──────────────────────────────────────────────────────────────────
+// Preview  
 function extractTitle(html) {
     const match = html.match(/<title>(.*?)<\/title>/i);
     return match ? match[1].trim() || "Untitled" : "Untitled";
@@ -102,7 +102,7 @@ function runCode() {
     if (span) span.textContent = extractTitle(codeArea.value);
 }
 
-// ─── Layout Toggle ────────────────────────────────────────────────────────────
+// Layout Toggle  
 function toggleLayout() {
     isWrapped = !isWrapped;
     document.body.classList.toggle("wrapped", isWrapped);
@@ -133,7 +133,7 @@ function loadLayout() {
     }
 }
 
-// ─── Resizer ──────────────────────────────────────────────────────────────────
+// Resizer    
 resizer.addEventListener("mousedown", () => {
     isResizing = true;
     document.body.style.userSelect = "none";
@@ -166,57 +166,36 @@ document.addEventListener("mouseup", () => {
     resizer.classList.remove("active");
 });
 
-// ─── Default Boilerplate ──────────────────────────────────────────────────────
+// Default Boilerplate  
 const DEFAULT_BOILERPLATE = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Page</title>
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0" />
+
+    <title>Your Title</title>
+
     <style>
-      /* ── Reset ── */
-      *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* ── Variables ── */
-      :root {
-        --bg: #ffffff;
-        --text: #1a1a1a;
-        --accent: #6c63ff;
-      }
-
-      /* ── Base ── */
-      body {
-        font-family: sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      h1 {
-        font-size: 2rem;
-        color: var(--accent);
-      }
+     /* Your CSS goes here */
     </style>
+
   </head>
   <body>
 
     <h1>Hello, World!</h1>
+    <p>Start by typing or pasting your code here....</p>
 
     <script>
       // Your JavaScript goes here
-      console.log("Page loaded!");
+      // Open console to see result
+      console.log("It worked!");
     <\/script>
+    
   </body>
 </html>`;
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// Init  
 function init() {
     codeArea.value = DEFAULT_BOILERPLATE;
     updateLineNumbers();

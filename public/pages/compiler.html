@@ -12,13 +12,14 @@
     <!-- ── EDITOR PANEL ── -->
     <div id="editor-wrapper" class="panel-wrapper">
       <div class="panel-header">
-        <div
-          class="panel-title"
-          onclick="showLandingPage()"
-          title="Back to home"
-        >
-          <i data-lucide="file-code"></i>
-          <span>Code Editor</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="panel-btn" onclick="showLandingPage()" title="Back to home">
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <div class="panel-title">
+            <i data-lucide="file-code"></i>
+            <span>Code Editor</span>
+          </div>
         </div>
         <div class="panel-controls">
           <button class="header-toggle-btn" onclick="toggleTheme()">
@@ -66,11 +67,7 @@
           <span>Live Previewer</span>
         </div>
         <div class="panel-controls">
-          <button
-            class="panel-btn"
-            title="Toggle layout"
-            onclick="toggleLayout()"
-          >
+          <button class="panel-btn" title="Toggle layout" onclick="toggleLayout()">
             <i data-lucide="columns"></i>
           </button>
         </div>
@@ -85,16 +82,13 @@
                 <span>Untitled</span>
               </div>
             </div>
-            <iframe
-              id="preview"
-              sandbox="allow-scripts allow-same-origin"
-            ></iframe>
+            <iframe id="preview" sandbox="allow-scripts"></iframe>
           </div>
         </div>
       </div>
     </div>
 
-    <script src="/libs/lucide.js"></script>
-    <script src="/js/guestCompiler.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/js/compiler.js"></script>
   </body>
 </html>

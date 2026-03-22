@@ -1,269 +1,337 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Editor Dashboard</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/logoo.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Editor Dashboard</title>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <!-- JS -->
+    <script src="/js/home.js" defer></script>
 
-  <!-- JS -->
-  <script src="/js/home.js" defer></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css/home.css" />
+  </head>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="../../css/home.css" />
-</head>
+  <body>
+    <!-- Backdrop overlay for mobile sidebar -->
+    <div id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-<body>
-
-  <!-- Backdrop overlay for mobile sidebar -->
-  <div id="sidebarBackdrop" onclick="closeSidebar()"></div>
-
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-container" style="margin-bottom: 10px;">
-        <img src="images/logoo.png" alt="logo">
-        <h3>Code<span style="color: #ffac1c;">Previewer</span></h3>
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container" style="margin-bottom: 10px">
+          <img src="images/logoo.png" alt="logo" />
+          <h3>Code<span style="color: #ffac1c">Previewer</span></h3>
+        </div>
+        <button id="newBtn">
+          <i data-lucide="plus" class="icon"></i> New Project
+        </button>
       </div>
-      <button id="newBtn"><i data-lucide="plus" class="icon"></i> New Project</button>
+      <div id="projectList">
+        <div class="project-list-header">Recent Projects</div>
+        <div id="projectItems">
+          <div class="loading">
+            <i data-lucide="loader" class="icon"></i> Loading projects...
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button onclick="openModal()">
+          <i data-lucide="log-out" class="icon"></i> Logout
+        </button>
+        <span id="projectCount">0 projects</span>
+      </div>
     </div>
-    <div id="projectList">
-      <div class="project-list-header">Recent Projects</div>
-      <div id="projectItems">
-        <div class="loading">
-          <i data-lucide="loader" class="icon"></i> Loading projects...
+
+    <!-- Main Area -->
+    <div id="mainArea">
+      <div id="topBar">
+        <!-- Hamburger toggle (works on both desktop + mobile) -->
+        <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+          <i data-lucide="menu" class="icon"></i>
+        </button>
+
+        <!-- Project title -->
+        <div class="h2" style="display: flex; align-items: center; gap: 10px">
+          <div id="currentTitle" title="Click to rename">Untitled Project</div>
+        </div>
+
+        <!-- Desktop action buttons -->
+        <div class="topbar-actions">
+          <button id="uploadBtn" class="topbar-btn">
+            <i data-lucide="upload" class="icon"></i> Upload File
+          </button>
+          <button id="saveBtn" class="topbar-btn">
+            <i data-lucide="save" class="icon"></i> Save
+          </button>
+          <button id="clearBtn" class="topbar-btn">
+            <i data-lucide="eraser" class="icon"></i> Clear Editor
+          </button>
+        </div>
+
+        <!-- Mobile 3-dot menu -->
+        <button
+          class="mobile-more-btn"
+          onclick="toggleMobileMenu()"
+          id="moreBtn"
+        >
+          <i data-lucide="ellipsis-vertical" class="icon"></i>
+        </button>
+        <div class="mobile-dropdown" id="mobileDropdown">
+          <button
+            onclick="
+              document.getElementById('fileInput').click();
+              closeMobileMenu();
+            "
+          >
+            <i data-lucide="upload" class="icon"></i> Upload File
+          </button>
+          <button
+            onclick="
+              document.getElementById('saveBtn').click();
+              closeMobileMenu();
+            "
+          >
+            <i data-lucide="save" class="icon"></i> Save
+          </button>
+          <button
+            onclick="
+              document.getElementById('clearBtn').click();
+              closeMobileMenu();
+            "
+          >
+            <i data-lucide="eraser" class="icon"></i> Clear Editor
+          </button>
+        </div>
+      </div>
+
+      <!-- Hidden file input -->
+      <input
+        type="file"
+        id="fileInput"
+        accept=".html,.htm,.js,.css,.txt"
+        style="display: none"
+      />
+
+      <div id="editorArea">
+        <div id="editorPanel">
+          <div class="panel-header">Editor</div>
+          <div class="editor-container">
+            <div id="lineNumbers" class="line-numbers"></div>
+            <textarea
+              id="codeEditor"
+              placeholder="Start typing your HTML here..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div id="divider"></div>
+
+        <div id="previewPanel">
+          <div class="panel-header">Previewer</div>
+          <button id="maximizeBtn" class="maximize-btn">
+            <i data-lucide="maximize" class="icon"></i>
+          </button>
+          <iframe id="previewFrame"></iframe>
         </div>
       </div>
     </div>
-    <div class="sidebar-footer">
-      <button onclick="openModal()"><i data-lucide="log-out" class="icon"></i> Logout</button>
-      <span id="projectCount">0 projects</span>
-    </div>
-  </div>
 
-  <!-- Main Area -->
-  <div id="mainArea">
-    <div id="topBar">
+    <div id="status" class="status">Saved!</div>
 
-      <!-- Hamburger toggle (works on both desktop + mobile) -->
-      <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
-        <i data-lucide="menu" class="icon"></i>
-      </button>
-
-      <!-- Project title -->
-      <div class="h2" style="display: flex; align-items: center; gap: 10px;">
-        <div id="currentTitle" title="Click to rename">Untitled Project</div>
-      </div>
-
-      <!-- Desktop action buttons -->
-      <div class="topbar-actions">
-        <button id="uploadBtn" class="topbar-btn">
-          <i data-lucide="upload" class="icon"></i> Upload File
-        </button>
-        <button id="saveBtn" class="topbar-btn">
-          <i data-lucide="save" class="icon"></i> Save
-        </button>
-        <button id="clearBtn" class="topbar-btn">
-          <i data-lucide="eraser" class="icon"></i> Clear Editor
-        </button>
-      </div>
-
-      <!-- Mobile 3-dot menu -->
-      <button class="mobile-more-btn" onclick="toggleMobileMenu()" id="moreBtn">
-        <i data-lucide="ellipsis-vertical" class="icon"></i>
-      </button>
-      <div class="mobile-dropdown" id="mobileDropdown">
-        <button onclick="document.getElementById('fileInput').click(); closeMobileMenu()">
-          <i data-lucide="upload" class="icon"></i> Upload File
-        </button>
-        <button onclick="document.getElementById('saveBtn').click(); closeMobileMenu()">
-          <i data-lucide="save" class="icon"></i> Save
-        </button>
-        <button onclick="document.getElementById('clearBtn').click(); closeMobileMenu()">
-          <i data-lucide="eraser" class="icon"></i> Clear Editor
-        </button>
-      </div>
-    </div>
-
-    <!-- Hidden file input -->
-    <input type="file" id="fileInput" accept=".html,.htm,.js,.css,.txt" style="display: none;">
-
-    <div id="editorArea">
-      <div id="editorPanel">
-        <div class="panel-header">
-          Editor
-        </div>
-        <div class="editor-container">
-          <div id="lineNumbers" class="line-numbers"></div>
-          <textarea id="codeEditor" placeholder="Start typing your HTML here..."></textarea>
-        </div>
-      </div>
-
-      <div id="divider"></div>
-
-      <div id="previewPanel">
-        <div class="panel-header">
-          Previewer
-        </div>
-        <button id="maximizeBtn" class="maximize-btn">
-          <i data-lucide="maximize" class="icon"></i>
-        </button>
-        <iframe id="previewFrame"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <div id="status" class="status">Saved!</div>
-
-  <!-- Create / Rename Project Modal -->
-  <div id="createProjectModal" style="
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    z-index: 2000;
-    place-items: center;
-  ">
-    <div style="
-      background: #1a1a1a;
-      color: #eee;
-      padding: 28px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    ">
-      <h2 id="createModalHeading" style="margin-bottom: 8px;">New Project</h2>
-      <p id="createModalSubtext" style="color: #aaa; margin-bottom: 20px;">Enter a name for your project</p>
-      <input id="newProjectTitleInput" type="text" placeholder="Type project name..." style="
-          width: 100%;
-          padding: 10px 14px;
-          background: #2a2a2a;
-          border: 1px solid #444;
-          border-radius: 6px;
+    <!-- Create / Rename Project Modal -->
+    <div
+      id="createProjectModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 2000;
+        place-items: center;
+      "
+    >
+      <div
+        style="
+          background: #1a1a1a;
           color: #eee;
-          font-family: Montserrat;
-          font-size: 14px;
-          box-sizing: border-box;
-          outline: none;
-          margin-bottom: 24px;
-        " />
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button onclick="closeCreateModal()" style="
-          padding: 10px 24px;
-          background: #333;
-          color: #ccc;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-family: Montserrat;
-        ">Cancel</button>
-        <button id="createModalConfirmBtn" onclick="confirmCreateModal()" style="
-          padding: 10px 24px;
-          background: #FFAC1C;
-          color: #111;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-family: Montserrat;
-          font-weight: 600;
-        ">Create</button>
+          padding: 28px;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 420px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        "
+      >
+        <h2 id="createModalHeading" style="margin-bottom: 8px">New Project</h2>
+        <p id="createModalSubtext" style="color: #aaa; margin-bottom: 20px">
+          Enter a name for your project
+        </p>
+        <input
+          id="newProjectTitleInput"
+          type="text"
+          placeholder="Type project name..."
+          style="
+            width: 100%;
+            padding: 10px 14px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #eee;
+            font-family: Montserrat;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            margin-bottom: 24px;
+          "
+        />
+        <div style="display: flex; gap: 12px; justify-content: flex-end">
+          <button
+            onclick="closeCreateModal()"
+            style="
+              padding: 10px 24px;
+              background: #333;
+              color: #ccc;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-family: Montserrat;
+            "
+          >
+            Cancel
+          </button>
+          <button
+            id="createModalConfirmBtn"
+            onclick="confirmCreateModal()"
+            style="
+              padding: 10px 24px;
+              background: #ffac1c;
+              color: #111;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-family: Montserrat;
+              font-weight: 600;
+            "
+          >
+            Create
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Logout Modal -->
-  <div id="myModal" style="
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    z-index: 2000;
-    place-items: center;
-  ">
-    <div style="
-      background: #1a1a1a;
-      color: #eee;
-      padding: 28px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    ">
-      <h2 style="margin-bottom: 20px;">Confirm Logout</h2>
-      <p style="color: #aaa; margin-bottom: 28px;">Are you sure you want to log out?</p>
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button onclick="cancel()" style="
-          padding: 10px 24px;
-          background: #333;
-          color: #ccc;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-family: Montserrat;
-        ">Cancel</button>
-        <button onclick="logout()" style="
-          padding: 10px 24px;
-          background: #e53e3e;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-family: Montserrat;
-        ">Logout</button>
+    <!-- Logout Modal -->
+    <div
+      id="myModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 2000;
+        place-items: center;
+      "
+    >
+      <div
+        style="
+          background: #1a1a1a;
+          color: #eee;
+          padding: 28px;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 420px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        "
+      >
+        <h2 style="margin-bottom: 20px">Confirm Logout</h2>
+        <p style="color: #aaa; margin-bottom: 28px">
+          Are you sure you want to log out?
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end">
+          <button
+            onclick="cancel()"
+            style="
+              padding: 10px 24px;
+              background: #333;
+              color: #ccc;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-family: Montserrat;
+            "
+          >
+            Cancel
+          </button>
+          <button
+            onclick="logout()"
+            style="
+              padding: 10px 24px;
+              background: #e53e3e;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-family: Montserrat;
+            "
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    // Sidebar toggle 
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      const isMobile = window.innerWidth <= 768;
+    <script>
+      // Sidebar toggle
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebarBackdrop");
+        const isMobile = window.innerWidth <= 768;
 
-      if (sidebar.classList.contains('expanded')) {
-        sidebar.classList.remove('expanded');
-        if (isMobile) backdrop.classList.remove('show');
-      } else {
-        sidebar.classList.add('expanded');
-        if (isMobile) backdrop.classList.add('show');
+        if (sidebar.classList.contains("expanded")) {
+          sidebar.classList.remove("expanded");
+          if (isMobile) backdrop.classList.remove("show");
+        } else {
+          sidebar.classList.add("expanded");
+          if (isMobile) backdrop.classList.add("show");
+        }
       }
-    }
 
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('expanded');
-      document.getElementById('sidebarBackdrop').classList.remove('show');
-    }
-
-    // Mobile 3-dot dropdown
-    function toggleMobileMenu() {
-      document.getElementById('mobileDropdown').classList.toggle('show');
-    }
-
-    function closeMobileMenu() {
-      document.getElementById('mobileDropdown').classList.remove('show');
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (e) {
-      const btn = document.getElementById('moreBtn');
-      const dropdown = document.getElementById('mobileDropdown');
-      if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-        closeMobileMenu();
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("expanded");
+        document.getElementById("sidebarBackdrop").classList.remove("show");
       }
-    });
 
-    // On resize: clean up backdrop if switching to desktop
-    window.addEventListener('resize', function () {
-      if (window.innerWidth > 768) {
-        document.getElementById('sidebarBackdrop').classList.remove('show');
+      // Mobile 3-dot dropdown
+      function toggleMobileMenu() {
+        document.getElementById("mobileDropdown").classList.toggle("show");
       }
-    });
-  </script>
 
-</body>
+      function closeMobileMenu() {
+        document.getElementById("mobileDropdown").classList.remove("show");
+      }
 
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function (e) {
+        const btn = document.getElementById("moreBtn");
+        const dropdown = document.getElementById("mobileDropdown");
+        if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+          closeMobileMenu();
+        }
+      });
+
+      // On resize: clean up backdrop if switching to desktop
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+          document.getElementById("sidebarBackdrop").classList.remove("show");
+        }
+      });
+      // Replace login from history so back button skips it
+      window.history.pushState(null, "", window.location.href);
+
+      window.addEventListener("popstate", () => {
+        window.history.pushState(null, "", window.location.href);
+      });
+    </script>
+  </body>
 </html>

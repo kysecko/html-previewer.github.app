@@ -1,6 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  const spinner = document.getElementById('redirectSpinner');
+  if (spinner) spinner.style.display = 'none';
+
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
   }

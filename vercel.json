@@ -1,15 +1,15 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
-    }
+    { "src": "backend/server.js", "use": "@vercel/node" }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "backend/server.js"
-    }
+    { "src": "/login",          "dest": "backend/server.js" },
+    { "src": "/register",       "dest": "backend/server.js" },
+    { "src": "/guest/compiler", "dest": "backend/server.js" },
+    { "src": "/user",           "dest": "backend/server.js" },
+    { "src": "/user/compiler",  "dest": "backend/server.js" },
+    { "src": "/admin",          "dest": "backend/server.js" },
+    { "src": "/(.*)",           "dest": "backend/server.js" }
   ]
 }

@@ -11,8 +11,8 @@
 .spinner-bg {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.9); /* Dimmed page background */
-  backdrop-filter: blur(1px); /* Optional: slight blur */
+  background-color: rgba(0, 0, 0, 0.9);  
+  backdrop-filter: blur(1px);  
 }
 
 /* Loader sits above the background */

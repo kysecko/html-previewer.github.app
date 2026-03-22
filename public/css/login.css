@@ -161,9 +161,9 @@ input[type="password"]::-webkit-textfield-decoration-container {
   border-radius: 6px;
   animation: slideDown 0.3s ease;
 }
-/* ================= LINK STYLE ================= */
+/* LINK STYLE */
 .link-style {
-  color: #ffac1c; /* Bright orange-yellow color */
+  color: #ffac1c; 
   text-decoration: none;
   font-weight: bold;
 }

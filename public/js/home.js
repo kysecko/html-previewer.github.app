@@ -278,13 +278,14 @@ function openModal() { modal.style.display = 'grid'; }
 function cancel() { modal.style.display = 'none'; }
 
 async function logout() {
-  try {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '/login.html';
-  } catch (error) {
-    console.error('Logout failed:', error);
-    showErrorModal('Logout Failed', 'Something went wrong while logging out. Please try again.');
-  }
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+
+  // Clear any stored data
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Replace history so back button goes nowhere
+  window.location.replace('/login');
 }
 
 function openCreateModal() {

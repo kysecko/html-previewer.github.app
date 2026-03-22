@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  
   // Date
   const dateEl = document.getElementById('date-display');
   if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', {
