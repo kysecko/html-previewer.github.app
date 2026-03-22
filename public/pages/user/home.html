@@ -49,7 +49,7 @@
     <div id="mainArea">
       <div id="topBar">
         <!-- Hamburger toggle (works on both desktop + mobile) -->
-        <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()">
+        <button id="toggleSidebar" class="toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
           <i data-lucide="menu" class="icon"></i>
         </button>
 
@@ -76,6 +76,7 @@
           class="mobile-more-btn"
           onclick="toggleMobileMenu()"
           id="moreBtn"
+          title="Show Actions"
         >
           <i data-lucide="ellipsis-vertical" class="icon"></i>
         </button>
@@ -117,7 +118,16 @@
 
       <div id="editorArea">
         <div id="editorPanel">
-          <div class="panel-header">Editor</div>
+          <div class="panel-header">
+            Editor
+            <button
+              id="expandEditorBtn"
+              class="panel-header-btn"
+              title="Expand Editor"
+            >
+              <i data-lucide="maximize" class="icon"></i>
+            </button>
+          </div>
           <div class="editor-container">
             <div id="lineNumbers" class="line-numbers"></div>
             <textarea
@@ -130,12 +140,12 @@
         <div id="divider"></div>
 
         <div id="previewPanel">
-          <div class="panel-header">Previewer</div>
-          <button id="maximizeBtn" class="maximize-btn">
+          <div class="panel-header">Previewer
+          <button id="maximizeBtn" title="Expand Previewer" class="panel-header-btn">
             <i data-lucide="maximize" class="icon"></i>
           </button>
-          <iframe id="previewFrame"></iframe>
         </div>
+          <iframe id="previewFrame"></iframe>
       </div>
     </div>
 

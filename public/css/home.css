@@ -15,22 +15,16 @@ body {
   display: flex;
 }
 
-/* SIDEBAR — Desktop (collapsed by default) */
+/* SIDEBAR — Desktop always fully expanded */
 #sidebar {
-  width: 80px;
+  width: 280px;
   background: #111;
   border-right: 1px solid #333;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
   overflow: hidden;
   flex-shrink: 0;
   z-index: 100;
-}
-
-/* Expanded state toggled via JS */
-#sidebar.expanded {
-  width: 280px;
 }
 
 .sidebar-header {
@@ -64,44 +58,28 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #999;
-  opacity: 0;
-  width: 0;
-  transition:
-    opacity 0.2s ease,
-    width 0.3s ease;
   overflow: hidden;
 }
 
-#sidebar.expanded .logo-container h3 {
-  opacity: 1;
-  width: auto;
-}
-
 #newBtn {
-  padding: 8px;
+  padding: 10px 8px;
   background: #ffac1c;
   color: #000;
   border: none;
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
-  font-size: 0;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition:
-    background 0.2s,
-    font-size 0.1s;
+  transition: background 0.2s;
   font-family: Montserrat;
   white-space: nowrap;
   overflow: hidden;
-  width: 100%; /* ← fills the collapsed sidebar */
+  width: 100%;
   box-sizing: border-box;
-}
-
-#sidebar.expanded #newBtn {
-  font-size: 12px;
 }
 
 #newBtn:hover {
@@ -115,10 +93,6 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
-  display: none;
-}
-
-#sidebar.expanded #projectList {
   display: block;
 }
 
@@ -214,7 +188,7 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0;
+  font-size: 12px;
   font-weight: 500;
   font-family: Montserrat;
   display: flex;
@@ -222,11 +196,6 @@ body {
   justify-content: center;
   gap: 6px;
   white-space: nowrap;
-  transition: font-size 0.1s;
-}
-
-#sidebar.expanded .sidebar-footer button {
-  font-size: 12px;
 }
 
 .sidebar-footer button:hover {
@@ -234,22 +203,18 @@ body {
 }
 
 #projectCount {
-  display: none;
-}
-
-#sidebar.expanded #projectCount {
   display: inline;
 }
 
-/* Toggle Button (inside topbar) */
+/* Toggle Button (inside topbar) — hidden on desktop */
 .toggle-btn {
+  display: none;
   background: none;
   border: none;
   color: #ffac1c;
   cursor: pointer;
   padding: 6px;
   border-radius: 6px;
-  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -430,16 +395,57 @@ body {
 }
 
 .panel-header {
-  padding: 12px 20px;
-  background: #1a1a1a;
-  border-bottom: 1px solid #333;
-  font-weight: 600;
-  font-size: 14px;
   display: flex;
-  color: #ffac1c;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 36px;
+  background: #141414;
+  border-bottom: 1px solid #2e2e2e;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffac1c;
   flex-shrink: 0;
+}
+
+.panel-header-btn {
+  background: transparent;
+  border: 1px solid #2e2e2e;
+  color: #888;
+  cursor: pointer;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.panel-header-btn:hover {
+  border-color: #ffac1c;
+  color: #ffac1c;
+  background: rgba(255, 172, 28, 0.1);
+}
+
+/* Editor expanded state */
+#editorArea.editor-expanded #editorPanel {
+  flex: 1 1 100% !important;
+}
+
+#editorArea.editor-expanded #divider,
+#editorArea.editor-expanded #previewPanel {
+  display: none;
+}
+
+/* Preview expanded state */
+#editorArea.preview-maximized #previewPanel {
+  flex: 1 1 100% !important;
+}
+
+#editorArea.preview-maximized #divider,
+#editorArea.preview-maximized #editorPanel {
+  display: none;
 }
 
 /* Line Numbers & Code Editor */
@@ -486,8 +492,8 @@ body {
 }
 
 #codeEditor::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 6px;
+  height: 10px;
 }
 #codeEditor::-webkit-scrollbar-track {
   background: #0d0d0d;
@@ -512,28 +518,6 @@ body {
   min-height: 0;
 }
 
-.maximize-btn {
-  position: absolute;
-  top: 5px;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #ffac1c;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  transition: all 0.2s;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.maximize-btn:hover {
-  background: rgba(255, 172, 28, 0.2);
-  box-shadow: 0 0 12px rgba(255, 172, 28, 0.4);
-}
-
 /* Fullscreen preview mode */
 .preview-maximized #editorPanel,
 .preview-maximized #divider {
@@ -552,8 +536,8 @@ body {
   flex-shrink: 0;
 }
 #divider:hover,
-#divider:active {
-  background: #555;
+#divider.active {
+  background: #ffac1c;
 }
 
 /* Status */
@@ -610,6 +594,7 @@ body {
 
 /* MOBILE  (≤768px) */
 @media (max-width: 768px) {
+  /* Sidebar hidden off-screen on mobile */
   #sidebar {
     position: fixed;
     top: 0;
@@ -621,6 +606,7 @@ body {
     z-index: 150;
   }
 
+  /* Slide in when toggled */
   #sidebar.expanded {
     transform: translateX(0);
     width: 280px;
@@ -646,6 +632,11 @@ body {
 
   #topBar {
     padding: 10px 14px;
+  }
+
+  /* Show hamburger on mobile */
+  .toggle-btn {
+    display: flex;
   }
 
   .topbar-actions {
