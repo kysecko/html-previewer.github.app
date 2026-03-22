@@ -1,15 +1,11 @@
-console.log('register.js loaded');
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded');
 
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
-    console.log('Lucide icons initialized');
   }
 
   const form = document.getElementById('registerForm');
-  console.log('Form element:', form);
 
   if (!form) {
     console.error('Register form not found!');
@@ -275,10 +271,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  console.log('Form submit handler attached');
 });
-
-fetch('/api/test')
-  .then(r => r.json())
-  .then(data => console.log('API test:', data))
-  .catch(err => console.error('API test failed:', err));
