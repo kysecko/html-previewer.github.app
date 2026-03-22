@@ -172,7 +172,33 @@ body.wrapped #preview-wrapper {
   align-items: center;
   gap: 6px;
 }
+/* Back Button */
+.back-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: var(--radius);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
 
+.back-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.back-btn:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.05);
+}
 /* ── PANEL BUTTONS ── */
 .panel-btn {
   background: transparent;
