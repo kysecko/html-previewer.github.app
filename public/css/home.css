@@ -447,7 +447,20 @@ body {
 #editorArea.preview-maximized #editorPanel {
   display: none;
 }
-
+#autocomplete-box::-webkit-scrollbar {
+  width: 4px;
+}
+#autocomplete-box::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 0 8px 8px 0;
+}
+#autocomplete-box::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+#autocomplete-box::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
 /* Line Numbers & Code Editor */
 .editor-container {
   display: flex;

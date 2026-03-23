@@ -69,6 +69,8 @@ const closeErrorModal = () => {
   errorModal.style.pointerEvents = 'none';
   errorModalBox.style.transform = 'scale(0.92)';
 };
+errorModal.addEventListener('click', closeErrorModal);
+
 const showErrorModal = (title, msg) => {
   clearTimeout(errorModalTimer);
   errorModalTitle.textContent = title;
@@ -110,6 +112,8 @@ const closeSuccessModal = () => {
   successModal2.style.pointerEvents = 'none';
   successModalBox.style.transform = 'scale(0.92)';
 };
+successModal2.addEventListener('click', closeSuccessModal);
+
 const showSuccessModal = (title, msg) => {
   clearTimeout(successModalTimer);
   successModalTitle.textContent = title;
@@ -355,7 +359,7 @@ async function saveProject() {
     const index = projects.findIndex(p => p.id === currentId);
     if (index !== -1) projects[index] = updated;
     renderList();
-    showSuccessModal('Project Saved', 'Your changes have been saved successfully.');
+    // showSuccessModal('Project Saved', 'Your changes have been saved successfully.');
     return updated;
   } catch (error) {
     showErrorModal('Save Failed', 'Failed to save your project: ' + error.message);
@@ -542,24 +546,41 @@ fileInput.addEventListener('change', async function (e) {
       showStatus('Uploading file...');
       const fileContent = event.target.result;
       editor.value = fileContent;
-      const filename = file.name.replace(/\.[^/.]+$/, '');
-      const projectTitle = filename || 'Untitled Project';
-      currentTitle.textContent = projectTitle;
       updatePreview();
-      const res = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title: projectTitle, code: fileContent })
-      });
-      if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Failed to save uploaded file'); }
-      const newProject = await res.json();
-      currentId = newProject.id;
-      await loadProjects();
-      showSuccessModal('File Uploaded', '"' + file.name + '" has been uploaded and saved successfully.');
+
+      // ✅ If a project is already open, save INTO it instead of creating a new one
+      if (currentId) {
+        const res = await fetch('/api/projects/' + currentId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title: currentTitle.textContent, code: fileContent })
+        });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Failed to save file into project'); }
+        const updated = await res.json();
+        const index = projects.findIndex(p => p.id === currentId);
+        if (index !== -1) projects[index] = updated;
+        renderList();
+        showSuccessModal('File Uploaded', '"' + file.name + '" has been loaded into your current project.');
+      } else {
+        // No project open — create a new one
+        const filename = file.name.replace(/\.[^/.]+$/, '');
+        const projectTitle = filename || 'Untitled Project';
+        currentTitle.textContent = projectTitle;
+        const res = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title: projectTitle, code: fileContent })
+        });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Failed to save uploaded file'); }
+        const newProject = await res.json();
+        currentId = newProject.id;
+        await loadProjects();
+        showSuccessModal('File Uploaded', '"' + file.name + '" has been uploaded and saved as a new project.');
+      }
     } catch (error) {
       showErrorModal('Upload Failed', 'File loaded but failed to save: ' + error.message);
-      currentId = null;
     } finally {
       fileInput.value = '';
     }
@@ -578,7 +599,7 @@ function loadProject(id) { loadProjectFromDB(id); }
 function downloadProject(id) {
   const p = projects.find(proj => proj.id === id);
   if (!p) return;
-  const blob = new Blob([getProjectContent(p)], { type: 'text/html' });
+  const blob = new Blob([getProjectContent(p)], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -642,5 +663,122 @@ async function init() {
   updateLineNumbers();
   setTimeout(() => showSuccessModal('Dashboard Loaded!', 'Your projects have been retrieved successfully.'), 500);
 }
+const suggestions = {
+  'h1': '<h1></h1>', 'h2': '<h2></h2>', 'h3': '<h3></h3>',
+  'h4': '<h4></h4>', 'h5': '<h5></h5>', 'h6': '<h6></h6>',
+  'div': '<div></div>', 'span': '<span></span>', 'p': '<p></p>',
+  'a': '<a href=""></a>', 'img': '<img src="" alt="">',
+  'ul': '<ul>\n  <li></li>\n</ul>', 'ol': '<ol>\n  <li></li>\n</ol>',
+  'li': '<li></li>', 'table': '<table>\n  <tr>\n    <td></td>\n  </tr>\n</table>',
+  'form': '<form action="" method="post"></form>', 'label': '<label for=""></label>',
+  'input': '<input type="text" placeholder="">',
+  'button': '<button></button>', 'textarea': '<textarea></textarea>',
+  'select': '<select>\n  <option value=""></option>\n</select>',
+  'nav': '<nav></nav>', 'header': '<header></header>',
+  'footer': '<footer></footer>', 'section': '<section></section>',
+  'article': '<article></article>', 'main': '<main></main>',
+  'style': '<style>\n  \n</style>', 'script': '<script>\n  \n<\/script>',
+  'link': '<link rel="stylesheet" href="">',
+  'meta': '<meta name="" content="">',
+  'html': '<!DOCTYPE html>\n<html>\n<head>\n  <title></title>\n</head>\n<body>\n  \n</body>\n</html>',
+};
+
+const autocompleteBox = document.createElement('div'); 
+autocompleteBox.id = 'autocomplete-box';
+autocompleteBox.style.cssText = `
+  position: fixed; z-index: 99999;
+  background: #1e1e1e; border: 1px solid #444; border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: none; flex-direction: column;
+  min-width: 180px; max-height: 200px; overflow-y: auto;
+  font-family: 'Courier New', monospace; font-size: 13px;
+`;
+document.body.appendChild(autocompleteBox);
+
+let acItems = [], acIndex = -1, acWord = '';
+
+function getWordBefore(el) {
+  const val = el.value.substring(0, el.selectionStart);
+  const match = val.match(/([a-zA-Z0-9!]+)$/);
+  return match ? match[1] : '';
+}
+
+function hideAutocomplete() {
+  autocompleteBox.style.display = 'none';
+  acItems = []; acIndex = -1;
+}
+
+function showAutocomplete(matches, word) {
+  if (!matches.length) { hideAutocomplete(); return; }
+  acItems = matches; acIndex = -1; acWord = word;
+  autocompleteBox.innerHTML = '';
+  matches.forEach((m, i) => {
+    const item = document.createElement('div');
+    item.style.cssText = `padding: 7px 14px; cursor: pointer; color: #d4d4d4; display: flex; justify-content: space-between; gap: 16px; align-items: center;`;
+    item.innerHTML = `<span style="color:#4ec9b0;">${m}</span><span style="color:#666;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px;">${suggestions[m].replace(/\n/g, ' ')}</span>`;
+    item.addEventListener('mousedown', e => { e.preventDefault(); applyAutocomplete(m); });
+    item.addEventListener('mouseenter', () => { acIndex = i; highlightItem(); });
+    autocompleteBox.appendChild(item);
+  });
+  const rect = editor.getBoundingClientRect();
+  const lineHeight = 20;
+  const lines = editor.value.substring(0, editor.selectionStart).split('\n');
+  const currentLine = lines.length;
+  const approxTop = rect.top + (currentLine * lineHeight) - editor.scrollTop + 4;
+  const approxLeft = rect.left + 40;
+  autocompleteBox.style.display = 'flex';
+  autocompleteBox.style.top = Math.min(approxTop, window.innerHeight - 220) + 'px';
+  autocompleteBox.style.left = Math.min(approxLeft, window.innerWidth - 200) + 'px';
+}
+
+function highlightItem() {
+  Array.from(autocompleteBox.children).forEach((el, i) => {
+    el.style.background = i === acIndex ? '#094771' : 'transparent';
+    el.style.color = i === acIndex ? '#fff' : '#d4d4d4';
+  });
+}
+
+function applyAutocomplete(key) {
+  const snippet = suggestions[key];
+  const start = editor.selectionStart;
+
+  // Select the typed word so execCommand replaces it
+  editor.selectionStart = start - acWord.length;
+  editor.selectionEnd = start;
+
+  // Insert using execCommand so undo/redo works natively
+  document.execCommand('insertText', false, snippet);
+
+  // Place cursor inside the tag (between > and <)
+  const newPos = editor.selectionStart - snippet.length + snippet.indexOf('><') + 1;
+  if (snippet.indexOf('><') !== -1) {
+    editor.selectionStart = editor.selectionEnd = newPos;
+  }
+
+  hideAutocomplete();
+  updatePreview();
+  updateLineNumbers();
+  if (currentId) { clearTimeout(saveTimeout); saveTimeout = setTimeout(() => saveProject(), 2000); }
+  editor.focus();
+}
+
+editor.addEventListener('keydown', function (e) {
+  if (autocompleteBox.style.display === 'flex') {
+    if (e.key === 'ArrowDown') { e.preventDefault(); acIndex = Math.min(acIndex + 1, acItems.length - 1); highlightItem(); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); acIndex = Math.max(acIndex - 1, 0); highlightItem(); return; }
+    if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); if (acIndex >= 0) applyAutocomplete(acItems[acIndex]); else if (acItems.length === 1) applyAutocomplete(acItems[0]); else hideAutocomplete(); return; }
+    if (e.key === 'Escape') { hideAutocomplete(); return; }
+  }
+});
+
+editor.addEventListener('input', function () {
+  const word = getWordBefore(editor);
+  if (word.length < 1) { hideAutocomplete(); return; }
+  const matches = Object.keys(suggestions).filter(k => k.startsWith(word) && k !== word);
+  showAutocomplete(matches, word);
+});
+
+editor.addEventListener('blur', () => setTimeout(hideAutocomplete, 150));
+document.addEventListener('scroll', hideAutocomplete, true);
 
 document.addEventListener('DOMContentLoaded', init);

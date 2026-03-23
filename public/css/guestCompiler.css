@@ -172,6 +172,7 @@ body.wrapped #preview-wrapper {
   align-items: center;
   gap: 6px;
 }
+
 /* Back Button */
 .back-btn {
   background: transparent;
