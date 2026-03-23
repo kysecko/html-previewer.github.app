@@ -152,6 +152,9 @@ document.addEventListener("mousemove", (e) => {
     } else {
         const w = (e.clientX / document.body.clientWidth) * 100;
         if (w >= 20 && w <= 80) {
+            editorWrapper.style.flex = "none";
+            previewWrapper.style.flex = "none";
+
             editorWrapper.style.width = w + "%";
             previewWrapper.style.width = (100 - w) + "%";
         }

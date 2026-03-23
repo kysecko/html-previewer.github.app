@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CodePreviewer | Guest Compiler</title>
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/guestCompiler.css" />
+    <link rel="stylesheet" href="/css/normalize.css" />
+    <link rel="stylesheet" href="/css/compiler.css" />
   </head>
 
   <body>
@@ -19,7 +19,6 @@
           onclick="showLandingPage()"
           title="Back to home"
         >
-          <i data-lucide="file-code"></i>
           <span>Code Editor</span>
         </div>
         <div class="panel-controls">
@@ -67,17 +66,23 @@
           class="panel-title-group"
           style="display: flex; align-items: center; gap: 8px"
         >
-          <button
-            onclick="showLandingPage()"
-            title="Back to home"
-            class="back-btn"
-          >
+          <button onclick="showLandingPage()" class="back-btn">
             <i data-lucide="arrow-left"></i>
           </button>
-          <div class="panel-title" title="Back to home">
-            <i data-lucide="file-code"></i>
-            <span>Code Editor</span>
+
+          <div class="panel-title">
+            <span>Code Previewer</span>
           </div>
+        </div>
+
+        <div class="panel-controls">
+          <button
+            onclick="toggleLayout()"
+            class="panel-btn"
+            title="Toggle Layout"
+          >
+            <i data-lucide="maximize-2"></i>
+          </button>
         </div>
       </div>
 
