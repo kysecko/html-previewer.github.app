@@ -9,8 +9,154 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/normalize.css" />
     <link rel="stylesheet" href="/css/admindashboard.css" />
+    <style>
+      /* ── Logs Section ── */
+      .logs-section {
+        margin-top: 2rem;
+      }
+
+      .logs-controls {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .logs-search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 160px;
+      }
+      .logs-search-wrap svg {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted, #888);
+        pointer-events: none;
+      }
+      .logs-search-wrap input {
+        width: 100%;
+        padding: 0.45rem 0.75rem 0.45rem 2rem;
+        background: var(--input-bg, #1a1a1a);
+        border: 1px solid var(--border, #2a2a2a);
+        border-radius: 6px;
+        color: var(--text, #eee);
+        font-size: 0.82rem;
+        outline: none;
+        box-sizing: border-box;
+      }
+      .logs-search-wrap input:focus {
+        border-color: var(--accent, #f90);
+      }
+
+      .logs-filter-select {
+        padding: 0.45rem 0.75rem;
+        background: var(--input-bg, #1a1a1a);
+        border: 1px solid var(--border, #2a2a2a);
+        border-radius: 6px;
+        color: var(--text, #eee);
+        font-size: 0.82rem;
+        outline: none;
+        cursor: pointer;
+      }
+      .logs-filter-select:focus {
+        border-color: var(--accent, #f90);
+      }
+
+      /* badge styles (mirrored from logs.css) */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        text-transform: uppercase;
+      }
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.7;
+      }
+      .badge.login {
+        background: rgba(34, 197, 94, 0.12);
+        color: #22c55e;
+      }
+      .badge.logout {
+        background: rgba(148, 163, 184, 0.1);
+        color: #94a3b8;
+      }
+      .badge.register {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818cf8;
+      }
+      .badge.create {
+        background: rgba(249, 115, 22, 0.12);
+        color: #f97316;
+      }
+      .badge.update {
+        background: rgba(234, 179, 8, 0.12);
+        color: #eab308;
+      }
+      .badge.delete {
+        background: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+      }
+      .badge.multi {
+        flex-direction: column;
+        gap: 1px;
+        padding: 3px 8px;
+        line-height: 1.1;
+      }
+
+      .log-col-id {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        color: #666;
+      }
+      .log-col-ip {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.76rem;
+      }
+      .log-col-time {
+        font-size: 0.76rem;
+        white-space: nowrap;
+      }
+      .log-col-details {
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.8rem;
+      }
+
+      .logs-state-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 2.5rem;
+        color: #666;
+        font-size: 0.85rem;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .spin {
+        animation: spin 0.7s linear infinite;
+      }
+    </style>
   </head>
   <body>
     <div class="layout">
@@ -40,6 +186,34 @@
               <rect x="14" y="14" width="7" height="7" />
             </svg>
             <span>Dashboard</span>
+          </a>
+          <!-- Logs now scrolls to the logs section on the same page -->
+          <a
+            class="nav-item"
+            href="#logs-section"
+            onclick="
+              document
+                .getElementById('logs-section')
+                .scrollIntoView({ behavior: 'smooth' });
+              return false;
+            "
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            <span>Activity Logs</span>
           </a>
         </nav>
 
@@ -138,7 +312,7 @@
           <p>Loading dashboard...</p>
         </div>
 
-        <!-- Content (hidden until loaded) -->
+        <!-- Content -->
         <div id="dashboard-content" style="display: none">
           <!-- Stats -->
           <div class="stats-grid" id="dashboard-stats">
@@ -275,7 +449,6 @@
                 </button>
               </div>
             </div>
-
             <div class="table-container">
               <table id="users-table">
                 <thead>
@@ -296,7 +469,6 @@
                 </tbody>
               </table>
             </div>
-
             <div class="table-footer">
               <p class="table-info">
                 Showing <strong id="showing-count">0</strong> of
@@ -309,21 +481,342 @@
               </div>
             </div>
           </div>
+
+          <!-- ── Activity Logs Section ── -->
+          <div class="table-wrap logs-section" id="logs-section">
+            <div class="table-header">
+              <div class="table-title">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                Activity Logs
+              </div>
+              <div class="table-actions logs-controls">
+                <div class="logs-search-wrap">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    type="text"
+                    id="logsSearch"
+                    placeholder="Search logs..."
+                    oninput="applyLogsFilter()"
+                  />
+                </div>
+                <select
+                  class="logs-filter-select"
+                  id="logsActionFilter"
+                  onchange="applyLogsFilter()"
+                >
+                  <option value="">All actions</option>
+                  <option value="LOGIN">Login</option>
+                  <option value="REGISTER">Register</option>
+                  <option value="LOGOUT">Logout</option>
+                  <option value="CREATE_PROJECT">Create Project</option>
+                  <option value="UPDATE_PROJECT">Update Project</option>
+                  <option value="DELETE_PROJECT">Delete Project</option>
+                </select>
+                <button class="topbar-btn secondary" onclick="exportLogsCSV()">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Export CSV
+                </button>
+                <button class="topbar-btn primary" onclick="loadLogs()">
+                  <svg
+                    id="logsReloadIcon"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  </svg>
+                  Reload
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table id="logs-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>IP Address</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                  <tr>
+                    <td colspan="6" class="loading-row">Loading logs...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <p class="table-info" id="logsFooter">—</p>
+              <div class="pagination" id="logsPagination"></div>
+            </div>
+          </div>
+          <!-- ── End Activity Logs ── -->
         </div>
+        <!-- /dashboard-content -->
       </main>
     </div>
 
-    <!-- Mobile overlay -->
     <div id="sidebarBackdrop"></div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/js/adminDashboard.js" defer></script>
-    <script>
-      // Replace login from history so back button skips it
-      window.history.pushState(null, "", window.location.href);
 
-      window.addEventListener("popstate", () => {
-        window.history.pushState(null, "", window.location.href);
+    <script>
+      /* ════════════════════════════════
+         ACTIVITY LOGS — inline script
+         (no separate page needed)
+      ════════════════════════════════ */
+      let allLogs = [],
+        filteredLogs = [],
+        logsPage = 1;
+      const LOGS_PER_PAGE = 8;
+
+      async function loadLogs() {
+        const icon = document.getElementById("logsReloadIcon");
+        if (icon) icon.classList.add("spin");
+        setLogsBody(`<tr><td colspan="6" class="loading-row">
+          <div style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+            <div class="spinner" style="width:14px;height:14px"></div> Fetching logs…
+          </div></td></tr>`);
+
+        try {
+          const res = await fetch("/api/logs", { credentials: "include" });
+          if (res.status === 401) {
+            window.location.href = "/login";
+            return;
+          }
+          if (!res.ok) throw new Error(`Server error ${res.status}`);
+          const json = await res.json();
+          if (!json.success)
+            throw new Error(json.error || "Failed to load logs");
+          allLogs = json.logs || [];
+          applyLogsFilter();
+        } catch (err) {
+          setLogsBody(
+            `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">${escLog(err.message)}</td></tr>`,
+          );
+        } finally {
+          if (icon) icon.classList.remove("spin");
+        }
+      }
+
+      function applyLogsFilter() {
+        const q = (
+          document.getElementById("logsSearch")?.value || ""
+        ).toLowerCase();
+        const action = document.getElementById("logsActionFilter")?.value || "";
+        filteredLogs = allLogs.filter((log) => {
+          const matchQ =
+            !q ||
+            [log.user_email, log.action, log.details, log.ip_address].some(
+              (v) => (v || "").toLowerCase().includes(q),
+            );
+          const matchA = !action || log.action === action;
+          return matchQ && matchA;
+        });
+        logsPage = 1;
+        renderLogs();
+      }
+
+      function renderLogs() {
+        if (!filteredLogs.length) {
+          setLogsBody(`<tr><td colspan="6"><div class="logs-state-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>No logs match your filters.</div></td></tr>`);
+          setLogsFooter(0, 0, 0);
+          renderLogsPager(0);
+          return;
+        }
+
+        const start = (logsPage - 1) * LOGS_PER_PAGE;
+        const slice = filteredLogs.slice(start, start + LOGS_PER_PAGE);
+
+        setLogsBody(
+          slice
+            .map(
+              (log, i) => `
+          <tr style="animation-delay:${i * 25}ms">
+            <td class="log-col-id">${truncLogId(log.id)}</td>
+            <td>${escLog(log.user_email || "—")}</td>
+            <td>${logBadge(log.action)}</td>
+            <td class="log-col-details" title="${escLog(log.details || "")}">${escLog(log.details || "—")}</td>
+            <td class="log-col-ip">${escLog(log.ip_address || "—")}</td>
+            <td class="log-col-time">${fmtLogDate(log.created_at)}</td>
+          </tr>`,
+            )
+            .join(""),
+        );
+
+        const end = Math.min(start + LOGS_PER_PAGE, filteredLogs.length);
+        setLogsFooter(start + 1, end, filteredLogs.length);
+        renderLogsPager(Math.ceil(filteredLogs.length / LOGS_PER_PAGE));
+      }
+
+      function setLogsBody(html) {
+        document.getElementById("logsTableBody").innerHTML = html;
+      }
+
+      function renderLogsPager(total) {
+        const pg = document.getElementById("logsPagination");
+        if (!pg) return;
+        if (total <= 1) {
+          pg.innerHTML = "";
+          return;
+        }
+        pg.innerHTML = `
+          <button class="page-btn" onclick="goLogsPage(${logsPage - 1})" ${logsPage === 1 ? "disabled" : ""}>← Prev</button>
+          <span class="page-info">Page ${logsPage} of ${total}</span>
+          <button class="page-btn" onclick="goLogsPage(${logsPage + 1})" ${logsPage === total ? "disabled" : ""}>Next →</button>`;
+      }
+
+      function goLogsPage(p) {
+        const total = Math.ceil(filteredLogs.length / LOGS_PER_PAGE);
+        if (p < 1 || p > total) return;
+        logsPage = p;
+        renderLogs();
+      }
+
+      function setLogsFooter(from, to, total) {
+        const el = document.getElementById("logsFooter");
+        if (!el) return;
+        el.innerHTML = total
+          ? `Showing <strong>${from}–${to}</strong> of <strong>${total}</strong> logs`
+          : "No logs found";
+      }
+
+      function exportLogsCSV() {
+        if (!filteredLogs.length) return;
+        const hdrs = ["ID", "User", "Action", "Details", "IP Address", "Time"];
+        const rows = filteredLogs.map((l) => [
+          l.id,
+          l.user_email,
+          l.action,
+          l.details,
+          l.ip_address,
+          fmtLogDate(l.created_at),
+        ]);
+        const csv = [hdrs, ...rows]
+          .map((r) =>
+            r.map((v) => `"${(v || "").replace(/"/g, '""')}"`).join(","),
+          )
+          .join("\n");
+        const a = document.createElement("a");
+        a.href = "data:text/csv," + encodeURIComponent(csv);
+        a.download = `activity_logs_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+      }
+
+      /* helpers */
+      function truncLogId(id) {
+        return id ? id.slice(0, 8) + "…" : "—";
+      }
+      function escLog(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function fmtLogDate(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        return (
+          d.toLocaleDateString("en-PH", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }) +
+          " " +
+          d.toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" })
+        );
+      }
+      function logActionCls(a) {
+        return (
+          {
+            LOGIN: "login",
+            REGISTER: "register",
+            LOGOUT: "logout",
+            CREATE_PROJECT: "create",
+            UPDATE_PROJECT: "update",
+            DELETE_PROJECT: "delete",
+          }[a?.toUpperCase()] || "login"
+        );
+      }
+      function logBadge(action) {
+        const cls = logActionCls(action);
+        const label = (action || "").replace(/_/g, " ");
+        const words = label.split(" ");
+        if (words.length > 1)
+          return `<span class="badge ${cls} multi"><span>${escLog(words[0])}</span><span>${escLog(words[1])}</span></span>`;
+        return `<span class="badge ${cls}"><span class="badge-dot"></span>${escLog(label)}</span>`;
+      }
+
+      /* Load logs once dashboard content is visible */
+      const _origShow = window.showDashboard;
+      document.addEventListener("DOMContentLoaded", () => {
+        // Wait for dashboard JS to reveal content, then load logs
+        const observer = new MutationObserver((_, obs) => {
+          const content = document.getElementById("dashboard-content");
+          if (content && content.style.display !== "none") {
+            loadLogs();
+            obs.disconnect();
+          }
+        });
+        const content = document.getElementById("dashboard-content");
+        if (content)
+          observer.observe(content, {
+            attributes: true,
+            attributeFilter: ["style"],
+          });
+        // Fallback: load after 3s
+        setTimeout(() => {
+          if (!allLogs.length) loadLogs();
+        }, 3000);
       });
     </script>
   </body>

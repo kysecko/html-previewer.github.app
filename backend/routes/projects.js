@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-
-console.log('PROJECTS ROUTES LOADED AND WORKING');
+const { logAction } = require('../utils/logger');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -20,10 +19,10 @@ router.get('/test', (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    console.log(' GET /api/projects - Fetching projects');
+    console.log('GET /api/projects - Fetching projects');
 
     if (!req.session?.userId || !req.session?.isLoggedIn) {
-      console.log(' Not authenticated');
+      console.log('Not authenticated');
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
@@ -36,7 +35,7 @@ router.get('/', async (req, res) => {
       .order('updated_at', { ascending: false });
 
     if (error) {
-      console.error(' Supabase error:', error);
+      console.error('Supabase error:', error);
       return res.status(500).json({ error: error.message });
     }
 
@@ -53,7 +52,7 @@ router.get('/', async (req, res) => {
 
     res.json(transformedData);
   } catch (error) {
-    console.error(' Get projects error:', error);
+    console.error('Get projects error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -64,7 +63,7 @@ router.post('/', async (req, res) => {
     console.log('Session user ID:', req.session.userId);
 
     if (!req.session?.userId || !req.session?.isLoggedIn) {
-      console.log(' Not authenticated');
+      console.log('Not authenticated');
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
@@ -72,7 +71,6 @@ router.post('/', async (req, res) => {
     const userId = req.session.userId;
 
     console.log(`Creating project for user ${userId}: "${title}"`);
-    console.log('Code length:', code.length);
 
     const projectData = {
       user_id: userId,
@@ -82,8 +80,6 @@ router.post('/', async (req, res) => {
       updated_at: new Date().toISOString()
     };
 
-    console.log('Project data to insert:', projectData);
-
     const { data, error } = await supabase
       .from('projects')
       .insert([projectData])
@@ -91,41 +87,42 @@ router.post('/', async (req, res) => {
       .single();
 
     if (error) {
-      console.error(' Supabase insert error details:', {
+      console.error('Supabase insert error:', {
         message: error.message,
         code: error.code,
         details: error.details,
         hint: error.hint
       });
-      
+
       if (error.code === '42501') {
-        return res.status(403).json({ 
+        return res.status(403).json({
           error: 'RLS Policy violation',
-          message: 'Row-level security is blocking this operation. Please check your RLS policies.',
+          message: 'Row-level security is blocking this operation.',
           details: error.message,
-          fix: 'Run: ALTER TABLE projects DISABLE ROW LEVEL SECURITY; in Supabase SQL editor'
+          fix: 'Run: ALTER TABLE projects DISABLE ROW LEVEL SECURITY;'
         });
       }
-      
+
       throw error;
     }
 
-    console.log(`Project created successfully:`, data);
+    // FIX: log AFTER successful insert, using the returned project data
+    await logAction(userId, req.session.email, 'CREATE_PROJECT', `Created project: ${data.title}`, req.ip);
 
-    const responseData = {
+    console.log('Project created successfully:', data);
+
+    res.status(201).json({
       id: data.id,
       title: data.title,
       code: data.code || '',
       created_at: data.created_at,
       updated_at: data.updated_at,
       user_id: data.user_id
-    };
-
-    res.status(201).json(responseData);
+    });
 
   } catch (error) {
-    console.error(' Create project error:', error);
-    res.status(500).json({ 
+    console.error('Create project error:', error);
+    res.status(500).json({
       error: 'Create failed',
       message: error.message,
       code: error.code
@@ -148,27 +145,20 @@ router.get('/:id', async (req, res) => {
       .eq('user_id', req.session.userId)
       .single();
 
-    if (error) {
-      console.error(' Supabase error:', error);
+    if (error || !data) {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    if (!data) {
-      return res.status(404).json({ error: "Project not found" });
-    }
-
-    const transformedData = {
+    res.json({
       id: data.id,
       title: data.title,
       code: data.code || '',
       created_at: data.created_at,
       updated_at: data.updated_at,
       user_id: data.user_id
-    };
-
-    res.json(transformedData);
+    });
   } catch (error) {
-    console.error(' Get project error:', error);
+    console.error('Get project error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -176,7 +166,6 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     console.log(`PUT /api/projects/${req.params.id}`);
-    console.log('Request body:', req.body);
 
     if (!req.session?.userId || !req.session?.isLoggedIn) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -186,19 +175,11 @@ router.put('/:id', async (req, res) => {
     const projectId = req.params.id;
     const userId = req.session.userId;
 
-    const updateData = {
-      updated_at: new Date().toISOString()
-    };
+    const updateData = { updated_at: new Date().toISOString() };
+    if (title !== undefined) updateData.title = title.trim();
+    if (code !== undefined) updateData.code = code;
 
-    if (title !== undefined) {
-      updateData.title = title.trim();
-    }
-    if (code !== undefined) {
-      updateData.code = code;
-    }
-
-    console.log('Update data:', updateData);
-
+    // Verify ownership before updating
     const { data: existingProject, error: checkError } = await supabase
       .from('projects')
       .select('id')
@@ -217,11 +198,12 @@ router.put('/:id', async (req, res) => {
       .eq('user_id', userId);
 
     if (updateError) {
-      console.error(' Update error:', updateError);
+      console.error('Update error:', updateError);
       throw updateError;
     }
 
-    console.log('Update executed successfully');
+    // FIX: log AFTER successful update
+    await logAction(userId, req.session.email, 'UPDATE_PROJECT', `Updated project: ${projectId}`, req.ip);
 
     const { data: updatedProject, error: fetchError } = await supabase
       .from('projects')
@@ -230,29 +212,22 @@ router.put('/:id', async (req, res) => {
       .eq('user_id', userId)
       .single();
 
-    if (fetchError) {
-      console.error(' Fetch error:', fetchError);
-      throw fetchError;
-    }
-
-    if (!updatedProject) {
+    if (fetchError || !updatedProject) {
       return res.status(404).json({ error: 'Failed to fetch updated project' });
     }
 
-    const responseData = {
+    console.log('Project updated successfully:', updatedProject.id);
+    res.json({
       id: updatedProject.id,
       title: updatedProject.title,
       code: updatedProject.code || '',
       created_at: updatedProject.created_at,
       updated_at: updatedProject.updated_at,
       user_id: updatedProject.user_id
-    };
-
-    console.log('Project updated successfully:', responseData);
-    res.json(responseData);
+    });
 
   } catch (error) {
-    console.error(' Update project error:', error);
+    console.error('Update project error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -265,21 +240,33 @@ router.delete('/:id', async (req, res) => {
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
+    const projectId = req.params.id;
+
     const { error } = await supabase
       .from('projects')
       .delete()
-      .eq('id', req.params.id)
+      .eq('id', projectId)
       .eq('user_id', req.session.userId);
 
     if (error) {
-      console.error(' Supabase delete error:', error);
+      console.error('Supabase delete error:', error);
       throw error;
     }
 
-    console.log(`Project ${req.params.id} deleted`);
+    // FIX: log AFTER successful delete
+    await logAction(
+      req.session.userId,
+      req.session.email,
+      'DELETE_PROJECT',
+      `Deleted project: ${projectId}`,
+      req.ip
+    );
+
+    console.log(`Project ${projectId} deleted`);
     res.json({ success: true });
+
   } catch (error) {
-    console.error(' Delete project error:', error);
+    console.error('Delete project error:', error);
     res.status(500).json({ error: error.message });
   }
 });

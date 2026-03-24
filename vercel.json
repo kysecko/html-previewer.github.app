@@ -4,6 +4,7 @@
     { "src": "backend/server.js", "use": "@vercel/node" }
   ],
   "routes": [
+    { "src": "/admin/logs",     "dest": "backend/server.js" },
     { "src": "/login",          "dest": "backend/server.js" },
     { "src": "/register",       "dest": "backend/server.js" },
     { "src": "/guest/compiler", "dest": "backend/server.js" },

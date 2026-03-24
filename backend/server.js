@@ -1,14 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const path    = require('path');
-const cors    = require('cors');
-const fs      = require('fs');
+const path = require('path');
+const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 app.set('trust proxy', 1);
 
-const isProd   = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 const isVercel = !!process.env.VERCEL;
 
 // ==============================
@@ -18,16 +18,16 @@ const isVercel = !!process.env.VERCEL;
 let requireAuth, authRouter, projectsRouter, usersRouter;
 
 try {
-  requireAuth    = require('./middleware/auth').requireAuth;
-  usersRouter    = require('./routes/users');
-  authRouter     = require('./routes/auth');
+  requireAuth = require('./middleware/auth').requireAuth;
+  usersRouter = require('./routes/users');
+  authRouter = require('./routes/auth');
   projectsRouter = require('./routes/projects');
 } catch (err) {
   console.error('Error loading route modules:', err.message);
 
   requireAuth = (req, res, next) => next();
 
-  authRouter     = express.Router();
+  authRouter = express.Router();
   authRouter.all('*', (req, res) => res.json({ message: 'Auth fallback' }));
 
   projectsRouter = express.Router();
@@ -77,7 +77,7 @@ if (process.env.REDIS_URL) {
       socket: { tls: true, rejectUnauthorized: false }
     });
 
-    redisClient.connect().catch(() => {});
+    redisClient.connect().catch(() => { });
     sessionConfig.store = new RedisStore({ client: redisClient });
   } catch (err) {
     console.error('Redis setup failed:', err.message);
@@ -110,15 +110,19 @@ const publicPath = path.join(__dirname, '..', 'public');
 // STATIC FILES
 // ==============================
 
-app.use(express.static(publicPath));
+app.use(express.static(publicPath, {
+  maxAge: '7d', // cache for 7 days
+  etag: true
+}));
 
 // ==============================
 // API ROUTES
 // ==============================
-
-app.use('/api/auth',     authRouter);
+const logsRouter = require('./routes/logs');
+app.use('/api/logs', logsRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/projects', projectsRouter);
-app.use('/api/users',    usersRouter);
+app.use('/api/users', usersRouter);
 
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API working', session: !!req.session });
@@ -139,7 +143,7 @@ app.get('/', (req, res) => {
 });
 
 // Auth pages (clean URLs, no .html)
-app.get('/login',    (req, res) => res.sendFile(path.join(publicPath, 'login.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(publicPath, 'login.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(publicPath, 'register.html')));
 
 // Guest compiler
@@ -168,7 +172,7 @@ app.get('/admin', requireAuth, (req, res) => {
 
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
-  if (path.extname(req.path))      return next();
+  if (path.extname(req.path)) return next();
 
   const filePath = path.join(publicPath, req.path + '.html');
 

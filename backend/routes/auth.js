@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { createClient } = require('@supabase/supabase-js');
+const { logAction } = require('../utils/logger');
 
 function getSupabase() {
   return createClient(
@@ -31,14 +32,21 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const { error } = await supabase
+    // FIX: capture the inserted row so we can log with the real user id
+    const { data: insertedUsers, error } = await supabase
       .from('users')
       .insert({ username, email, password: hashedPassword, role: 'user' })
       .select();
 
     if (error) return res.status(400).json({ success: false, error: error.message });
 
+    const newUser = insertedUsers?.[0];
+    if (newUser) {
+      await logAction(newUser.id, newUser.email, 'REGISTER', 'New account created', req.ip);
+    }
+
     return res.json({ success: true, message: 'Registered successfully' });
+
   } catch (err) {
     console.error('REGISTER ERROR:', err);
     return res.status(500).json({ success: false, error: 'Server error' });
@@ -72,15 +80,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
-    // ✅ Update last_login_at — INSIDE the async function, correct placement
+    // Update last_login_at — non-fatal if column doesn't exist
     try {
       await supabase
         .from('users')
         .update({ last_login_at: new Date().toISOString() })
         .eq('id', user.id);
     } catch (updateErr) {
-      console.warn('last_login_at update failed (column may not exist yet):', updateErr.message);
-      // Non-fatal — login continues even if this fails
+      console.warn('last_login_at update failed:', updateErr.message);
     }
 
     req.session.isLoggedIn = true;
@@ -96,13 +103,16 @@ router.post('/login', async (req, res) => {
       });
     });
 
+    // FIX: log BEFORE sending response so it's inside the try/catch
+    await logAction(user.id, user.email, 'LOGIN', 'User logged in', req.ip);
+
     console.log('Login successful:', email, '| Role:', user.role);
     const redirect = user.role === 'admin' ? '/admin' : '/user';
-    res.json({ success: true, redirect });
+    return res.json({ success: true, redirect });
 
   } catch (err) {
     console.error('LOGIN ERROR:', err);
-    res.status(500).json({ success: false, error: 'Server error: ' + err.message });
+    return res.status(500).json({ success: false, error: 'Server error: ' + err.message });
   }
 });
 
@@ -119,7 +129,10 @@ router.get('/verify', (req, res) => {
   return res.status(401).json({ success: false, error: 'Not authenticated' });
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
+  // Log before session is destroyed so we still have userId/email
+  await logAction(req.session.userId, req.session.email, 'LOGOUT', 'User logged out', req.ip);
+
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ success: false, error: 'Logout failed' });
     res.clearCookie('code-editor-session');
