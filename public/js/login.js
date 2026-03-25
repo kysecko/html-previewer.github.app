@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const redirectTo = data.redirect || '/user';
       setTimeout(() => {
         window.location.replace(redirectTo);
-      }, 700);
+      }, 500);
 
     } catch (err) {
       console.error('Login error:', err);
