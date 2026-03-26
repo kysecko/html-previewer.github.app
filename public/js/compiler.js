@@ -112,21 +112,31 @@ function toggleLayout() {
 }
 
 function applyLayout() {
+    const container = document.getElementById('container');
+
     if (isWrapped) {
         editorWrapper.style.width = "100%";
         previewWrapper.style.width = "100%";
         editorWrapper.style.height = "50%";
         previewWrapper.style.height = "50%";
+        editorWrapper.style.flex = "none";
+        previewWrapper.style.flex = "none";
     } else {
         editorWrapper.style.width = "42%";
-        previewWrapper.style.width = "";
         editorWrapper.style.height = "100%";
+        previewWrapper.style.width = "58%";
         previewWrapper.style.height = "100%";
+        editorWrapper.style.flex = "none";
+        previewWrapper.style.flex = "none"
     }
 }
 
+// Layout Toggle — auto-wrap on mobile
 function loadLayout() {
-    if (localStorage.getItem("layout") === "wrapped") {
+    const isMobile = window.innerWidth <= 768;
+    const saved = localStorage.getItem("layout");
+
+    if (saved === "wrapped" || (isMobile && !saved)) {
         isWrapped = true;
         document.body.classList.add("wrapped");
         applyLayout();
@@ -134,14 +144,27 @@ function loadLayout() {
 }
 
 // Resizer    
-resizer.addEventListener("mousedown", () => {
+resizer.addEventListener("mousedown", startResize);
+resizer.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    startResize();
+}, { passive: false });
+
+function startResize() {
     isResizing = true;
     document.body.style.userSelect = "none";
     document.body.style.cursor = isWrapped ? "row-resize" : "col-resize";
     resizer.classList.add("active");
-});
+}
 
-document.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", handleResize);
+document.addEventListener("touchmove", (e) => {
+    if (!isResizing) return;
+    e.preventDefault();
+    handleResize(e.touches[0]);
+}, { passive: false });
+
+function handleResize(e) {
     if (!isResizing) return;
     if (isWrapped) {
         const h = (e.clientY / document.body.clientHeight) * 100;
@@ -152,22 +175,22 @@ document.addEventListener("mousemove", (e) => {
     } else {
         const w = (e.clientX / document.body.clientWidth) * 100;
         if (w >= 20 && w <= 80) {
-            editorWrapper.style.flex = "none";
-            previewWrapper.style.flex = "none";
-
             editorWrapper.style.width = w + "%";
             previewWrapper.style.width = (100 - w) + "%";
         }
     }
-});
+}
 
-document.addEventListener("mouseup", () => {
+function stopResize() {
     if (!isResizing) return;
     isResizing = false;
     document.body.style.userSelect = "";
     document.body.style.cursor = "";
     resizer.classList.remove("active");
-});
+}
+
+document.addEventListener("mouseup", stopResize);
+document.addEventListener("touchend", stopResize);
 
 // Default Boilerplate  
 const DEFAULT_BOILERPLATE = `<!DOCTYPE html>

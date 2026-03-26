@@ -170,7 +170,12 @@ body.wrapped #preview-wrapper {
   align-items: center;
   gap: 6px;
 }
-
+/* Make resizer touch-friendly */
+.resizer {
+  min-height: 12px;  
+  min-width: 12px;  
+  touch-action: none;
+}
 /* Back Button */
 .back-btn {
   background: transparent;

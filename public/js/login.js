@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (jsonError) {
         console.error('JSON parse error:', jsonError);
         hideSpinner();
-        showModal('Server Error', 'The server returned an invalid response. Please try again.');
+        showModal('Server Connection Error', 'The server returned an invalid response. Please try again.');
         if (submitBtn) {
           submitBtn.disabled      = false;
           submitBtn.textContent   = originalText;
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('Login error:', err);
       hideSpinner();
-      showModal('Connection Error', 'Could not reach the server. Please check your connection and try again.');
+      showModal('Connection Error', 'Something went wrong. Please check your connection and try again.');
       if (submitBtn) {
         submitBtn.disabled      = false;
         submitBtn.textContent   = originalText;

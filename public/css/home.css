@@ -659,6 +659,44 @@ body {
   .mobile-more-btn {
     display: flex;
   }
+  @media (max-width: 768px) {
+    /* Default: stacked 50/50 */
+    #editorArea {
+      flex-direction: column;
+    }
+
+    #editorPanel,
+    #previewPanel {
+      flex: 1;
+      min-height: 0;
+    }
+
+    #divider {
+      width: 100%;
+      height: 5px;
+      cursor: row-resize;
+    }
+
+    /* Editor fullscreen */
+    #editorArea.mobile-editor-full #editorPanel {
+      flex: 1 1 100% !important;
+      height: 100% !important;
+    }
+    #editorArea.mobile-editor-full #previewPanel,
+    #editorArea.mobile-editor-full #divider {
+      display: none !important;
+    }
+
+    /* Preview fullscreen */
+    #editorArea.mobile-preview-full #previewPanel {
+      flex: 1 1 100% !important;
+      height: 100% !important;
+    }
+    #editorArea.mobile-preview-full #editorPanel,
+    #editorArea.mobile-preview-full #divider {
+      display: none !important;
+    }
+  }
 }
 
 /* LIGHT MODE */
