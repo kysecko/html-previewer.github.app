@@ -14,21 +14,21 @@ let isResizing = false;       // Is the divider currently being resized?
 
 // DOM References
 // Gets the elements from the HTML to be used in JS
-const editor          = document.getElementById('codeEditor');
-const preview         = document.getElementById('previewFrame');
-const projectList     = document.getElementById('projectItems');
-const currentTitle    = document.getElementById('currentTitle');
-const projectCount    = document.getElementById('projectCount');
-const status          = document.getElementById('status');
-const modal           = document.getElementById('myModal');
-const maximizeBtn     = document.getElementById('maximizeBtn');
+const editor = document.getElementById('codeEditor');
+const preview = document.getElementById('previewFrame');
+const projectList = document.getElementById('projectItems');
+const currentTitle = document.getElementById('currentTitle');
+const projectCount = document.getElementById('projectCount');
+const status = document.getElementById('status');
+const modal = document.getElementById('myModal');
+const maximizeBtn = document.getElementById('maximizeBtn');
 const expandEditorBtn = document.getElementById('expandEditorBtn');
-const editorArea      = document.getElementById('editorArea');
-const lineNumbers     = document.getElementById('lineNumbers');
-const sidebar         = document.getElementById('sidebar');
-const divider         = document.getElementById('divider');
-const fileInput       = document.getElementById('fileInput');
-const uploadBtn       = document.getElementById('uploadBtn');
+const editorArea = document.getElementById('editorArea');
+const lineNumbers = document.getElementById('lineNumbers');
+const sidebar = document.getElementById('sidebar');
+const divider = document.getElementById('divider');
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
 
 // Sidebar Toggle
 // Hides or shows the sidebar, especially on mobile
@@ -190,7 +190,7 @@ function showConfirmModal(title, msg, confirmLabel = 'Confirm', confirmColor = '
     confirmModal.style.display = 'grid';
     const cleanup = (result) => { confirmModal.style.display = 'none'; resolve(result); };
     confirmModalConfirm.onclick = () => cleanup(true);
-    confirmModalCancel.onclick  = () => cleanup(false);
+    confirmModalCancel.onclick = () => cleanup(false);
     confirmModal.onclick = (e) => { if (e.target === confirmModal) cleanup(false); };
   });
 }
@@ -270,7 +270,7 @@ expandEditorBtn.addEventListener('click', () => {
 });
 
 // Mobile Panel Maximize / Minimize
-// On mobile, either panel can be fullscreened by clicking its maximize button
+// On mobile, either panel can be fullscreen by clicking its maximize button
 // Default is a 50/50 split — clicking maximize fills the screen, clicking again restores the split
 function initMobilePanelMaximize() {
   if (window.innerWidth > 768) return; // This only runs on mobile
@@ -300,7 +300,7 @@ function initMobilePanelMaximize() {
 // Syncs the maximize/minimize button icons to match the current panel state on mobile
 function updateMobilePanelIcons() {
   if (window.innerWidth > 768) return;
-  const editorFull  = editorArea.classList.contains('mobile-editor-full');
+  const editorFull = editorArea.classList.contains('mobile-editor-full');
   const previewFull = editorArea.classList.contains('mobile-preview-full');
 
   // Show minimize icon if editor is fullscreen, otherwise show maximize
@@ -410,7 +410,7 @@ async function confirmCreateModal() {
     return;
   }
   closeCreateModal();
-  if (_modalMode === 'create')              await createProject(title);
+  if (_modalMode === 'create') await createProject(title);
   else if (_modalMode === 'rename-current') await renameCurrentProject(title);
   else if (_modalMode === 'rename-sidebar') await renameProjectById(_renameTargetId, title);
 }
@@ -418,7 +418,7 @@ async function confirmCreateModal() {
 // Modal Keyboard Shortcuts
 // Enter to confirm and Escape to cancel inside the create/rename modal
 document.getElementById('newProjectTitleInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter')  confirmCreateModal();
+  if (e.key === 'Enter') confirmCreateModal();
   if (e.key === 'Escape') closeCreateModal();
 });
 
@@ -887,11 +887,11 @@ function showAutocomplete(matches, word) {
   const lineHeight = 20;
   const lines = editor.value.substring(0, editor.selectionStart).split('\n');
   const currentLine = lines.length;
-  const approxTop  = rect.top + (currentLine * lineHeight) - editor.scrollTop + 4;
+  const approxTop = rect.top + (currentLine * lineHeight) - editor.scrollTop + 4;
   const approxLeft = rect.left + 40;
   autocompleteBox.style.display = 'flex';
-  autocompleteBox.style.top  = Math.min(approxTop,  window.innerHeight - 220) + 'px';
-  autocompleteBox.style.left = Math.min(approxLeft, window.innerWidth  - 200) + 'px';
+  autocompleteBox.style.top = Math.min(approxTop, window.innerHeight - 220) + 'px';
+  autocompleteBox.style.left = Math.min(approxLeft, window.innerWidth - 200) + 'px';
 }
 
 // Highlight Autocomplete Item
@@ -899,7 +899,7 @@ function showAutocomplete(matches, word) {
 function highlightItem() {
   Array.from(autocompleteBox.children).forEach((el, i) => {
     el.style.background = i === acIndex ? '#094771' : 'transparent';
-    el.style.color      = i === acIndex ? '#fff'    : '#d4d4d4';
+    el.style.color = i === acIndex ? '#fff' : '#d4d4d4';
   });
 }
 
@@ -911,7 +911,7 @@ function applyAutocomplete(key) {
 
   // Select the typed word so it gets replaced by the snippet
   editor.selectionStart = start - acWord.length;
-  editor.selectionEnd   = start;
+  editor.selectionEnd = start;
 
   // Use execCommand so the browser's undo/redo works natively
   document.execCommand('insertText', false, snippet);
@@ -935,12 +935,12 @@ function applyAutocomplete(key) {
 editor.addEventListener('keydown', function (e) {
   if (autocompleteBox.style.display === 'flex') {
     if (e.key === 'ArrowDown') { e.preventDefault(); acIndex = Math.min(acIndex + 1, acItems.length - 1); highlightItem(); return; }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); acIndex = Math.max(acIndex - 1, 0);                  highlightItem(); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); acIndex = Math.max(acIndex - 1, 0); highlightItem(); return; }
     if (e.key === 'Enter' || e.key === 'Tab') {
       e.preventDefault();
-      if (acIndex >= 0)              applyAutocomplete(acItems[acIndex]);
+      if (acIndex >= 0) applyAutocomplete(acItems[acIndex]);
       else if (acItems.length === 1) applyAutocomplete(acItems[0]);
-      else                           hideAutocomplete();
+      else hideAutocomplete();
       return;
     }
     if (e.key === 'Escape') { hideAutocomplete(); return; }
@@ -958,7 +958,7 @@ editor.addEventListener('input', function () {
 
 // Hide Autocomplete on Blur / Scroll
 // Hides the autocomplete when the editor loses focus or the page scrolls
-editor.addEventListener('blur',   () => setTimeout(hideAutocomplete, 150));
+editor.addEventListener('blur', () => setTimeout(hideAutocomplete, 150));
 document.addEventListener('scroll', hideAutocomplete, true);
 
 // Initialization
@@ -974,7 +974,7 @@ async function init() {
   // If the editor is empty, insert the default boilerplate code
   if (!editor.value.trim()) {
     editor.value =
-      '<!DOCTYPE html>\n<html>\n<head>\n  <title>My Project</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      margin: 0;\n      padding: 20px;\n      background: #f0f0f0;\n    }\n    .container {\n      max-width: 800px;\n      margin: 0 auto;\n      background: white;\n      padding: 30px;\n      border-radius: 10px;\n      box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n    }\n    h1 { color: #333; }\n    .btn {\n      background: #FFAC1C;\n      color: white;\n      border: none;\n      padding: 10px 20px;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn:hover { background: #eba52d; }\n  </style>\n</head>\n<body>\n  <div class="container">\n    <h1>Welcome to Code Previewer</h1>\n    <p>This is your live preview area.</p>\n    <button class="btn" onclick="alert(\'Uyy! Gumana boi.\')">Click Me</button>\n  </div>\n</body>\n</html>';
+      '<!DOCTYPE html>\n<html>\n<head>\n  <title>My Project</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      margin: 0;\n      padding: 20px;\n      background: #f0f0f0;\n    }\n    .container {\n      max-width: 800px;\n      margin: 0 auto;\n      background: white;\n      padding: 30px;\n      border-radius: 10px;\n      box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n    }\n    h1 { color: #333; }\n    .btn {\n      background: #FFAC1C;\n      color: white;\n      border: none;\n      padding: 10px 20px;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn:hover { background: #eba52d; }\n  </style>\n</head>\n<body>\n  <div class="container">\n    <h1>Welcome to Code Previewer</h1>\n    <p>This is your live preview area.</p>\n    <button class="btn" onclick="alert(\'Uyy! Himala gumana.\')">Click Me</button>\n  </div>\n</body>\n</html>';
     updatePreview();
   }
 
