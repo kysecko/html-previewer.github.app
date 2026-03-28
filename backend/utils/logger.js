@@ -16,9 +16,9 @@ async function logAction(userId, userEmail, action, details = '', ipAddress = ''
   }]);
 
   if (error) {
-    console.error('❌ logAction failed:', error.message, error.details);
+    console.error('Log Action:', error.message, error.details);
   } else {
-    console.log('✅ logAction success:', action);
+    console.log('Log Action success:', action);
   }
 }
 

@@ -6,7 +6,7 @@ function isAuthenticated(req, res, next) {
   if (req.session && req.session.isLoggedIn) {
     return next();
   }
-  res.redirect('/login.html');
+  res.redirect('/login');
 }
 
 function isAdmin(req, res, next) {
@@ -17,11 +17,11 @@ function isAdmin(req, res, next) {
 }
 
 router.get('/user', isAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/user/home.html'));
+  res.sendFile(path.join(__dirname, '../public/user/home'));
 });
 
 router.get('/admin', isAuthenticated, isAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/admin/dashboard.html'));
+  res.sendFile(path.join(__dirname, '../public/admin/dashboard'));
 });
 
 router.get('/api/current-user', isAuthenticated, (req, res) => {

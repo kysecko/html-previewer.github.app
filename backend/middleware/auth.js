@@ -21,11 +21,11 @@ function requireAuth(req, res, next) {
   if (req.path.startsWith('/api/')) {
     return res.status(401).json({
       error: 'Authentication required',
-      redirect: '/login.html'
+      redirect: '/login'
     });
   }
 
-  res.redirect('/login.html');
+  res.redirect('/login');
 }
 
 module.exports = { requireAuth };
