@@ -140,4 +140,14 @@ router.post('/logout', async (req, res) => {
   });
 });
 
+router.get('/me', (req, res) => {
+  if (!req.session?.isLoggedIn || !req.session?.userId) {
+    return res.status(401).json(null);
+  }
+  res.json({
+    id: req.session.userId,
+    username: req.session.username,
+    role: req.session.role
+  });
+});
 module.exports = router;

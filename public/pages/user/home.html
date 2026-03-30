@@ -38,12 +38,42 @@
           </div>
         </div>
       </div>
-      <div class="sidebar-footer">
-        <button onclick="openModal()">
-          <i data-lucide="log-out" class="icon"></i> Logout
-        </button>
-        <span id="projectCount">0 projects</span>
-      </div>
+<div class="sidebar-footer">
+  <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+    
+    <button onclick="openFeedbackModal()" style="
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      width:100%; padding:10px 16px;
+      background:#ffac1c; color:#111;
+      border:none; border-radius:8px;
+      cursor:pointer; font-family:Montserrat;
+      font-weight:600; font-size:13px;
+      transition: opacity 0.2s;
+    " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+      <i data-lucide="message-square-plus" style="width:15px;height:15px;"></i>
+      Leave Feedback
+    </button>
+
+    <button onclick="openModal()" style="
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      width:100%; padding:10px 16px;
+      background:transparent; color:#aaa;
+      border:1px solid #333; border-radius:8px;
+      cursor:pointer; font-family:Montserrat;
+      font-weight:500; font-size:13px;
+      transition: all 0.2s;
+    " onmouseover="this.style.borderColor='#e53e3e';this.style.color='#e53e3e'" 
+       onmouseout="this.style.borderColor='#333';this.style.color='#aaa'">
+      <i data-lucide="log-out" style="width:15px;height:15px;"></i>
+      Logout
+    </button>
+
+    <span id="projectCount" style="
+      text-align:center; font-size:11px; color:#555; padding-top:2px;
+    ">0 projects</span>
+
+  </div>
+</div>
     </div>
 
     <!-- Main Area -->
@@ -292,7 +322,142 @@
       </div>
     </div>
 
-    <script>
+<!-- Feedback Modal -->
+<div id="dashFeedbackOverlay" style="display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.65); z-index:3000; place-items:center;">
+  <div style="background:#1a1a1a; color:#eee; padding:28px; border-radius:12px;
+    width:90%; max-width:440px; box-shadow:0 20px 60px rgba(0,0,0,0.6); position:relative;">
+
+    <button onclick="closeFeedbackModal()" style="position:absolute; top:14px; right:14px;
+      background:none; border:none; color:#aaa; cursor:pointer; font-size:18px; line-height:1;">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div id="dashModalUserHeader" style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <div id="dashModalAvatar" style="width:40px; height:40px; border-radius:50%;
+        background:#333; display:flex; align-items:center; justify-content:center;
+        font-weight:600; font-size:14px; color:#eee;"></div>
+      <div>
+        <p id="dashModalUsername" style="margin:0; font-weight:600; font-size:14px;"></p>
+        <p id="dashModalRole" style="margin:0; font-size:12px; color:#aaa;"></p>
+      </div>
+    </div>
+
+    <h2 style="margin:0 0 4px;">Share Your Experience</h2>
+    <p style="color:#aaa; font-size:13px; margin:0 0 16px;">Your feedback will show on the landing page.</p>
+
+    <textarea id="dashFbMessage" rows="4" maxlength="300"
+      placeholder="What do you love about CodePreviewer?"
+      style="width:100%; padding:10px 14px; background:#2a2a2a; border:1px solid #444;
+        border-radius:6px; color:#eee; font-family:Montserrat; font-size:14px;
+        box-sizing:border-box; resize:vertical; outline:none;"></textarea>
+    <p id="dashFbCharCount" style="font-size:12px; color:#888; text-align:right; margin:4px 0 16px;">0 / 300</p>
+
+    <p id="dashFbStatus" style="display:none; font-size:13px; margin:0 0 12px;"></p>
+
+    <button id="dashSubmitFeedbackBtn" onclick="submitDashFeedback()"
+      style="width:100%; padding:12px; background:#ffac1c; color:#111; border:none;
+        border-radius:6px; cursor:pointer; font-family:Montserrat; font-weight:600; font-size:14px;
+        display:flex; align-items:center; justify-content:center; gap:8px;">
+      <i data-lucide="send" style="width:16px;height:16px;"></i> Submit Feedback
+    </button>
+  </div>
+</div>
+
+<script>
+  let dashCurrentUser = null;
+
+  // Fetch user on page load (reuses your existing /api/auth/me endpoint)
+  (async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        dashCurrentUser = await res.json();
+        const initials = dashCurrentUser.username?.slice(0, 2).toUpperCase() || '?';
+        document.getElementById('dashModalAvatar').textContent = initials;
+        document.getElementById('dashModalUsername').textContent = dashCurrentUser.username;
+        document.getElementById('dashModalRole').textContent = dashCurrentUser.role || 'User';
+      }
+    } catch (e) { /* not logged in */ }
+    lucide.createIcons();
+  })();
+
+  function openFeedbackModal() {
+    document.getElementById('dashFeedbackOverlay').style.display = 'grid';
+    lucide.createIcons();
+  }
+
+  function closeFeedbackModal() {
+    document.getElementById('dashFeedbackOverlay').style.display = 'none';
+    document.getElementById('dashFbStatus').style.display = 'none';
+    document.getElementById('dashFbMessage').value = '';
+    document.getElementById('dashFbCharCount').textContent = '0 / 300';
+  }
+
+  // Close on backdrop click
+  document.getElementById('dashFeedbackOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeFeedbackModal();
+  });
+
+  // Char counter
+  document.getElementById('dashFbMessage').addEventListener('input', function() {
+    document.getElementById('dashFbCharCount').textContent = `${this.value.length} / 300`;
+  });
+
+  async function submitDashFeedback() {
+    const message = document.getElementById('dashFbMessage').value.trim();
+    const btn = document.getElementById('dashSubmitFeedbackBtn');
+    const status = document.getElementById('dashFbStatus');
+
+    status.style.display = 'none';
+
+    if (!message) {
+      status.textContent = 'Please write your feedback before submitting.';
+      status.style.color = '#e53e3e';
+      status.style.display = 'block';
+      return;
+    }
+    if (!dashCurrentUser) {
+      status.textContent = 'Could not identify user. Please refresh.';
+      status.style.color = '#e53e3e';
+      status.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader-2" style="width:16px;height:16px;"></i> Sending…';
+    lucide.createIcons();
+
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: dashCurrentUser.id, message }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        status.textContent = 'Thanks for your feedback!';
+        status.style.color = '#38a169';
+        status.style.display = 'block';
+        document.getElementById('dashFbMessage').value = '';
+        document.getElementById('dashFbCharCount').textContent = '0 / 300';
+        setTimeout(closeFeedbackModal, 1800);
+      } else {
+        status.textContent = data.error || 'Something went wrong.';
+        status.style.color = '#e53e3e';
+        status.style.display = 'block';
+      }
+    } catch {
+      status.textContent = 'Network error. Please try again.';
+      status.style.color = '#e53e3e';
+      status.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Submit Feedback';
+      lucide.createIcons();
+    }
+  }
       // Sidebar toggle
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");

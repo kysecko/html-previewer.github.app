@@ -151,6 +151,11 @@ app.get('/admin', requireAuth, (req, res) => {
   res.sendFile(path.join(publicPath, 'pages/admin/dashboard.html'));
 });
 
+// Feedback routes
+const feedbackRoutes = require('./routes/feedback');
+app.use('/api/feedback', feedbackRoutes);
+
+
 // CLEAN URL HANDLER (.html extension remover)
 
 app.get('*', (req, res, next) => {

@@ -1,0 +1,236 @@
+/* Feedback section utilities */
+.hidden { display: none !important; }
+
+/* Skeleton loaders */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton-card { pointer-events: none; }
+
+.skeleton-line,
+.skeleton-avatar {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.skeleton-line.long    { height: 14px; width: 100%; }
+.skeleton-line.medium  { height: 14px; width: 80%; }
+.skeleton-line.short   { height: 14px; width: 60%; }
+.skeleton-line.shorter { height: 12px; width: 45%; }
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.skeleton-author-text {
+  flex: 1;
+}
+
+/* Card fade-in */
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.testimonial-card.fade-in {
+  animation: cardFadeIn 0.5s ease forwards;
+}
+
+/* Feedback CTA */
+.feedback-cta,
+.feedback-nudge {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.feedback-nudge p {
+  color: #5a5a5a;
+  font-size: 0.9rem;
+}
+
+.feedback-nudge a {
+  color: #FFAC1C;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.feedback-nudge a:hover {
+  text-decoration: underline;
+}
+
+/* Modal overlay */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-overlay:not(.hidden) {
+  display: flex;
+}
+
+.feedback-modal {
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 16px;
+  position: relative;
+  animation: modalIn 0.25s ease;
+}
+
+/* Modal close button */
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #7a7a7a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: #fff; }
+
+.modal-close i {
+  width: 20px;
+  height: 20px;
+}
+
+/* Modal user header */
+.modal-user-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.modal-avatar {
+  width: 42px;
+  height: 42px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #FFAC1C;
+  font-size: 1rem;
+  border: 2px solid #3a3a3a;
+  flex-shrink: 0;
+}
+
+.modal-username {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.modal-role {
+  color: #7a7a7a;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* Modal text */
+.modal-title {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.modal-subtitle {
+  color: #7a7a7a;
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+}
+
+/* Form */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8a8a8a;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.form-textarea {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.form-textarea:focus { border-color: #FFAC1C; }
+
+.char-count {
+  font-size: 0.78rem;
+  color: #5a5a5a;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Status message */
+.fb-status {
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.fb-status.success { color: #27ca3f; }
+.fb-status.error   { color: #ff5f56; }
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  justify-content: center;
+}

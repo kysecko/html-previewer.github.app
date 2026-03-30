@@ -11,9 +11,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+  <!-- CSS -->
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/landingpage.css" />
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/testimonials.css">
+  <!-- JS -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -254,50 +257,60 @@
   </section>
 
   <!-- Testimonials Section -->
-  <section class="section" id="testimonials">
-    <div class="section-header" data-aos="fade-up" data-aos-duration="700">
-      <h2 class="section-title">What Our Users Say</h2>
-    </div>
-    <div class="testimonials">
-      <div class="testimonial-card" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="0">
-        <div class="testimonial-content">
-          "Finally, a code editor that doesn't distract me with colors and animations. My productivity has doubled."
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">SW</div>
-          <div class="author-info">
-            <strong>Sam Co</strong>
-            <span>Full-Stack Developer</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="150">
-        <div class="testimonial-content">
-          "The instant preview feature is a game-changer. I can see my changes live without any setup."
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">RG</div>
-          <div class="author-info">
-            <strong>Ruselle Garcia</strong>
-            <span>PHP Backend Developer</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="300">
-        <div class="testimonial-content">
-          "Perfect for teaching code. Students focus on structure rather than getting lost in syntax highlighting."
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">MB</div>
-          <div class="author-info">
-            <strong>Moki Buniel</strong>
-            <span>UI/UX Designer</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="section" id="testimonials">
+  <div class="section-header" data-aos="fade-up" data-aos-duration="700">
+    <h2 class="section-title">What Our Users Say</h2>
+    <p class="section-subtitle">Real experiences shared by real users, highlighting how the app performs in everyday use.</p>
+  </div>
 
+  <!-- Dynamic Testimonials Grid -->
+  <div class="testimonials" id="testimonialsGrid">
+    <div class="testimonial-card skeleton-card">
+      <div class="skeleton-line long"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-author">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-author-text">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line shorter"></div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card skeleton-card">
+      <div class="skeleton-line long"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-author">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-author-text">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line shorter"></div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card skeleton-card">
+      <div class="skeleton-line long"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-author">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-author-text">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line shorter"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div style="display:flex; justify-content:center; margin-top: 2rem;" data-aos="fade-up" data-aos-duration="600">
+  <a href="/login" class="btn btn-yellow">
+    <i data-lucide="log-in"></i>
+    <div class="btn-text">Sign In to Leave Feedback</div>
+  </a>
+</div>
+
+</section>
   <!-- Footer Section -->
   <footer class="footer" data-aos="fade-up" data-aos-duration="600">
     <div class="footer-content">
@@ -319,7 +332,7 @@
       <p>&copy; 2026 CodePreviewer. All rights reserved.</p>
     </div>
   </footer>
-
+<script src="/js/testimonials.js"></script>
   <script>
     // Init Lucide icons
     lucide.createIcons();
