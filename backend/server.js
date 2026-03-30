@@ -11,9 +11,7 @@ app.set('trust proxy', 1);
 const isProd = process.env.NODE_ENV === 'production';
 const isVercel = !!process.env.VERCEL;
 
-// ==============================
 // LOAD ROUTES
-// ==============================
 
 let requireAuth, authRouter, projectsRouter, usersRouter;
 
@@ -37,9 +35,7 @@ try {
   usersRouter.all('*', (req, res) => res.json({ message: 'Users fallback' }));
 }
 
-// ==============================
 // CORS
-// ==============================
 
 app.use(cors({
   origin: [
@@ -50,9 +46,7 @@ app.use(cors({
   credentials: true
 }));
 
-// ==============================
 // SESSION
-// ==============================
 
 const sessionConfig = {
   name: 'code-editor-session',
@@ -86,9 +80,7 @@ if (process.env.REDIS_URL) {
 
 app.use(session(sessionConfig));
 
-// ==============================
 // MIDDLEWARES
-// ==============================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -100,24 +92,19 @@ if (!isProd) {
   });
 }
 
-// ==============================
 // PATHS
-// ==============================
 
 const publicPath = path.join(__dirname, '..', 'public');
 
-// ==============================
 // STATIC FILES
-// ==============================
 
 app.use(express.static(publicPath, {
   maxAge: '7d', // cache for 7 days
   etag: true
 }));
 
-// ==============================
 // API ROUTES
-// ==============================
+
 const logsRouter = require('./routes/logs');
 app.use('/api/logs', logsRouter);
 app.use('/api/auth', authRouter);
@@ -132,9 +119,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });
 
-// ==============================
 // PAGE ROUTES
-// ==============================
 
 // Home — redirect to /user if already logged in
 app.get('/', (req, res) => {
@@ -166,9 +151,7 @@ app.get('/admin', requireAuth, (req, res) => {
   res.sendFile(path.join(publicPath, 'pages/admin/dashboard.html'));
 });
 
-// ==============================
-// CLEAN URL HANDLER (.html remover)
-// ==============================
+// CLEAN URL HANDLER (.html extension remover)
 
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
@@ -182,9 +165,7 @@ app.get('*', (req, res, next) => {
   });
 });
 
-// ==============================
 // ERROR HANDLING
-// ==============================
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found', path: req.path });
@@ -198,9 +179,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ==============================
-// START SERVER (local only)
-// ==============================
+// START SERVER ( on local only )
 
 if (!isProd) {
   const PORT = process.env.PORT || 3000;
