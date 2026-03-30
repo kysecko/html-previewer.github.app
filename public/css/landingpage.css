@@ -120,6 +120,18 @@ img {
   white-space: nowrap;
 }
 
+.logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.highlight {
+  color: #FFAC1C;
+}
+
 .nav-links a:hover {
   color: #fff;
 }
