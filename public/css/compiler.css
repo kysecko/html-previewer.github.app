@@ -375,6 +375,7 @@ body.light-mode #sourceCode::placeholder {
   flex-shrink: 0;
   transition: background 0.2s;
   position: relative;
+  margin-right: 12px;
 }
 
 .resizer:hover,
