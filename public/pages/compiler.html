@@ -11,14 +11,17 @@
   </head>
 
   <body>
-      <!-- EDITOR PANEL -->
-      <div id="editor-wrapper" class="panel-wrapper">
-        <div class="panel-header">
-          <div
-            class="panel-title"
-            onclick="showLandingPage()"
-            title="Back to home"
-          >
+    <!-- EDITOR PANEL -->
+    <div id="editor-wrapper" class="panel-wrapper">
+      <div class="panel-header">
+        <div
+        class="panel-title"
+        onclick="showLandingPage()"
+        title="Back to home"
+        >
+        <button onclick="showLandingPage()" class="back-btn">
+          <i data-lucide="arrow-left"></i>
+        </button>
             <span>Code Editor</span>
           </div>
           <div class="panel-controls">
@@ -66,9 +69,6 @@
             class="panel-title-group"
             style="display: flex; align-items: center; gap: 8px"
           >
-            <button onclick="showLandingPage()" class="back-btn">
-              <i data-lucide="arrow-left"></i>
-            </button>
 
             <div class="panel-title">
               <span>Code Previewer</span>
